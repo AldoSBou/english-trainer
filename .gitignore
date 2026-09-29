@@ -1,0 +1,3 @@
+# Nada que ignorar por ahora; los datos del alumno viven en localStorage del navegador
+Thumbs.db
+.DS_Store
