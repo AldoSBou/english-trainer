@@ -7,7 +7,7 @@
    carga (incluidas las nuevas unidades) se guarda solo.
    Sube CACHE (et-v2, et-v3…) si quieres forzar una limpieza.
    =========================================================== */
-const CACHE = 'et-v7';
+const CACHE = 'et-v8';
 const SHELL = ['./', 'index.html', 'css/style.css', 'js/engine.js', 'js/coach.js', 'js/method.js', 'js/translate.js', 'js/app.js', 'courses/registry.js',
   'manifest.webmanifest', 'icons/icon-192.png', 'icons/icon-512.png', 'icons/apple-touch-icon.png'];
 

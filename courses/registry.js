@@ -36,7 +36,7 @@ window.COURSES = [
       { id: 'unit2', number: 2, title: 'Trends & food', subtitle: 'Condicionales reales y time clauses', available: true, xpGoal: 600 },
       { id: 'unit3', number: 3, title: "What's it worth?", subtitle: 'too / enough y comparaciones modificadas', available: true, xpGoal: 600 },
       { id: 'unit4', number: 4, title: 'Famous faces', subtitle: 'Especulación (must/might/can\'t) y relative clauses', available: true, xpGoal: 600 },
-      { id: 'unit5', number: 5, title: 'Unit 5', available: false },
+      { id: 'unit5', number: 5, title: 'Stories & broken plans', subtitle: 'Past perfect · was going to / supposed to', available: true, xpGoal: 600 },
       { id: 'unit6', number: 6, title: 'Good works', subtitle: 'Pasiva con modales · ofrecer y aceptar ayuda', available: true, xpGoal: 600 },
     ],
   },
