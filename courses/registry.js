@@ -38,6 +38,8 @@ window.COURSES = [
       { id: 'unit4', number: 4, title: 'Famous faces', subtitle: 'Especulación (must/might/can\'t) y relative clauses', available: true, xpGoal: 600 },
       { id: 'unit5', number: 5, title: 'Stories & broken plans', subtitle: 'Past perfect · was going to / supposed to', available: true, xpGoal: 600 },
       { id: 'unit6', number: 6, title: 'Good works', subtitle: 'Pasiva con modales · ofrecer y aceptar ayuda', available: true, xpGoal: 600 },
+      { id: 'unit7', number: 7, title: 'Spread the word', subtitle: 'Reported speech · comunicación y redes', available: true, xpGoal: 600 },
+      { id: 'unit8', number: 8, title: 'Work & wishes', subtitle: 'Condicionales irreales · I wish · trabajo', available: true, xpGoal: 600 },
     ],
   },
   { id: 'ingles5', number: 5, title: 'Inglés 5', subtitle: 'Intermedio alto', available: false, units: [] },
