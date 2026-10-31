@@ -64,6 +64,13 @@
   window.UNIT_DATA['ingles4/unit5'] = {
     source: 'Evolve · Unit 5 · Stories & broken plans',
     description: 'Tipos de historias y phrasal verbs de planes que se hacen y se rompen; el past perfect para contar qué pasó antes, <i>was/were going to</i> y <i>was/were supposed to</i> para planes que no salieron, y cómo reaccionar a problemas y malas noticias.',
+    cando: [
+      "Contar una historia ordenando el pasado con past perfect (<i>By the time I arrived, they had left</i>)",
+      "Explicar un plan que no salió: <i>I was going to… / I was supposed to…, but…</i>",
+      "Clasificar historias y películas: <i>coming-of-age, feel-good, tearjerker, tall tale, human interest</i>",
+      "Usar phrasal verbs de planes: <i>end up, get together, look forward to, let down, split up, be held up</i>",
+      "Reaccionar a un problema o una mala noticia: <i>There must be some kind of mistake</i> · <i>Well, it is what it is</i>",
+    ],
     map: [
       ['Vocabulary', '12 tipos de historia (<i>coming-of-age story, family saga, feel-good story, hard-luck story, horror story, mystery, tearjerker, tall tale…</i>) y 12 phrasal verbs de planes (<i>be held up, cheer up, end up, get together, give up on, go ahead, look forward to, let down, make up, mess up, split up…</i>)', 'Flashcards con audio, phrasal verb ↔ definición, sinopsis → tipo de historia, phrasal verb en contexto'],
       ['Grammar', '<b>Past perfect</b> (<i>had</i> + participio) para lo que pasó antes de otro momento del pasado, y <b>was/were going to</b> / <b>was/were supposed to</b> para planes que no ocurrieron (+ <i>but</i>) o cosas que pasaron sin planearlas', '¿Qué pasó primero?, forma el past perfect, going to vs supposed to, repaso de las Units 1-4'],

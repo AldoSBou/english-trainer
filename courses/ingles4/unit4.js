@@ -92,6 +92,13 @@
   window.UNIT_DATA['ingles4/unit4'] = {
     source: 'Evolve · Unit 4 · Famous faces',
     description: 'Publicidad y gente de los medios: especular con must / might / can\'t, oraciones de relativo de sujeto y objeto, y cómo intercambiar y defender opiniones con énfasis.',
+    cando: [
+      "Especular sobre una foto o una situación con <i>must / might / may / could / can't</i> (y nunca <i>can</i>)",
+      "Describir personas y cosas con relative clauses (<i>the designer who…</i>, <i>the ad that…</i>) y omitir el pronombre cuando se puede",
+      "Hablar de publicidad y marcas: <i>brand, commercial, slogan, sponsor, status symbol, fashion statement</i>",
+      "Nombrar a la gente de los medios: <i>celebrity, comedian, filmmaker, performer, audience</i>",
+      "Dar y discutir opiniones con énfasis: <i>As I see it…</i> · <i>That's a good point, but…</i> · <i>I couldn't disagree more</i>",
+    ],
     map: [
       ['Vocabulary', '12 palabras de publicidad (<i>ad, brand, commercial, logo, slogan, sponsor, status symbol…</i>) y 12 de gente de los medios (<i>celebrity, comedian, icon, model, movie producer, performer…</i>)', 'Flashcards con audio, emparejar con definiciones, situación → palabra, ¿sustantivo o verbo?'],
       ['Grammar', 'Modales de especulación (<b>must</b> · <b>might / may / could</b> · <b>can\'t / must not</b>; nunca <i>can</i>); oraciones de relativo de sujeto y objeto con <b>who / which / that / where</b>, y cuándo se omite el pronombre', 'Elige el modal según la certeza, elige el pronombre, ¿se puede omitir?, repaso de las Units 1-3'],

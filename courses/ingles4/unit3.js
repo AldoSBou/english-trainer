@@ -71,6 +71,13 @@
   window.UNIT_DATA['ingles4/unit3'] = {
     source: "Evolve · Unit 3 · What's it worth?",
     description: 'Tiempo, dinero y valor: too / enough, cómo modificar comparaciones, pedir disculpas y explicar qué pasó, y escribir una reseña de producto.',
+    cando: [
+      "Decir que algo es demasiado o insuficiente con <i>too</i> y <i>(not) enough</i> en el orden correcto",
+      "Comparar matizando: <i>a bit / way / a whole lot</i> + comparativo, <i>nearly / nowhere near as… as</i>, <i>by far</i>",
+      "Hablar de dinero y valor: <i>be worth it</i>, <i>can't afford</i>, <i>cost of living</i>, <i>standard of living</i>, <i>rely on</i>",
+      "Disculparme y dar una explicación: <i>I can't tell you how sorry I am</i>",
+      "Escribir una reseña de producto con pros, contras y recomendación",
+    ],
     map: [
       ['Vocabulary', '12 expresiones de tiempo y dinero (<i>cost of living, be worth it, take a salary cut…</i>), 12 frases verbales de precios y valor (<i>charge for, rely on, treat yourself to…</i>) y léxico del vídeo de infraestructura', 'Flashcards con audio, emparejar con definiciones, situación → palabra, preposiciones y verbos de las collocations'],
       ['Grammar', '<b>too</b> y <b>enough</b> (posición con adjetivo / sustantivo, + infinitivo); modificar comparaciones: <i>a bit, way, a whole lot, nearly, nowhere near, by far</i>', 'Elige la forma correcta, gradúa la comparación según la diferencia, repaso de la Unit 1'],

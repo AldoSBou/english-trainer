@@ -19,7 +19,8 @@ js/engine.js            window.Engine: renderizadores por `type` + util {shuffle
 js/mastery.js           window.Mastery: dominio por actividad (et-mastery: nivel 0 nuevo · 1 visto · 2 en práctica · 3 dominado; el vocabulario toma el nivel de la caja SRS) y cuaderno de errores (et-errors) con drill que reusa los renderizadores; vista en #/method/errors
 js/app.js               rutas hash, navegación (Hoy · Curso · Práctica · Coach · Perfil), pantalla Hoy (sesión diaria de 5 pasos), portada de unidad, perfil (racha, calendario, objetivo semanal), XP/progreso, voz
 js/coach.js             Speaking Coach (#/coach): chat por voz, evaluación CEFR, cuaderno de errores, modelos por tema. IA: artifact `sample` → API key propia → reglas locales
-js/method.js            Práctica (#/method): Leitner SRS, shadowing, quiz mezclado, 4-3-2, dictogloss, read&retell, plan semanal. Expone srsStats/srsLoop (los usa Hoy)
+js/method.js            Práctica (#/method): Leitner SRS, cuaderno de errores, pronunciación, shadowing, quiz mezclado, 4-3-2, dictogloss, read&retell, plan semanal. Expone srsStats/srsLoop (los usa Hoy)
+js/pron.js              Laboratorio de pronunciación para hispanohablantes (#/method/pron): pares mínimos (10 contrastes), terminación -ed, sílaba tónica, enlaces y contracciones (usa el tipo `say`). Datos propios dentro del archivo
 js/translate.js         Traductor con voz (#/translate): glosario de las unidades → IA del Coach → MyMemory
 courses/registry.js     window.COURSES: ciclos y unidades (available / current / title / subtitle / xpGoal)
 courses/<ciclo>/unitN.js  window.UNIT_DATA['<ciclo>/unitN'] = {source, description, map, weak?, weakLink?, sections}
@@ -29,7 +30,7 @@ tools/validate-all.js   todas las unidades                     → npm run valid
 tools/test-all.js       recorre las 177+ rutas en Chromium headless y falla con cualquier error de página → npm test
 ```
 
-Rutas: `#/` (Hoy: sesión diaria) · `#/curso` (ciclos) · `#/<ciclo>` · `#/<ciclo>/<unidad>` · `#/<ciclo>/<unidad>/<sección>` · `#/perfil` · `#/coach/<chat|eval|history|settings>` · `#/method/<plan|srs|shadow|mix|fluency|dictogloss|retell>` · `#/translate`.
+Rutas: `#/` (Hoy: sesión diaria) · `#/curso` (ciclos) · `#/<ciclo>` · `#/<ciclo>/<unidad>` · `#/<ciclo>/<unidad>/<sección>` · `#/perfil` · `#/coach/<chat|eval|history|settings>` · `#/method/<plan|srs|errors|pron|shadow|mix|fluency|dictogloss|retell>` · `#/translate`.
 
 Pantalla **Hoy** (portada): cinco o seis pasos (~13-16 min) armados solos con la *unidad en foco* (la última visitada del ciclo actual): repaso SRS (máx. 12 tarjetas) → 6 mcq de gramática (4 de la unidad + 2 de otras, interleaving) → [caza tus errores: drill de 6 fallos del cuaderno, solo si hay ≥3] → dictado de 3 frases → 1 reto de speaking → 6 palabras nuevas que entran al mazo SRS. Completarlos todos marca el día como sesión (racha, objetivo semanal). Las unidades siguen siendo la biblioteca de estudio alineada con la clase.
 
@@ -65,7 +66,9 @@ window.UNIT_DATA['ingles4/unitN'] = {
 };
 ```
 
-Tipos de actividad (`type`): `notes` (html) · `flashcards` (cards:{cat,w,def,ex,ask,say?}) · `match` (pairs, round) · `mcq` (items:{q,opts,a,why,blank?} o `build(util)`, `pool`) · `dictation` (sentences) · `dialog` (lines:[[speaker,text]], questions) · `speaking` (challenges:{t,task,model,tags}) · `stress` (pairs:[[label,say]]) · `reading` (paragraphs, main, infer, think) · `fix` (items:{bad,good,why}) · `soft` (items:{h,a}, pattern RegExp, missing) · `comment` (checks:{label, re|words}, min, max, need) · `order` (dialogs:[["Nombre: texto"]]) · `recall` (cards como flashcards, pool) · `cloze` (sentences, gaps) · `build` (sentences). Los tres últimos se generan solos (actividades virtuales); solo decláralos a mano si quieres frases o tarjetas distintas.
+Tipos de actividad (`type`): `notes` (html) · `flashcards` (cards:{cat,w,def,ex,ask,say?}) · `match` (pairs, round) · `mcq` (items:{q,opts,a,why,blank?} o `build(util)`, `pool`) · `dictation` (sentences) · `dialog` (lines:[[speaker,text]], questions) · `speaking` (challenges:{t,task,model,tags}) · `stress` (pairs:[[label,say]]) · `reading` (paragraphs, main, infer, think) · `fix` (items:{bad,good,why}) · `soft` (items:{h,a}, pattern RegExp, missing) · `comment` (checks:{label, re|words}, min, max, need) · `order` (dialogs:[["Nombre: texto"]]) · `recall` (cards como flashcards, pool) · `cloze` (sentences, gaps) · `build` (sentences) · `say` (sentences: escucha, dilo y compara con reconocimiento de voz; autoevaluación si no hay). Los cuatro últimos se generan solos (actividades virtuales: `say` en speak con las frases de los modelos de los retos + dictado); solo decláralos a mano si quieres frases o tarjetas distintas.
+
+`cando`: las ocho unidades de Inglés 4 ya lo tienen (5-6 frases "Puedo…" con HTML ligero). Al crear una unidad nueva, escríbelo a partir de la gramática, el vocabulario y el functional language de la unidad; el estado de las casillas vive en `et-cando`.
 
 Reglas que el validador comprueba y que te ahorran bugs:
 - En `mcq`, **`a` es el string de la opción correcta**, no un índice; sin opciones repetidas; `blank:1` ⇔ la pregunta contiene `___` (solo se sustituye la primera).

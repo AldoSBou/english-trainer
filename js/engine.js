@@ -307,5 +307,36 @@ window.Engine = (() => {
     if (bank.length) draw(); else box.innerHTML = '<p class="small muted">No hay frases suficientes.</p>';
   };
 
-  return { renderers: R, register: (t, fn) => { R[t] = fn; }, util: { shuffle, pick, esc, norm, blank, diffWords, $, $$ } };
+  /* matchScore: % de palabras del objetivo dichas en orden (lo usan Dilo, shadowing y pronunciación) */
+  function matchScore(said, target) {
+    const A = norm(said).split(' ').filter(Boolean), B = norm(target).split(' ').filter(Boolean); let i = 0, hit = 0;
+    for (const w of B) { const j = A.indexOf(w, i); if (j >= 0) { hit++; i = j + 1; } }
+    return B.length ? Math.round(hit / B.length * 100) : 0;
+  }
+
+  /* say: "Dilo" · escucha el modelo, dilo y compara con tu voz (o autoevalúate si no hay reconocimiento) */
+  R.say = (root, act, ctx) => {
+    const SP = window.Speech, canRec = !!(SP && SP.supported);
+    let bank = shuffle(act.sentences), i = 0, r = null;
+    root.innerHTML = `<div class="card">${head(act)}<div class="prompt-box"><div class="eyebrow say-n"></div><p class="big-sent say-text"></p></div>
+      <div class="row" style="margin-top:12px"><button class="btn say-play">▶ Escuchar</button><button class="btn ghost say-slow">🐢 Lenta</button>${canRec ? '<button class="btn warm say-rec">🎤 Dilo</button>' : ''}<button class="btn ghost say-next" style="margin-left:auto">Siguiente →</button></div>
+      ${canRec ? '' : '<p class="small muted" style="margin-top:8px">Este navegador no tiene reconocimiento de voz (usa Chrome o Edge). Escucha, dilo en voz alta y evalúate tú.</p><div class="row say-self" style="margin-top:8px"><button class="btn ok sm say-ok">✔ Me salió bien</button><button class="btn bad sm say-ko">✘ Repetir mañana</button></div>'}
+      <div class="fb say-fb"></div></div>`;
+    const cur = () => bank[i % bank.length];
+    const draw = () => { $('.say-text', root).textContent = cur(); $('.say-n', root).textContent = `Frase ${(i % bank.length) + 1} de ${bank.length}`; $('.say-fb', root).className = 'fb say-fb'; delete root.dataset.done; };
+    const report = (said, p) => { const good = p >= 80, fb = $('.say-fb', root); fb.className = 'fb say-fb show ' + (good ? 'good' : 'wrong'); fb.innerHTML = `<b>${p}%</b> de coincidencia.<br><span class="diff">${diffWords(said, cur())}</span>${good ? '' : '<p class="small muted" style="margin-top:6px">Escucha otra vez y fíjate en las palabras marcadas. Repite pegado a la voz.</p>'}`; ctx.score(good, 10); if (ctx.answer) ctx.answer({ kind: 'say', good, item: { s: cur() }, typed: said }); };
+    $('.say-play', root).onclick = () => ctx.say(cur(), 1); $('.say-slow', root).onclick = () => ctx.say(cur(), 0.75);
+    $('.say-next', root).onclick = () => { i++; if (i % bank.length === 0) bank = shuffle(act.sentences); draw(); };
+    const rb = $('.say-rec', root); if (rb) rb.onclick = () => {
+      if (r) { r.stop(); return; } if (window.speechSynthesis) speechSynthesis.cancel();
+      rb.textContent = '⏹ Detener'; rb.classList.add('rec'); const fb = $('.say-fb', root); fb.className = 'fb say-fb show good'; fb.textContent = 'Escuchando… di la frase.';
+      r = SP.listen({ continuous: false, onText: t => { fb.textContent = t; }, onEnd: said => { r = null; rb.textContent = '🎤 Dilo'; rb.classList.remove('rec'); if (said) report(said, matchScore(said, cur())); else { fb.className = 'fb say-fb show wrong'; fb.textContent = 'No se oyó nada. Acércate al micrófono e inténtalo otra vez.'; } }, onError: () => { r = null; rb.textContent = '🎤 Dilo'; rb.classList.remove('rec'); ctx.toast('No se pudo usar el micrófono'); } });
+    };
+    const ok = $('.say-ok', root), ko = $('.say-ko', root);
+    if (ok) ok.onclick = () => { if (root.dataset.done) return; root.dataset.done = 1; ctx.score(true, 6); if (ctx.answer) ctx.answer({ kind: 'say', good: true, item: { s: cur() } }); ctx.toast('¡Bien! Siguiente.'); };
+    if (ko) ko.onclick = () => { if (root.dataset.done) return; root.dataset.done = 1; ctx.score(false, 0); if (ctx.answer) ctx.answer({ kind: 'say', good: false, item: { s: cur() } }); };
+    draw();
+  };
+
+  return { renderers: R, register: (t, fn) => { R[t] = fn; }, util: { shuffle, pick, esc, norm, blank, diffWords, matchScore, $, $$ } };
 })();

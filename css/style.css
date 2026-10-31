@@ -505,6 +505,15 @@ select{padding:7px 10px}
 .cz-in.ok{border-color:var(--ok);background:var(--ok-soft);color:var(--ok-ink)}
 .cz-in.bad{border-color:var(--bad);background:var(--bad-soft);color:var(--bad-ink)}
 
+/* pronunciación */
+.syls{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 4px}
+.syl{border:1px solid var(--line-strong);background:var(--surface);color:var(--ink);border-radius:12px;padding:12px 18px;font:inherit;font-family:var(--font-head);font-size:1.5rem;font-weight:600;cursor:pointer;box-shadow:0 2px 0 var(--line);transition:transform .1s}
+.syl:hover{border-color:var(--accent);transform:translateY(-2px)}
+.syl.ok{border-color:var(--ok);background:var(--ok-soft);color:var(--ok-ink);box-shadow:0 2px 0 var(--ok)}
+.syl.bad{border-color:var(--bad);background:var(--bad-soft);color:var(--bad-ink);animation:shake .3s}
+.pr-opts .opt{font-family:var(--font-head);font-size:1.4rem;text-align:center;padding:18px}
+.kind[data-kind="say"]{background:#FCE7E2;color:#B03A28}
+
 /* perfil */
 .heat{display:grid;grid-auto-flow:column;grid-template-rows:repeat(7,1fr);gap:4px;overflow-x:auto;padding-bottom:4px}
 .heat i{width:14px;height:14px;border-radius:4px;background:var(--surface3);display:block}

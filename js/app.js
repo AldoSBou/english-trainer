@@ -170,6 +170,14 @@
       const at = l.activities.findIndex(a => a.type === 'dictation') + 1;
       l.activities.splice(at || l.activities.length, 0, { virtual: true, label: 'Completa lo que oyes', type: 'cloze', eyebrow: 'Listening · cloze', title: 'Escucha y completa las palabras que faltan', intro: 'Dos huecos por frase. Escúchala entera, fíjate en las palabras de contenido y escribe solo lo que falta.', sentences: sents, gaps: 2 });
     }
+    const sp = sec('speak');
+    if (sp && !sp.activities.some(a => a.type === 'say')) {
+      // frases de los modelos de speaking (4-16 palabras) + las del dictado
+      const models = sp.activities.filter(a => a.type === 'speaking').flatMap(a => a.challenges.map(ch => String(ch.model || '').replace(/<[^>]+>/g, '')));
+      const fromModels = models.flatMap(m => m.match(/[^.!?]+[.!?]+/g) || []).map(s => s.trim()).filter(s => { const n = s.split(' ').length; return n >= 4 && n <= 16; });
+      const say = [...new Set([...fromModels, ...sents])];
+      if (say.length >= 5) { const at = sp.activities.findIndex(a => a.type === 'speaking') + 1; sp.activities.splice(at || sp.activities.length, 0, { virtual: true, label: 'Dilo', type: 'say', eyebrow: 'Dilo · pronunciación y ritmo', title: 'Escucha la frase, dila y compara', intro: 'Frases del modelo de los retos y del dictado. Escucha, imita el ritmo y grábate: verás palabra por palabra qué se entendió. Más del 80 % es buena señal.', sentences: say }); }
+    }
     const g = sec('grammar');
     if (g && sents.length >= 5 && !g.activities.some(a => a.type === 'build')) {
       const rev = g.activities.findIndex(a => /^repaso/i.test(a.label || ''));

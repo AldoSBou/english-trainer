@@ -51,6 +51,13 @@
   window.UNIT_DATA['ingles4/unit2'] = {
     source: 'Evolve · Unit 2 · Trends & food',
     description: 'Tendencias que van y vienen, comida y formas de cocinar, condicionales reales y time clauses, ofrecer comida y escribir un informe formal.',
+    cando: [
+      "Hablar de una tendencia: <i>be all the rage</i>, <i>go out of style</i>, <i>gain / lose popularity</i>",
+      "Explicar una receta con verbos de cocina (<i>chop, fry, stir, rinse, boil</i>)",
+      "Hacer un plan real con el primer condicional (<i>If it rains, we'll stay in</i>)",
+      "Usar <i>when / as soon as / until / once</i> con presente aunque hable del futuro",
+      "Ofrecer comida y aceptarla o rechazarla con naturalidad",
+    ],
     map: [
       ['Vocabulary', '15 expresiones de tendencias (<i>be all the rage, be on the way out, come back in style…</i>), 9 alimentos, 6 verbos de cocina e Insider English <i>be trending</i>', 'Flashcards con audio, emparejar, tendencias en contexto, ¿sube o baja?, comida y cocina'],
       ['Grammar', 'Condicionales reales (<i>if</i> + simple present → <i>will / going to / might</i>, imperativo o verdad general) y time clauses con <i>after, until, when, as soon as, before, once</i>', 'Elige la forma, ¿para qué se usa?, time clauses (tu punto débil), repaso Unit 1'],

@@ -84,6 +84,13 @@
   window.UNIT_DATA['ingles4/unit8'] = {
     source: 'Evolve · Unit 8 · Work and life',
     description: 'Trabajos y equilibrio entre trabajo y vida: el segundo condicional (<i>If I were rich, I\'d…</i>), los deseos con <i>I wish</i> (presente, pasado y <i>could</i>), la diferencia entre <i>wish</i> y <i>hope</i>, y cómo pensar opciones en voz alta, animar y advertir a un amigo (<i>If I were in your shoes, I\'d… / It can\'t hurt / I wouldn\'t do that if I were you</i>).',
+    cando: [
+      "Imaginar situaciones con el segundo condicional (<i>If I had more time, I'd…</i>) sin poner <i>would</i> después de <i>if</i>",
+      "Expresar deseos y arrepentimientos con <i>I wish</i> + pasado, + past perfect, + <i>could</i>",
+      "Distinguir <i>wish</i> (no va a cambiar) de <i>hope</i> (puede pasar)",
+      "Describir trabajos: <i>challenging, high-paying, freelance, permanent, 9-to-5</i>; y hablar de work/life balance: <i>downtime, me time, always connected</i>",
+      "Pensar opciones en voz alta y aconsejar: <i>Have you tried…?</i> · <i>If I were in your shoes, I'd…</i> · <i>It can't hurt</i> · <i>I wouldn't do that if I were you</i>",
+    ],
     map: [
       ['Vocabulary', '15 expresiones para <i>describing jobs</i> (<i>challenging, desk job, dream job, freelance, full-time, government job, high-paying, main job, part-time, permanent, second job, stressful, temporary, tiring, tough</i>) y 14 de <i>work/life balance</i> (<i>always connected, assignments, busy schedule, chill out, commitment, downtime, family life, lecture, me time, office hours, seminar, social life, time off, 9-to-5</i>)', 'Flashcards con audio, expresión ↔ definición, situación → expresión, ¿cuál de los dos?'],
       ['Grammar', '<b>Present unreal conditionals</b> (segundo condicional): <i>if</i> + pasado simple → <i>would / might</i> + verbo; <i>were</i> para todos los sujetos; comas. <b>I wish…</b>: <i>wish</i> + pasado (presente), + past perfect (arrepentimiento), + <i>could</i>; realidad ↔ deseo invertidos; <i>wish</i> vs <i>hope</i>', 'Elige la forma, ¿real o imaginado?, construye deseos, <i>wish</i> o <i>hope</i>, corrige errores típicos, ordena mini-diálogos, reescribe realidad → deseo y situación → condicional, repaso Units 1-6'],

@@ -51,13 +51,13 @@ window.Mastery = (() => {
   const errText = e => {
     const it = e.item;
     if (e.kind === 'mcq') return `${strip(it.q).replace('…', '___')} → <b>${strip(it.a)}</b>`;
-    if (e.kind === 'dictation' || e.kind === 'build') return `<b>${esc(it.s)}</b>`;
+    if (e.kind === 'dictation' || e.kind === 'build' || e.kind === 'say') return `<b>${esc(it.s)}</b>`;
     if (e.kind === 'fix') return `<s>${esc(it.bad)}</s> → <b>${esc(it.good)}</b>`;
     if (e.kind === 'soft') return `${esc(it.h)} → <b>${esc(it.a)}</b>`;
     if (e.kind === 'recall') return `${esc(it.def)} → <b>${esc(it.w)}</b>`;
     return esc(JSON.stringify(it));
   };
-  const KIND = { mcq: 'Elegir', dictation: 'Dictado', build: 'Orden', fix: 'Corregir', soft: 'Reescribir', recall: 'Escribir' };
+  const KIND = { mcq: 'Elegir', dictation: 'Dictado', build: 'Orden', fix: 'Corregir', soft: 'Reescribir', recall: 'Escribir', say: 'Decir' };
   function miss(e) {
     const k = errKey(e), ex = E.find(x => x.k === k);
     if (ex) { ex.n++; ex.day = today(); ex.typed = e.typed || ex.typed; }
@@ -83,6 +83,7 @@ window.Mastery = (() => {
     const rc = by('recall'); if (rc.length) add(`Escribir la palabra · ${rc.length}`, 'recall', { cards: rc.map(e => e.item), pool: rc.length });
     const dc = by('dictation'); if (dc.length) add(`Dictado · ${dc.length}`, 'dictation', { sentences: dc.map(e => e.item.s) });
     const bd = by('build'); if (bd.length) add(`Ordenar · ${bd.length}`, 'build', { sentences: bd.map(e => e.item.s) });
+    const sy = by('say'); if (sy.length) add(`Decir · ${sy.length}`, 'say', { sentences: sy.map(e => e.item.s) });
     const fx = by('fix'); if (fx.length) add(`Corregir · ${fx.length}`, 'fix', { items: fx.map(e => e.item) });
     const sf = by('soft'); const groups = {}; sf.forEach(e => (groups[e.item.pattern + '/' + e.item.flags] ||= []).push(e));
     Object.values(groups).forEach(g => { let re; try { re = new RegExp(g[0].item.pattern, g[0].item.flags); } catch (x) { re = /./; } add(`Reescribir · ${g.length}`, 'soft', { items: g.map(e => ({ h: e.item.h, a: e.item.a })), pattern: re, missing: g[0].item.missing, explain: g[0].item.explain }); });

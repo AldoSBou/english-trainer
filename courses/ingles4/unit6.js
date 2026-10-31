@@ -71,6 +71,13 @@
   window.UNIT_DATA['ingles4/unit6'] = {
     source: 'Evolve · Unit 6 · Good works',
     description: 'Voluntariado, actos de bondad y gratitud: la pasiva de presente y pasado un paso más allá (preguntas, <i>by</i>, ¿activa o pasiva?), la pasiva con modales (<i>might / can / will / must be done</i>) y cómo ofrecer, aceptar y rechazar ayuda.',
+    cando: [
+      "Describir cómo funciona una organización con pasiva de presente y de pasado (<i>Meals are delivered…</i>, <i>It was founded in…</i>)",
+      "Decir lo que puede o debe hacerse con pasiva y modales (<i>Donations can be made online</i>)",
+      "Hablar de voluntariado: <i>get involved with, take part in, help out, donate, pass on</i>",
+      "Agradecer con familias de palabras: <i>appreciate / appreciation</i>, <i>grateful / gratitude</i>, <i>act of kindness</i>",
+      "Ofrecer, aceptar y rechazar ayuda, e insistir con <i>I insist</i>",
+    ],
     map: [
       ['Vocabulary', '11 expresiones de <i>good works</i> (<i>bring together, donate, get involved with, help out, pass on, take care of, take part in, volunteer…</i>) y 20 de <i>good deeds</i> con sus familias (<i>appreciate / appreciation / appreciative, grateful / gratitude, kind / kindness, reward / rewarding, thought / thoughtful…</i>)', 'Flashcards con audio, phrasal verb ↔ definición, situación → expresión, ¿qué forma de la familia?'],
       ['Grammar', 'Pasiva de presente y pasado (<b>be</b> + participio, <i>by</i> + agente, preguntas y negativas) y <b>pasiva con modales</b>: <i>might / can / will / must</i> + <b>be</b> + participio, cada uno con su matiz', 'Activa → pasiva, elige el modal según el significado, ¿activa o pasiva?, repaso de las Units 1-5'],

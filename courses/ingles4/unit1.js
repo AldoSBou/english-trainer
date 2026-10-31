@@ -55,6 +55,14 @@
   window.UNIT_DATA['ingles4/unit1'] = {
     source: 'Evolve · Unit 1 · Accomplishments & qualities',
     description: 'Logros y cualidades personales, tiempos simples vs continuos, verbos de estado, presentaciones y entrevistas de trabajo.',
+    cando: [
+      "Presentarme y presentar a alguien: <i>I don't think we've met</i> · <i>Let me introduce you to…</i> · <i>We go way back</i>",
+      "Contar un logro con present perfect y distinguirlo del pasado simple (<i>I've run a marathon</i> / <i>I ran it in 2023</i>)",
+      "Describir a una persona con cualidades y sus sustantivos (<i>ambitious / ambition</i>, <i>confident / confidence</i>)",
+      "Hablar de lo que estoy haciendo estos días con present continuous y present perfect continuous, y usar <i>think / want / know</i> sin -ing",
+      "Usar <i>meet</i> y <i>know</i> en el momento correcto, y decir <i>I don't have time</i> (nunca <i>I haven't time</i>)",
+      "Escribir un comentario a un artículo suavizando con <i>a bit</i> / <i>a little</i>",
+    ],
     map: [
       ['Vocabulary', '12 expresiones de logros (<i>break a record, rise to a challenge…</i>) y 12 pares adjetivo/sustantivo (<i>ambitious/ambition…</i>)', 'Flashcards con audio, emparejar, collocations, cualidades por situación'],
       ['Grammar', 'Simple vs continuous tenses; verbos de estado (<i>think, want, need, know</i>)', 'Detective de tiempos, elige la forma correcta, trampa de verbos de estado'],

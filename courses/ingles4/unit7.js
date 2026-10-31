@@ -79,6 +79,13 @@
   window.UNIT_DATA['ingles4/unit7'] = {
     source: 'Evolve · Unit 7 · Did you hear…?',
     description: 'Contar lo que otros dijeron y preguntaron: reported statements (say / tell / explain / inform, cambio de tiempo verbal), reported questions (orden de afirmación, sin do/does/did, if), verbos de comunicación, vocabulario de redes sociales y cómo recontar chismes, noticias e historias sin perder el hilo.',
+    cando: [
+      "Contar lo que alguien dijo con reported speech y el cambio de tiempos correcto (<i>She said she was tired</i>)",
+      "Reportar preguntas sin <i>do / does / did</i> y con <i>if</i> para las de sí o no",
+      "Usar <i>say / explain / mention</i> sin objeto y <i>tell / inform / persuade</i> con objeto",
+      "Hablar de comunicación online: <i>clickbait, hashtag, lurker, status update, trending topic, newsfeed</i>",
+      "Contar una noticia o conversación: <i>Apparently…</i> · <i>Turns out…</i> · <i>You'll never believe what…</i>, y retomar el hilo con <i>As I was saying…</i>",
+    ],
     map: [
       ['Vocabulary', '14 verbos y expresiones para describir la comunicación (<i>catch up with, comment on, congratulate on, contact, criticize for, explain to, gossip, inform of, keep in touch with, mention, persuade to, reply to, report on, respond to</i>) y 13 palabras de comunicación en línea (<i>clickbait, geo-tag, hashtag, lifecaster, lurker, meme, newsfeed, podcaster, profile, status update, tag, timeline, trending topic</i>)', 'Flashcards con audio, verbo ↔ definición, palabra ↔ definición, situación → expresión y la preposición correcta (<i>congratulate ON, reply TO, contact Ø</i>)'],
       ['Grammar', '<b>Reported statements</b>: <i>said / told me / explained / informed me</i> + cambio de tiempo (presente → pasado, pasado → past perfect), sin cambio para hechos, hábitos y futuro; instrucciones con <i>told / persuaded + objeto + to</i>. <b>Reported questions</b>: orden de afirmación, sin <i>do / does / did</i>, <i>if</i> para preguntas de sí/no, sin signo de interrogación', 'Elige el tiempo, ¿say o tell?, preguntas indirectas, corrige los errores típicos del hispanohablante, ordena, reescribe directo → indirecto, repaso de las Units 1-6'],
