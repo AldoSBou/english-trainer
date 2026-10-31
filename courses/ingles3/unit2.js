@@ -86,6 +86,14 @@
       ['Writing', 'Escribir un anuncio online; usar <i>one</i> y <i>ones</i> para no repetir', 'Corrige tus errores, reescribe con one/ones, checklist del anuncio'],
       ['Social English', 'Introducir temas (<i>Guess what! You know…</i>), cambiar de tema (<i>By the way, Before I forget</i>), volver al tema (<i>Anyway</i>) y preguntas cortas de interés (<i>You are? He was?</i>)', 'Frases por situación, ordenar diálogos, respuesta rápida'],
     ],
+    cando: [
+      'Describir mis cosas con <i>brand new, used, outdated, damaged, useless, valuable, plain, fancy, one of a kind</i> y decir si están <i>in good condition</i>',
+      'Hablar de mi tecnología con <i>device, model, storage, folder, home screen, set up, sync, delete</i> y distinguir <i>try</i> (probar) de <i>work</i> (funcionar)',
+      'Decir cuánto tiempo hace que tengo algo con <i>for</i> y <i>since</i> (<i>I\'ve had this phone for two years / since 2024</i>)',
+      'Preguntar por experiencias con <i>Have you ever…?</i> y responder con <i>never</i> o <i>haven\'t</i>, sin mezclarlos',
+      'Contar qué ya hice y qué todavía no con <i>already</i> (antes del participio) y <i>yet</i> (al final)',
+      'Introducir un tema (<i>Guess what!</i>, <i>You know…, right?</i>), cambiarlo (<i>By the way</i>, <i>Before I forget</i>), retomarlo (<i>Anyway</i>) y mostrar interés con preguntas cortas (<i>You are? He did?</i>)',
+    ],
     weak: [
       '<b>ever vs never</b>: pusiste <i>"have"</i> donde iba <i>ever</i> y <i>ever</i> donde iba <i>never</i>. Regla corta: <b>ever</b> solo en preguntas (<i>Have you <b>ever</b>…?</i>), <b>never</b> solo en afirmativas con sentido negativo (<i>I\'ve <b>never</b>…</i>).',
       '<b>never vs haven\'t</b>: escribiste <i>"I\'ve haven\'t eaten Thai food"</i> → <i>I\'ve <b>never</b> eaten Thai food</i>. O bien <i>I <b>haven\'t</b> eaten</i>, o bien <i>I\'<b>ve never</b> eaten</i>, nunca los dos juntos.',
@@ -396,6 +404,64 @@
           { q: 'Te has ido por las ramas y quieres volver al tema original.', opts: ['Anyway, they looked good in the photos.', 'By the way, my sister called.', 'Guess what! I bought two more.', 'Before I forget, take my notes.'], a: 'Anyway, they looked good in the photos.', why: '<b>Anyway</b> retoma lo que estabas contando.' },
           { q: 'Te vas, pero tienes que decirle algo urgente antes de olvidarlo.', opts: ['Oh, before I forget, can I get your notes?', 'Anyway, see you later.', 'You know, I like pizza.', 'Guess what! Bye.'], a: 'Oh, before I forget, can I get your notes?', why: '<b>Before I forget</b> introduce algo que no quieres que se te olvide.' },
           { q: 'Quieres introducir algo que tu amigo ya sabe a medias.', opts: ["You know I'm interested in old toys, right?", 'Anyway, old toys.', 'By the way, old toys.', 'He was?'], a: "You know I'm interested in old toys, right?", why: '<b>You know…, right?</b> presenta un tema que el otro ya conocía en parte.' },
+        ] },
+
+        { label: 'Role-play', type: 'roleplay', eyebrow: 'Role-play con ramas', title: 'En la cafetería del banco: una noticia, un desvío y una petición', intro: 'Café de media mañana con Renato, un compañero de tu equipo. Tienes una noticia (por fin vendiste tu laptop vieja), él tiene otra, y antes de volver a tu escritorio necesitas pedirle algo. Introduce temas, muestra interés con preguntas cortas, vuelve al hilo con <i>Anyway</i> y no te olvides de tu petición.', scenes: [
+          { t: 'En la cafetería', you: 'Aldo, desarrollador del equipo de pagos', partner: 'Renato', role: 'compañero de equipo, también desarrollador', goal: 'Cuenta tu noticia con Guess what!, reacciona a la suya con una pregunta corta, retoma tu tema con Anyway y pide un favor con Before I forget.', start: 'a', nodes: {
+            a: { say: "Hey, Aldo. You look happy today. What's going on?", opts: [
+              { t: "Guess what! I've finally sold my old laptop. A guy from Surco picked it up last night.", ok: 2, why: "<b>Guess what!</b> es la señal de la unidad para una noticia que el otro no espera. Y <b>I've finally sold</b> (present perfect, sin fecha) presenta el resultado, no el momento.", next: 'b' },
+              { t: "You know I wanted to sell my old laptop, right? Well, I sold it yesterday.", ok: 1, why: "Correcta: <b>You know…, right?</b> presenta un tema que el otro ya conocía a medias, y con <i>yesterday</i> el simple past es el tiempo justo. <b>Guess what!</b> le daría más fuerza a la noticia.", next: 'b' },
+              { t: "You know? I have sold my old laptop yesterday.", ok: 0, why: "Dos calcos: <i>¿Sabes?</i> no es <i>You know?</i> a secas (la fórmula es <b>You know…, right?</b>), y con <i>yesterday</i> (momento terminado) va el simple past: <b>I sold</b>.", next: 'a2' },
+            ] },
+            a2: { say: "Oh… OK. The old gray one?", opts: [
+              { t: "Yeah, that one. I've had it since 2017, so it was pretty outdated, but it was still in good condition.", ok: 2, why: "Recuperas la conversación con datos: <b>since</b> + punto de inicio, y dos adjetivos de la unidad, <b>outdated</b> e <b>in good condition</b> (sin artículo).", next: 'b' },
+              { t: "Yes, that one. It was very old, but it still worked well.", ok: 1, why: "Correcta y natural. <b>Work</b> = funcionar, bien usado. Con <i>since</i> o <i>for</i> le contarías cuánto tiempo la tuviste.", next: 'b' },
+              { t: "Yes, that one. It was in a good condition but very outdated for me.", ok: 0, why: "<b>In good condition</b> va sin artículo: <i>in <s>a</s> good condition</i>. Es un calco de “en buen estado” con un artículo que en inglés no existe.", next: 'b' },
+            ] },
+            b: { say: "Nice! How much did you get for it? Those old models aren't worth much these days.", opts: [
+              { t: "Not a lot, it was worth about 600 soles. But I've already bought a new one for the food business, so the money helped.", ok: 2, why: "<b>Be worth</b> + cantidad, <b>already</b> delante del participio (<i>I've <b>already</b> bought</i>) y <b>one</b> para no repetir <i>laptop</i>: tres puntos de la unidad en una frase.", next: 'c' },
+              { t: "About 600 soles. I bought a new laptop for the food business with that money.", ok: 1, why: "Correcta. Con <b>a new one</b> evitarías repetir <i>laptop</i>, y <b>I've already bought</b> dejaría claro que está hecho antes de lo esperado.", next: 'c' },
+              { t: "Nothing much. I have already buy another laptop for the food business.", ok: 0, why: "Después de <i>have already</i> va el <b>participio</b>: <i>I've already <b>bought</b></i>, nunca el infinitivo.", next: 'c' },
+            ] },
+            c: { say: "For the food business? I didn't know you were still doing that. How long have you had it now?", opts: [
+              { t: "We've had it for almost two years. My wife runs it, and I take care of the orders app and the weekend deliveries.", ok: 2, why: "A <i>How long have you had…?</i> se responde con present perfect + <b>for</b> + periodo: <b>We've had it for almost two years</b>.", next: 'd' },
+              { t: "Since 2024. My wife runs it and I help out on weekends.", ok: 1, why: "Correcta: <b>since</b> + punto de inicio. Una respuesta algo corta; la frase completa sería <i>We've had it since 2024</i>.", next: 'd' },
+              { t: "We have it since two years. My wife is who runs it.", ok: 0, why: "Calco doble: <i>lo tenemos desde hace dos años</i> → <b>We've had it for two years</b> (present perfect + <i>for</i> con un periodo). Y <i>my wife is who runs it</i> → <b>my wife runs it</b>.", next: 'd' },
+            ] },
+            d: { say: "That's great. By the way, I'm going to the Java conference in Bogotá next month. The bank's paying for it.", opts: [
+              { t: "You are? That's awesome! Have you ever been to Bogotá?", ok: 2, why: "Renato dijo <i>I'm going</i> (presente de <i>be</i>) → pregunta corta de interés <b>You are?</b>. Y <b>Have you ever been…?</b> es la pregunta de experiencia de la unidad.", next: 'e' },
+              { t: "Really? Nice. Is it your first time in Colombia?", ok: 1, why: "Correcta y natural. La unidad propone mostrar interés repitiendo el auxiliar del otro: <b>You are?</b>", next: 'e' },
+              { t: "You do? Did you ever go to Bogotá?", ok: 0, why: "El auxiliar tiene que ser el mismo que usó él: <i>I'm going</i> → <b>You are?</b>, no <i>You do?</i>. Y para una experiencia en la vida: <b>Have you ever been…?</b>", next: 'd2' },
+            ] },
+            d2: { say: "Do I what? Ha. Yes, I'm going. And no, I've never been to Bogotá.", opts: [
+              { t: "Sorry, I meant: you are? That's great news. I've never been there either.", ok: 2, why: "Reparas la pregunta corta con el auxiliar correcto, <b>You are?</b>, y usas <b>never</b> entre <i>have</i> y el participio.", next: 'e' },
+              { t: "Sorry. That's great news. I haven't been there either.", ok: 1, why: "Correcta: <b>I haven't been</b> es la otra forma de decir <i>I've never been</i>. Te faltó mostrar interés con la pregunta corta.", next: 'e' },
+              { t: "OK. Anyway, my laptop…", ok: 0, why: "<b>Anyway</b> sirve para volver a tu tema, pero usarlo justo cuando él acaba de darte una noticia suena a que no te importa. Primero reacciona, luego retoma.", next: 'meh' },
+            ] },
+            e: { say: "No, never. It's my first time. I've already booked the flight, but I haven't found a hotel yet.", opts: [
+              { t: "You have? Then you're almost ready. My cousin lives there, so I can ask her about hotels if you want.", ok: 2, why: "<i>I've already booked</i> (present perfect) → pregunta corta <b>You have?</b>. Después, <b>so</b> para dar la razón de tu oferta.", next: 'f' },
+              { t: "Nice. I can ask my cousin, she lives in Bogotá.", ok: 1, why: "Correcta y amable. Con <b>You have?</b> habrías mostrado interés antes de ofrecer ayuda.", next: 'f' },
+              { t: "You did? Just search on Booking, is easy.", ok: 0, why: "Él usó present perfect (<i>I've booked</i>) → <b>You have?</b>, no <i>You did?</i>. Y en inglés el sujeto no se omite: <b>it's easy</b>.", next: 'f' },
+            ] },
+            f: { say: "That would be great, thanks! Send me her number.", opts: [
+              { t: "Sure, I'll text it to you after lunch. Anyway, about the new laptop: I haven't set it up yet, and I need to sync it with the orders app this weekend.", ok: 2, why: "<b>Anyway</b> es la señal de la unidad para volver al tema de antes. Además: <b>yet</b> al final de la negativa y los verbos <b>set up</b> y <b>sync</b>.", next: 'g' },
+              { t: "Sure. So, about the laptop: it's still in the box. I'm going to set it up this weekend.", ok: 1, why: "Correcta: <i>So, about…</i> también retoma el tema. <b>Anyway</b> es la fórmula que practicaste en la unidad, y <b>set it up</b> está perfecto.", next: 'g' },
+              { t: "Sure. Anyway, I haven't set up it already.", ok: 0, why: "Dos fallos: con pronombre, el phrasal verb se separa (<b>set it up</b>), y en negativas va <b>yet</b> al final, no <i>already</i>.", next: 'g' },
+            ] },
+            g: { say: "This weekend? Good luck with that. Well, I should get back. The sprint review is at three.", opts: [
+              { t: "Me too. Oh, before I forget, can I try your tablet in the demo tomorrow? Mine doesn't have enough storage for the new build.", ok: 2, why: "<b>Oh, before I forget</b> introduce lo que no quieres que se te olvide justo antes de despedirte. <b>Try</b> = probar un rato (no <i>work</i>) y <b>storage</b>, de la unidad.", next: 'win' },
+              { t: "OK. One more thing: could I borrow your tablet for the demo tomorrow? Mine is almost full.", ok: 1, why: "Correcta y natural. La fórmula de la unidad para colar algo antes de irte es <b>Oh, before I forget</b>.", next: 'win' },
+              { t: "OK. Before I forget, can I work with your tablet tomorrow? Mine doesn't work the storage.", ok: 0, why: "Confundiste <b>try</b> (probar algo un rato) con <b>work</b> (funcionar, lo hace el aparato): tu error del curso. Y <i>no tiene almacenamiento</i> = <b>it doesn't have enough storage</b>.", next: 'g2' },
+            ] },
+            g2: { say: "Work with my tablet? Like… use it for the whole day? What's wrong with yours?", opts: [
+              { t: "Sorry, I mean try it, just for the demo. Mine is an old model and it doesn't have enough storage for the new build.", ok: 2, why: "Aclaras con el verbo correcto, <b>try</b>, y explicas la razón con <b>model</b> y <b>storage</b>. Pedir algo concreto y acotado hace fácil decir que sí.", next: 'win' },
+              { t: "I mean, can I use it for the demo? Mine is full.", ok: 1, why: "Correcta y clara. <b>Use</b> funciona; <b>try</b> era la palabra de la unidad para probar un dispositivo.", next: 'win' },
+              { t: "Nothing, is fine, forget it.", ok: 0, why: "Falta el sujeto (<b>it's fine</b>) y te rindes con la petición: mañana seguirás sin tablet. Reformular (<i>I mean…</i>) cuesta dos segundos.", next: 'fail' },
+            ] },
+            win: { say: "Sure, no problem. I'll bring it tomorrow. See you at the review!", end: true, outcome: 'win', note: 'Lanzaste la noticia con <b>Guess what!</b>, contaste cuánto tiempo con <b>for / since</b>, mostraste interés con preguntas cortas (<b>You are? You have?</b>), volviste a tu tema con <b>Anyway</b> y pediste el favor con <b>Oh, before I forget</b>. Fíjate en la lógica de la pregunta corta: mismo auxiliar y mismo tiempo que usó el otro.' },
+            meh: { say: "Right. Well, I'd better get back to my desk.", end: true, outcome: 'meh', note: 'La noticia y los datos salieron bien, pero cortaste la suya con <b>Anyway</b> antes de reaccionar. El orden natural es: pregunta corta de interés (<b>You are?</b>), un comentario, y solo después <b>Anyway</b> para retomar lo tuyo.' },
+            fail: { say: "OK… see you at the review, then.", end: true, outcome: 'fail', note: 'Te quedaste sin tablet para la demo por no aclarar la petición. <b>Try</b> = probar algo un rato; <b>work</b> = funcionar (lo hace el aparato). Y si algo sale mal, repara con <i>Sorry, I mean…</i> en vez de retirarte con <i>forget it</i>.' },
+          } },
         ] },
       ] },
     ],

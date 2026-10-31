@@ -76,7 +76,7 @@ En Reading de cada unidad (pestaña **Lectura cronometrada**) y en Práctica ›
 
 ## Role-play con ramas
 
-En Social English de cada unidad de Inglés 4 (pestaña **Role-play**) y en Práctica › Role-play (`#/method/roleplay`, con las escenas de todas las unidades). Una situación real con el lenguaje funcional de la unidad: la otra persona habla con la voz alternativa; eliges tu réplica entre tres (la más natural, una correcta pero mejorable y un error típico), ves el porqué, dices la frase buena en voz alta con reconocimiento de voz y la conversación sigue por la rama de lo que elegiste. Hay finales buenos, regulares y malos: repetir la escena por otra rama es parte del ejercicio. Los fallos entran al cuaderno de errores.
+En Social English de cada unidad de Inglés 3 y 4 (pestaña **Role-play**, 18 escenas) y en Práctica › Role-play (`#/method/roleplay`, con las escenas de todas las unidades). Una situación real con el lenguaje funcional de la unidad: la otra persona habla con la voz alternativa; eliges tu réplica entre tres (la más natural, una correcta pero mejorable y un error típico), ves el porqué, dices la frase buena en voz alta con reconocimiento de voz y la conversación sigue por la rama de lo que elegiste. Hay finales buenos, regulares y malos: repetir la escena por otra rama es parte del ejercicio. Los fallos entran al cuaderno de errores.
 
 ## Pronunciación (`js/pron.js`)
 

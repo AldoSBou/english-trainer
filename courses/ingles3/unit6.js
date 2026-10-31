@@ -94,6 +94,14 @@
       ['Writing', 'Escribir un comentario sobre un pódcast usando preguntas para argumentar', 'Corrige tus propios errores y checklist de comentario'],
       ['Social English', '<i>Are you all right? / What a relief!</i> y <i>though</i> para contrastar', 'Ordenar diálogos, reescribir con <i>though</i>, respuesta rápida'],
     ],
+    cando: [
+      "Describir los problemas de mi ciudad: <i>traffic jam, pollution, noise, trash, graffiti, concrete</i>",
+      "Decir cómo hace alguien algo con adverbios de modo: <i>calmly, safely, politely, loudly, dangerously</i>",
+      "Elegir el cuantificador según el nombre: <i>so much traffic</i>, <i>very few parks</i>, <i>almost no space</i> (nunca <i>several traffic</i>)",
+      "Hablar de hechos y hábitos con el present real conditional (<i>When it rains here, the traffic gets terrible</i>)",
+      "Proponer una solución y su resultado con el future real conditional (<i>If the city builds more bike lanes, there will be less pollution</i>) sin poner <i>will</i> después de <i>if</i>",
+      "Expresar preocupación y alivio (<i>Are you all right? Is everyone OK? What a relief! I'm glad to hear that</i>) y añadir un contraste con <i>, though</i> al final",
+    ],
     weak: [
       '<b>Cuantificadores</b>: marcaste <i>several</i> como válido con <b>non-count nouns</b>. <i>A few, several</i> y <i>so many</i> solo van con <b>count nouns</b> (<i>several cars</i>, pero <i>so much traffic</i>).',
       '<b>Adverbio equivocado</b>: escribiste <i>"The firefighters helped the family get out of the house <s>quitly</s>"</i>. Si <i>nobody was hurt</i>, el adverbio es <b>safely</b>, no <i>quietly</i>.',
@@ -340,6 +348,58 @@
           { q: '"Did you like the concert?" Te gustó, pero había muchísimo ruido. Contrasta con <i>though</i>.', opts: ['Yes, a lot. It was very loud, though.', 'Yes, a lot. Though it was very loud.', 'Yes, a lot, though it was very loud very much.'], a: 'Yes, a lot. It was very loud, though.', why: 'En conversación, <b>though</b> va al <b>final</b>, tras coma.' },
           { q: '"Was the trip OK?" Sí, pero perdiste el vuelo de vuelta.', opts: ['Yes, it was great. I missed my flight home, though.', 'Yes, it was great, though I missing my flight home.', 'Yes, though it was great. I missed my flight home.'], a: 'Yes, it was great. I missed my flight home, though.', why: 'El contraste (perder el vuelo) va al final con <b>, though</b>.' },
           { q: 'Repaso Unit 5: alguien te cuenta algo increíble y quieres reaccionar con sorpresa.', opts: ['You’re kidding! What happened next?', 'What a relief!', 'Is anything wrong?'], a: 'You’re kidding! What happened next?', why: 'Reacción de <b>sorpresa</b> de la Unit 5, distinta de la preocupación y del alivio.' },
+        ] },
+        { label: 'Role-play', type: 'roleplay', eyebrow: 'Role-play con ramas', title: 'Tu compañero llega dos horas tarde al despliegue', intro: 'Rodrigo, el desarrollador junior de tu equipo en el banco, tenía que estar a las ocho para el despliegue y aparece a las diez, pálido y sin haber contestado el teléfono. Expresa preocupación, escucha qué pasó, expresa alivio y explícaselo a tu jefa con un contraste con <i>though</i>. Si empiezas regañando, la escena se tuerce.', scenes: [
+          { t: 'Llegó tarde al despliegue', you: 'Aldo, desarrollador senior del equipo', partner: 'Rodrigo', role: 'tu compañero junior, que llega dos horas tarde; después entra Patricia, tu jefa', goal: 'Pregunta si está bien antes de hablar de trabajo, reacciona con alivio, cuéntaselo a tu jefa con <i>though</i> y reorganiza la mañana con un condicional real.', start: 'a', nodes: {
+            a: { say: "Hey… sorry, sorry. I know, I'm two hours late.", opts: [
+              { t: "Are you all right? I was really worried. You didn't answer your phone.", ok: 2, why: "Primero la persona, luego el trabajo: <b>Are you all right?</b> + <b>I was really worried</b> son las dos frases de preocupación de la unidad.", next: 'b' },
+              { t: "Is anything wrong? We tried to call you a few times.", ok: 1, why: "Correcta: <b>Is anything wrong?</b> también expresa preocupación. Algo más fría que preguntar directamente si está bien.", next: 'b' },
+              { t: "Where were you? The release started at eight!", ok: 0, why: "Llega pálido y tú empiezas por el reproche. En inglés suena aún más duro que en español. Pregunta antes: <b>Are you all right?</b>", next: 'a2' },
+            ] },
+            a2: { say: "I know, I know. There was an accident on the Vía Expresa, right in front of me. I couldn't call anyone.", opts: [
+              { t: "Sorry, I didn't mean to shout. Are you all right? Was everyone OK?", ok: 2, why: "Reparas el tono y preguntas por él y por los demás: <b>Are you all right?</b> y <b>Was everyone OK?</b>", next: 'b' },
+              { t: "An accident? Are you OK?", ok: 1, why: "Correcta y natural. <b>Are you all right?</b> es la forma de la unidad, pero <i>Are you OK?</i> funciona igual.", next: 'b' },
+              { t: "I don't care. You should leave earlier. We lost two hours.", ok: 0, why: "Segundo golpe seguido a alguien que acaba de ver un accidente. Ninguna frase de la unidad sirve aquí porque has decidido no usarlas.", next: 'fail' },
+            ] },
+            b: { say: "I'm fine, really. A truck hit a car right in front of my bike. Nobody hit me, but we didn't move for an hour and a half. And then my phone died.", opts: [
+              { t: "What a relief! Was everyone OK?", ok: 2, why: "Alivio por él (<b>What a relief!</b>) y preocupación por los demás (<b>Was everyone OK?</b>). Justo el orden natural.", next: 'c' },
+              { t: "I'm so relieved. Did anyone get hurt?", ok: 1, why: "Correcta: <b>I'm so relieved</b> es la otra fórmula de alivio. <i>Did anyone get hurt?</i> es más directo que <i>Was everyone OK?</i>", next: 'c' },
+              { t: "What a relieved! So you are OK.", ok: 0, why: "Mezcla típica: <b>relief</b> es el sustantivo (<i>What a relief!</i>) y <b>relieved</b> el adjetivo (<i>I'm so relieved</i>).", next: 'b2' },
+            ] },
+            b2: { say: "A… relieved? Anyway. Yes, I'm OK. Just a bit shaky.", opts: [
+              { t: "Sorry, I mean: what a relief. Was everyone OK?", ok: 2, why: "Te corriges sin drama y sigues con la pregunta por los demás: <b>What a relief. Was everyone OK?</b>", next: 'c' },
+              { t: "I mean I'm relieved. Was anyone hurt?", ok: 1, why: "Correcta: <b>I'm relieved</b> con el adjetivo en su sitio.", next: 'c' },
+              { t: "Yes, yes. Now sit down, we have so many work.", ok: 0, why: "Vuelves al trabajo sin cerrar el susto, y además <b>work</b> es non-count: <b>so much work</b>, nunca <i>so many work</i>.", next: 'c' },
+            ] },
+            c: { say: "I think two people went to the hospital, but they were talking and walking. It was pretty scary, though.", opts: [
+              { t: "I'm glad to hear that. Take a minute. If you need to go home, we'll manage.", ok: 2, why: "<b>I'm glad to hear that</b> para la buena noticia, y un <b>future real conditional</b> bien formado: <i>If you need…, we'll manage</i>.", next: 'd' },
+              { t: "I'm glad to hear that. Do you want a coffee before we start?", ok: 1, why: "Correcta y amable: <b>I'm glad to hear that</b> + una oferta concreta.", next: 'd' },
+              { t: "If you will need to go home, I will manage.", ok: 0, why: "Después de <b>if</b> va <b>simple present</b>, aunque hables del futuro: <i>If you <b>need</b> to go home, we'll manage</i>. Y falta reaccionar a la noticia.", next: 'd' },
+            ] },
+            d: { who: 'Patricia', say: "Aldo, is everything OK in here? Rodrigo, you look pale.", opts: [
+              { t: "He's fine. There was an accident on the Vía Expresa and he got stuck for almost two hours. It was pretty scary, though.", ok: 2, why: "Cuentas lo esencial y cierras con el contraste de la unidad: <b>It was pretty scary, though</b>, con <i>though</i> al <b>final</b> y después de coma.", next: 'e' },
+              { t: "He's OK. He was stuck in a traffic jam after an accident, but he wasn't hurt.", ok: 1, why: "Correcta y clara, con <i>but</i>. La unidad te pide practicar el contraste con <b>, though</b> al final.", next: 'e' },
+              { t: "He's fine, though he was in an accident.", ok: 0, why: "Dos problemas: <i>though</i> delante suena formal y cambia la construcción, y <b>he was in an accident</b> significa que él chocó. Patricia se asusta.", next: 'd2' },
+            ] },
+            d2: { who: 'Patricia', say: "In an accident?! Do we need to call anyone? Is he hurt?", opts: [
+              { t: "No, sorry, I explained that badly. He wasn't hurt. He was stuck behind the accident for two hours, though.", ok: 2, why: "Reparas el malentendido y usas <b>though</b> donde va: al final, para contrastar <i>no le pasó nada</i> con <i>perdió dos horas</i>.", next: 'e' },
+              { t: "No, no. The accident was in front of him, not with him. He's OK.", ok: 1, why: "Correcta y tranquilizadora. Sin el contraste con <i>though</i>, pero resuelve.", next: 'e' },
+              { t: "Calm down, Patricia. Is not a big deal.", ok: 0, why: "<i>Calm down</i> a tu jefa suena a orden, y falta el sujeto: <b>It's not a big deal</b>. Segunda réplica torpe seguida: ella corta la conversación.", next: 'fail' },
+            ] },
+            e: { who: 'Patricia', say: "That's such a relief. OK… what about the release? We're two hours behind.", opts: [
+              { t: "If we start now, we'll finish before lunch. Rodrigo, are you OK to continue?", ok: 2, why: "Plan con <b>future real conditional</b>: <i>If we start now, we'll finish…</i> (present en el <i>if</i>, <i>will</i> en el resultado). Y sigues cuidando a Rodrigo.", next: 'f' },
+              { t: "We can still do it today if we start right now.", ok: 1, why: "Correcta: la cláusula <i>if</i> va detrás y sin coma. Funciona.", next: 'f' },
+              { t: "If we will start now, we finish before lunch.", ok: 0, why: "Al revés: <i>will</i> nunca va en la cláusula con <b>if</b>, y el resultado futuro sí lo lleva: <b>If we start now, we'll finish</b>.", next: 'f' },
+            ] },
+            f: { who: 'Rodrigo', say: "Yes, let's do it. And sorry again, Aldo. Next time I'll take the train.", opts: [
+              { t: "Good idea. If you take the train, you won't need to worry about traffic. And charge your phone!", ok: 2, why: "La frase del diálogo de la unidad: <b>If you take the train, you won't need to worry about traffic</b>. Cierras con humor y sin reproche.", next: 'win' },
+              { t: "Don't worry about it. Just text me if something happens, OK?", ok: 1, why: "Correcta y cercana. <i>Text me if something happens</i> es un condicional real con la cláusula <i>if</i> detrás.", next: 'win' },
+              { t: "Yes, you must take the train. The traffic are so many in the morning.", ok: 0, why: "<i>Must</i> suena a orden, y <b>traffic</b> es non-count: <b>There is so much traffic</b>, nunca <i>the traffic are so many</i>.", next: 'meh' },
+            ] },
+            win: { who: 'Rodrigo', say: "Deal. Thanks for asking if I was OK before asking about the release. I noticed.", end: true, outcome: 'win', note: 'Preguntaste antes de reprochar (<b>Are you all right? I was really worried</b>), reaccionaste con <b>What a relief!</b> e <b>I\'m glad to hear that</b>, contaste el contraste con <b>It was pretty scary, though</b> y reorganizaste la mañana con un <b>future real conditional</b> bien formado.' },
+            meh: { who: 'Rodrigo', say: "The traffic… are? OK, boss. Let's go.", end: true, outcome: 'meh', note: 'La parte humana salió perfecta; la última frase no. <b>traffic</b> no se cuenta: <i>there is so much traffic</i>, nunca <i>the traffic are so many</i>. Y para aconsejar, mejor un condicional que un <i>must</i>: <b>If you take the train, you won\'t need to worry about traffic</b>.' },
+            fail: { say: "You know what? I'm going home. Tell Patricia whatever you want.", end: true, outcome: 'fail', note: 'Dos réplicas duras seguidas y la conversación se rompe. Cuando alguien llega mal, el orden es: preocupación (<b>Are you all right? Is anything wrong?</b>) → escuchar → alivio (<b>What a relief! I\'m glad to hear that</b>) → y solo después el trabajo. El reproche, si hace falta, va al final y en condicional: <i>If you leave earlier, you won\'t get stuck</i>.' },
+          } },
         ] },
       ] },
     ],

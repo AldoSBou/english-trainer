@@ -104,6 +104,14 @@
       ['Writing', 'Organizar ideas y escribir una reseña de película', 'Corrige errores típicos (y los tuyos), suaviza con <i>kind of / sort of</i>, checklist'],
       ['Social English', 'Rechazar una invitación y reaccionar a un rechazo', 'Frases por situación, ordenar diálogos, respuesta rápida'],
     ],
+    cando: [
+      "Hablar de hábitos y gustos del pasado que ya cambiaron con <i>used to</i>, <i>didn't use to</i> y <i>Did you use to…?</i>",
+      "Comparar dos cosas con <i>(not) as … as</i>, eligiendo <i>as much</i> o <i>as many</i> según el nombre",
+      "Nombrar estilos de música (<i>classical, EDM, folk, heavy metal, reggae…</i>) y tipos de programa y película (<i>documentary, soap opera, thriller, game show…</i>)",
+      "Rechazar una invitación con educación: <i>I'd love to, but… / I'm sorry. Unfortunately,… / Maybe later. But thanks for asking.</i>",
+      "Reaccionar a un rechazo sin presionar: <i>Oh, that's too bad. / I understand. / Let me know if your plans change.</i>",
+      "Suavizar una crítica o un motivo con <i>kind of</i> / <i>sort of</i> y escribir una reseña breve de película en cuatro bloques",
+    ],
     weak: [
       '<b>as much / as many</b>: en <i>"Was there as ___ ___ as you wanted? (action)"</i> no completaste <i>as <b>much</b> action as</i>. <b>action</b> es incontable → <b>much</b>. Con contables (<i>scenes, songs, people</i>) → <b>many</b>.',
       '<b>No pierdas el segundo <i>as</i></b>: la estructura es <b>as</b> + adjetivo/adverbio/much/many + <b>as</b>. Si escribes solo <i>as exciting</i> o <i>as much action</i>, la comparación queda incompleta.',
@@ -363,6 +371,63 @@
           { q: 'Te acaban de invitar y quieres agradecerlo aunque digas que no.', opts: ['But thanks for asking.', 'But thanks to ask.', 'But thanks for ask.', 'But thank for asking.'], a: 'But thanks for asking.', why: 'Frase fija: <b>thanks for</b> + verbo en <b>-ing</b>.' },
           { q: 'Tu amiga dice que quizá cambie de opinión. ¿Cómo lo dejas abierto?', opts: ['Let me know if you change your mind.', 'Let me know if you change your mine.', 'Tell me when you changed your mind.', 'Let me know when your mind changes it.'], a: 'Let me know if you change your mind.', why: 'Frase fija: <b>change your mind</b> = cambiar de opinión.' },
           { q: 'Alguien rechaza tu plan con un buen motivo y quieres mostrar comprensión en dos palabras.', opts: ['I understand.', "I'd love to.", 'Unfortunately.', 'Maybe later.'], a: 'I understand.', why: 'Respuesta corta y empática del que invitaba.' },
+        ] },
+        { label: 'Role-play', type: 'roleplay', eyebrow: 'Role-play con ramas', title: 'El concierto de Diego: decir que no y encajar un no', intro: 'Diego, compañero del banco, toca el bajo en una banda y te invita a su primer concierto. Tú tienes la tesis y el negocio de comida: recházalo sin quedar mal, suaviza el motivo con <i>kind of / sort of</i> y deja la puerta abierta. Después le toca a él decirte que no: reacciona como quien invita.', scenes: [
+          { t: 'El concierto de Diego', you: 'Aldo, compañero del banco', partner: 'Diego', role: 'desarrollador de otro equipo del banco; bajista en una banda de rock', goal: 'Rechaza dos invitaciones con educación (motivo suavizado + puerta abierta), agradece la invitación y, cuando él te diga que no, reacciona con las frases de quien invita.', start: 'a', nodes: {
+            a: { say: "Hey, Aldo! Remember my band? We're having our first concert on Friday night, in Barranco. Would you like to come and hear us play?", opts: [
+              { t: "I'd love to, but I can't make it on Friday. I have a meeting with my thesis advisor that evening.", ok: 2, why: "La fórmula completa de la unidad: <b>I'd love to, but…</b> + <b>I can't make it on Friday</b> + un motivo concreto. Amable y clara.", next: 'b' },
+              { t: "I'm sorry, I have other plans on Friday night.", ok: 1, why: "Correcta: <b>I'm sorry</b> + <i>other plans</i> es lo que dice Mari en el curso. Con <b>I'd love to, but…</b> delante sonaría más cálida.", next: 'b' },
+              { t: "No, Friday I can't. I have thesis.", ok: 0, why: "Demasiado seco: empieza con <i>No</i> y sin disculpa. Además <i>I have thesis</i> es un calco: <b>I have a thesis meeting</b> o <b>I'm working on my thesis</b>.", next: 'a2' },
+            ] },
+            a2: { say: "Oh. OK… I thought you were into rock.", opts: [
+              { t: "Sorry, that came out wrong. I'd really love to go, but I can't make it on Friday. My thesis advisor can only see me that evening.", ok: 2, why: "Reparas el tono (<i>that came out wrong</i>) y usas la fórmula de la unidad: <b>I'd love to, but I can't make it…</b> con el motivo detrás.", next: 'b' },
+              { t: "Sorry, I didn't mean it like that. Unfortunately, I'm busy on Friday.", ok: 1, why: "Correcta: te disculpas y <b>Unfortunately</b> introduce la mala noticia con educación.", next: 'b' },
+              { t: "I used to like rock. Now not so much.", ok: 0, why: "Gramaticalmente <b>used to</b> está bien, pero decirle a un amigo que su música ya no te gusta justo cuando te invita cierra la conversación.", next: 'fail' },
+            ] },
+            b: { say: "Oh, that's too bad. What about Saturday? We're playing again at a bar in Miraflores.", opts: [
+              { t: "I'm sorry. Unfortunately, I'm going to be kind of busy all weekend. My wife and I run the food stall on Saturdays.", ok: 2, why: "Calcada del curso: <b>I'm sorry. Unfortunately, I'm going to be kind of busy all weekend.</b> El <b>kind of</b> suaviza y el motivo lo hace creíble.", next: 'c' },
+              { t: "Saturday is difficult too. We open the food business early, so I'm busy all day.", ok: 1, why: "Correcta y sincera, pero algo tajante: un <b>kind of</b> o un <b>sort of</b> delante de <i>busy</i> la suavizaría.", next: 'c' },
+              { t: "Saturday impossible. I am very very busy.", ok: 0, why: "La primera frase no tiene sujeto ni verbo, e <i>impossible</i> es demasiado fuerte para una invitación. Suaviza: <b>I'm going to be kind of busy</b>.", next: 'b2' },
+            ] },
+            b2: { say: "Impossible? Wow. OK, I get it. You're a busy man.", opts: [
+              { t: "Sorry, I didn't mean it that way. I'm just going to be sort of busy all weekend with the food stall. But thanks for asking!", ok: 2, why: "Rectificas con <b>sort of busy</b> y cierras con <b>But thanks for asking</b>, la frase de la unidad para agradecer aunque digas que no.", next: 'c' },
+              { t: "Sorry, it's just that weekends are complicated for us right now.", ok: 1, why: "Correcta: <i>it's just that…</i> suaviza la explicación. Faltaría agradecer la invitación.", next: 'c' },
+              { t: "Yes, I am very busy person.", ok: 0, why: "Falta el artículo: <b>a very busy person</b>. Y confirmar el tono seco en vez de suavizarlo deja a Diego con la sensación de que no te interesa.", next: 'c' },
+            ] },
+            c: { say: "I understand. No worries, man.", opts: [
+              { t: "But thanks for asking! Maybe after that? Are you playing again next month?", ok: 2, why: "<b>But thanks for asking</b> + <b>Maybe after that?</b>: agradeces y dejas la puerta abierta, justo la receta de la unidad.", next: 'd' },
+              { t: "Thanks for inviting me, though. Let me know when the next one is.", ok: 1, why: "Correcta y natural. La expresión fija del curso es <b>thanks for asking</b>.", next: 'd' },
+              { t: "Thanks for ask me. Other day, maybe.", ok: 0, why: "<b>Thanks for</b> va con <b>-ing</b>: <i>thanks for asking</i>. Y <i>other day</i> es calco de “otro día”: <b>some other time</b> o <b>maybe later</b>.", next: 'd' },
+            ] },
+            d: { say: "Sure, I'll send you the dates. Hey, how's the food business going, by the way?", opts: [
+              { t: "Really well, actually. We used to sell only on Sundays, but now we open both days. Would you like to come by one Saturday and try the ceviche?", ok: 2, why: "Usas <b>used to</b> para el cambio (antes solo domingos) y ahora invitas tú con <b>Would you like to…?</b>, como Cody en el curso.", next: 'e' },
+              { t: "Pretty good. You should come and try the food one Saturday.", ok: 1, why: "Correcta: <i>You should come…</i> es una invitación informal válida. <b>Would you like to…?</b> es la forma del curso.", next: 'e' },
+              { t: "Good. You have to come to eat on Saturday.", ok: 0, why: "<b>have to</b> es obligación, no invitación: suena a orden. Invita con <b>Would you like to come…?</b>", next: 'd2' },
+            ] },
+            d2: { say: "I have to? Ha! Is that an order, boss?", opts: [
+              { t: "Ha, no! I mean, we'd love to have you. Would you like to come by one Saturday and try the food?", ok: 2, why: "Te ríes, aclaras (<i>we'd love to have you</i>) e invitas con <b>Would you like to…?</b>", next: 'e' },
+              { t: "Sorry, I mean you're invited. Come whenever you want.", ok: 1, why: "Correcta y simpática. Menos formal que <b>Would you like to…?</b>, pero funciona entre compañeros.", next: 'e' },
+              { t: "Yes, is an order.", ok: 0, why: "Falta el sujeto: <b>it's an order</b>. Y seguir la broma sin invitar de verdad deja a Diego sin saber si va en serio.", next: 'e' },
+            ] },
+            e: { say: "I'd love to, but I can't make it this Saturday. We're rehearsing all day. Band stuff, you know.", opts: [
+              { t: "Oh, that's too bad. Well, let me know if your plans change. We're there every weekend.", ok: 2, why: "Las dos frases de quien recibe un no: <b>Oh, that's too bad</b> + <b>Let me know if your plans change</b>. Sin presionar.", next: 'f' },
+              { t: "I understand. Some other time, then.", ok: 1, why: "Correcta: <b>I understand</b> es la reacción corta y empática de la unidad. Añadir <i>let me know if…</i> dejaría la puerta más abierta.", next: 'f' },
+              { t: "Why not? All day? Nobody rehearses all day.", ok: 0, why: "Discutir un rechazo es lo contrario de reaccionar bien. Diego ya usó la fórmula educada; tú respondes con <b>that's too bad</b> o <b>I understand</b>.", next: 'e2' },
+            ] },
+            e2: { say: "Hey, I'm serious. We're not as good as we'd like to be yet, so we need every hour.", opts: [
+              { t: "Sorry, you're right. I understand. Let me know if you change your mind, OK?", ok: 2, why: "Te disculpas y recuperas las frases de la unidad: <b>I understand</b> + <b>Let me know if you change your mind</b>. Fíjate en su <i>not as good as</i>.", next: 'f' },
+              { t: "OK, OK. I understand. Good luck with the rehearsal.", ok: 1, why: "Correcta: <b>I understand</b> y un deseo de suerte. Natural.", next: 'f' },
+              { t: "OK. Whatever.", ok: 0, why: "<i>Whatever</i> es desdén puro: en inglés suena a “me da igual lo que digas”. Con un compañero, cierra la puerta.", next: 'meh' },
+            ] },
+            f: { say: "Thanks, man. Honestly, we're not as good as we used to be when we were twenty, but we have just as much fun. Maybe the Saturday after next?", opts: [
+              { t: "That works. And let me know if you change your mind about this Saturday, too. Good luck on Friday!", ok: 2, why: "Confirmas, repites la puerta abierta con <b>Let me know if you change your mind</b> y deseas suerte. Fíjate en cómo Diego combinó la gramática de la unidad: <i>not as good as we used to be</i> y <i>just as much fun</i>.", next: 'win' },
+              { t: "Great, see you then. Break a leg on Friday!", ok: 1, why: "Correcta y natural: <i>break a leg</i> es la forma de desear suerte a quien actúa.", next: 'win' },
+              { t: "Good lucky on Friday! I hope you play as good than before.", ok: 0, why: "<b>Good luck</b>, no <i>good lucky</i>. Y la comparación es <b>as well as</b> (adverbio) o <b>as good as</b>: nunca <i>as … than</i>.", next: 'win' },
+            ] },
+            win: { say: "Deal! Save me some ceviche. See you Monday!", end: true, outcome: 'win', note: "Rechazaste con la receta completa (<b>I'd love to, but I can't make it…</b> → <b>I'm sorry. Unfortunately, I'm going to be kind of busy…</b> → <b>But thanks for asking. Maybe after that?</b>) y, cuando te tocó encajar un no, respondiste como quien invita: <b>Oh, that's too bad. Let me know if your plans change / if you change your mind.</b>" },
+            meh: { say: "…Right. OK. See you Monday, I guess.", end: true, outcome: 'meh', note: "Todo iba bien hasta que discutiste su rechazo y rematas con <i>Whatever</i>. Un no educado se encaja con <b>Oh, that's too bad</b> o <b>I understand</b>, y la puerta se deja abierta con <b>Let me know if your plans change</b>." },
+            fail: { say: "Right. Forget it, then. See you around.", end: true, outcome: 'fail', note: "Decirle a quien te invita que su música ya no te gusta no es rechazar, es cerrar la puerta. La fórmula: <b>I'd love to, but…</b> + motivo suavizado con <b>kind of / sort of</b> + <b>But thanks for asking</b>." },
+          } },
         ] },
       ] },
     ],

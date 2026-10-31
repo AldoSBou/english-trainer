@@ -78,6 +78,14 @@
       ['Writing', 'Un post online; expresiones de tiempo (<i>up to now, so far, from now on…</i>)', 'Notas, elige la expresión, corrige tus errores reales y escribe tu post'],
       ['Social English', '<i>It\'s been a long time / What have you been up to? / That would be awful</i>', 'Frases por situación, ordenar diálogos, respuesta rápida'],
     ],
+    cando: [
+      "Contar qué he estado haciendo últimamente con el <i>present perfect continuous</i> (<i>I've been working on my thesis lately</i>)",
+      "Distinguir <i>present perfect</i> y <i>present perfect continuous</i>: resultado o cantidad (<i>I've written three chapters</i>) frente a proceso (<i>I've been writing all week</i>), con <i>lately / recently</i> al final y <i>only / also</i> antes de <i>been</i>",
+      "Hablar de experiencias con <i>achievement, challenge, change, chore, opportunity, process, project, success</i>",
+      "Describir mi progreso con el verbo correcto: <i>make good progress, get nowhere, have trouble with, have a chance, do my best, take it easy, save / waste time</i>",
+      "Ponerme al día con alguien: <i>It's been a long time</i>, <i>I haven't seen you since / for…</i>, <i>What have you been up to?</i>, <i>Not much / The same as usual</i>, y reaccionar con <i>That would be wonderful / awful</i>",
+      "Escribir un post con expresiones de tiempo (<i>up to now, so far, from now on, right away, immediately</i>) sin confundir <i>from now on</i> con <i>up to now</i>",
+    ],
     weak: [
       '<b>from now <s>up</s></b> → <b>from now on</b>. La expresión de futuro es <i>from now <b>on</b></i> ("de ahora en adelante"). <i>Up to now</i> existe, pero significa lo contrario: "hasta ahora".',
       '<b><s>inmediately</s></b> → <b>immediately</b>. Se escribe con <b>imm-</b>, no con <i>inm-</i> (interferencia del español <i>inmediatamente</i>).',
@@ -341,6 +349,63 @@
           { q: '"It looks like my laptop\'s broken."', opts: ['I hope not! That would be terrible.', 'That would be excellent!', 'The same as usual.', "What's going on with?"], a: 'I hope not! That would be terrible.', why: 'Reaccionas a algo malo que quizá pase: <b>That would be terrible</b>.' },
           { q: 'Te ofrecen ir a recogerte en coche para ahorrar tiempo.', opts: ['Oh, that would be fantastic. Thanks!', 'That would be awful.', "I haven't had a chance.", 'The same as usual.'], a: 'Oh, that would be fantastic. Thanks!', why: '<b>That would be + adjetivo positivo</b> también sirve para aceptar una oferta con entusiasmo.' },
           { q: 'Acabas de encontrarte con alguien tras mucho tiempo. Primera frase.', opts: ["Wow! It's been a long time.", "Wow! It has a long time.", 'Wow! It is a long time ago.', 'Wow! Long time it has been.'], a: "Wow! It's been a long time.", why: '<b>It\'s been a long time</b> = <i>It has been</i>. Es la apertura típica.' },
+        ] },
+        { label: 'Role-play', type: 'roleplay', eyebrow: 'Role-play con ramas', title: 'Un café en Miraflores: ponerse al día', intro: 'Sales a comprar un café cerca del banco y te cruzas con Rocío, una excompañera de equipo a la que no ves desde la hackathon del año pasado. Dile cuánto tiempo ha pasado, cuenta qué has estado haciendo (tesis, negocio, trabajo), pregunta por sus noticias y reacciona a lo que te cuente. Si solo hablas de ti, la conversación se enfría.', scenes: [
+          { t: 'Café en Miraflores', you: 'Aldo, en la cola del café', partner: 'Rocío', role: 'excompañera del banco; ahora trabaja en una startup', goal: 'Saluda con las fórmulas de la unidad, cuenta tu progreso con present perfect continuous, acepta su ayuda con <i>That would be…</i> y pregunta por sus noticias.', start: 'a', nodes: {
+            a: { say: "Aldo? Aldo! Oh my gosh, is that you?", opts: [
+              { t: "Rocío! Wow, it's been a long time! I haven't seen you since the hackathon last year.", ok: 2, why: "Las dos fórmulas de la unidad para decir cuánto tiempo ha pasado: <b>It's been a long time</b> y <b>I haven't seen you since</b> + un momento concreto.", next: 'b' },
+              { t: "Hey, Rocío! It's been a long time. How have you been?", ok: 1, why: "Correcta: <b>It's been a long time</b> + <b>How have you been?</b> Natural, aunque no dices desde cuándo.", next: 'b' },
+              { t: "Rocío! I don't see you since one year!", ok: 0, why: "Dos calcos del español: el verbo va en present perfect (<b>I haven't seen you</b>) y con una duración se usa <b>for</b>, no <i>since</i>: <i>for a year</i>.", next: 'a2' },
+            ] },
+            a2: { say: "Since… what? Oh, you mean since the hackathon? Yeah, about a year!", opts: [
+              { t: "Right! I haven't seen you for a year. Time flies.", ok: 2, why: "Te corriges con la forma correcta: <b>I haven't seen you for</b> + duración (<i>for a year</i>).", next: 'b' },
+              { t: "Yes, since the hackathon. It's been a long time.", ok: 1, why: "Correcta: <b>since</b> + momento concreto, y recuperas <b>It's been a long time</b>.", next: 'b' },
+              { t: "Yes, it has one year.", ok: 0, why: "Calco de “hace un año”. En inglés: <b>It's been a year</b> o <i>a year ago</i>. Rocío lo deja pasar, pero suena raro.", next: 'b' },
+            ] },
+            b: { say: "I know! So, what have you been up to?", opts: [
+              { t: "Not much, the same as usual. Well… I've been working on my thesis lately, and the food business keeps us busy.", ok: 2, why: "Respondes con las fórmulas de la unidad (<b>Not much</b>, <b>the same as usual</b>) y luego cuentas una actividad en curso con <b>I've been working on</b> + <i>lately</i> al final.", next: 'c' },
+              { t: "I've been really busy. Work, the thesis, the business…", ok: 1, why: "Correcta: <b>I've been really busy</b> es otra respuesta del curso. Con un verbo en <i>-ing</i> darías más detalle.", next: 'c' },
+              { t: "I've been work in my thesis lately.", ok: 0, why: "La forma es fija: <b>have been + -ing</b> (<i>working</i>). Y en inglés se trabaja <b>on</b> una tesis, no <i>in</i>.", next: 'c' },
+            ] },
+            c: { say: "A thesis! Are you making good progress?", opts: [
+              { t: "Up to now, yes. I've written three chapters so far, but I haven't had a chance to work on it this month.", ok: 2, why: "Mezcla perfecta de la unidad: <b>up to now</b> / <b>so far</b>, present perfect simple con cantidad (<b>I've written three chapters</b>) y <b>I haven't had a chance to</b>.", next: 'd' },
+              { t: "Yes, I'm making good progress, but it's a slow process.", ok: 1, why: "Correcta: <b>make good progress</b> y <b>process</b>, dos piezas de vocabulario de la unidad.", next: 'd' },
+              { t: "I'm making a good progress, but I haven't time.", ok: 0, why: "<b>progress</b> es incontable: sin <i>a</i>. Y <i>have</i> como verbo principal se niega con <b>don't have</b>: <i>I don't have time</i>.", next: 'd' },
+            ] },
+            d: { say: "And the food business? Are you and your wife still doing that?", opts: [
+              { t: "We are! We've been getting more orders recently, but I'm having trouble with our delivery app. I keep calling the developer and I'm getting nowhere.", ok: 2, why: "Present perfect continuous con <i>recently</i> al final y dos expresiones de progreso: <b>have trouble with</b> y <b>get nowhere</b>.", next: 'e' },
+              { t: "Yes. It's been a big success, actually, but we've been having problems with the delivery app.", ok: 1, why: "Correcta: <b>success</b> y <b>have problems with</b> son de la unidad. Funciona bien.", next: 'e' },
+              { t: "Yes, but I have problems with the app of delivery since two months.", ok: 0, why: "Con una duración va <b>for</b> (<i>for two months</i>) y el verbo en present perfect continuous: <b>I've been having problems with</b>. Además, <i>delivery app</i>, no <i>app of delivery</i>.", next: 'e' },
+            ] },
+            e: { say: "You know, my cousin builds delivery apps for small restaurants. I could put you in touch with her.", opts: [
+              { t: "Really? That would be wonderful! It'd save us so much time.", ok: 2, why: "Reaccionas a una oferta que aún no ha pasado con <b>That would be wonderful</b>, y añades <b>save time</b>, de la unidad.", next: 'f' },
+              { t: "That'd be great, thanks. Could you send me her number?", ok: 1, why: "Correcta: <b>That'd be</b> + adjetivo positivo. <i>Great</i> vale, aunque la unidad propone <i>wonderful / excellent</i>.", next: 'f' },
+              { t: "That would be awful! Thanks.", ok: 0, why: "Cruzaste los adjetivos: <b>awful / terrible</b> son para malas noticias; para una oferta buena, <b>wonderful / excellent</b>.", next: 'e2' },
+            ] },
+            e2: { say: "Awful? Oh… OK. I thought it might help.", opts: [
+              { t: "No, no, sorry, wrong word! I meant that would be wonderful. Please, send me her number.", ok: 2, why: "Reparas el malentendido (<b>wrong word</b>) y repites la fórmula correcta: <b>that would be wonderful</b>.", next: 'f' },
+              { t: "Sorry, I meant it would be great. Yes, please.", ok: 1, why: "Correcta y breve. Aclaras y aceptas.", next: 'f' },
+              { t: "No, is OK, don't worry.", ok: 0, why: "Falta el sujeto (<b>it's OK</b>) y, peor, rechazas la ayuda sin querer. Rocío se queda con el “awful” y la oferta se pierde.", next: 'fail' },
+            ] },
+            f: { say: "Done, I'll text you tonight. And what's going on with the bank? Still in the payments team?", opts: [
+              { t: "Yes, and we're making good progress on a new project. What's going on with you? Are you still at the startup?", ok: 2, why: "Contestas y devuelves la pregunta con la fórmula de la unidad: <b>What's going on with…?</b> Una conversación de ponerse al día es de ida y vuelta.", next: 'g' },
+              { t: "The same as usual, really. Lots of projects. How about you?", ok: 1, why: "Correcta: <b>The same as usual</b> + <i>How about you?</i> para devolver el turno.", next: 'g' },
+              { t: "Yes. The same.", ok: 0, why: "Gramaticalmente pasa, pero es demasiado seco y no preguntas nada. Rocío lleva un rato interesándose por ti.", next: 'f2' },
+            ] },
+            f2: { say: "Oh. OK… Well, I should probably get going.", opts: [
+              { t: "Wait, sorry, I've been talking about myself the whole time. What's going on with you? How's the startup?", ok: 2, why: "Salvas la conversación: reconoces el fallo con <b>I've been talking</b> y preguntas con <b>What's going on with you?</b>", next: 'g' },
+              { t: "Sorry! And you? What have you been doing?", ok: 1, why: "Correcta: <b>What have you been doing?</b> es otra pregunta de la unidad para pedir noticias.", next: 'g' },
+              { t: "OK, bye. See you.", ok: 0, why: "La dejas ir sin preguntarle nada. Una puesta al día en la que solo habla uno no es una puesta al día.", next: 'meh' },
+            ] },
+            g: { say: "Well… I've been thinking about moving to Madrid. There's a job offer.", opts: [
+              { t: "Madrid? That'd be a big change! But what an opportunity. Let's not wait another year to catch up, OK?", ok: 2, why: "Comentas una posibilidad con <b>That'd be</b> + sustantivo de la unidad (<b>a big change</b>, <b>opportunity</b>) y cierras proponiendo seguir en contacto.", next: 'win' },
+              { t: "Wow, that would be excellent! Congratulations.", ok: 1, why: "Correcta: <b>That would be excellent</b>. Ojo: aún lo está pensando, así que <i>congratulations</i> se adelanta un poco.", next: 'win' },
+              { t: "Madrid! It will be a very big change.", ok: 0, why: "Todavía no ha decidido nada: para algo que <b>aún no ha pasado</b> se usa <b>That would be…</b>, no <i>will</i>. Con <i>will</i> suena a que ya se va.", next: 'meh' },
+            ] },
+            win: { say: "Deal! I'll text you my cousin's number tonight. So good to see you, Aldo!", end: true, outcome: 'win', note: 'Dijiste cuánto tiempo había pasado (<b>It\'s been a long time</b>, <b>I haven\'t seen you since…</b>), contaste tu progreso con <b>I\'ve been working on…</b>, <b>make good progress</b> y <b>have trouble with</b>, aceptaste la ayuda con <b>That would be wonderful</b> y devolviste la pregunta con <b>What\'s going on with you?</b>' },
+            meh: { say: "Yeah… see you around, Aldo. Take care.", end: true, outcome: 'meh', note: 'Contaste bien lo tuyo, pero la conversación quedó coja: o no preguntaste por ella o reaccionaste a su noticia con <i>will</i>. Recuerda <b>What\'s going on with you?</b> y, para algo que aún no ha pasado, <b>That would be a big change</b>.' },
+            fail: { say: "Oh. OK then. Well… good luck with the app, I guess.", end: true, outcome: 'fail', note: 'Perdiste el contacto de la prima por dos detalles: <b>awful</b> es para malas noticias (aquí tocaba <b>That would be wonderful / excellent</b>) y <i>is OK</i> sin sujeto sonó a rechazo. Para aceptar una oferta: <b>That would be wonderful. Thanks!</b>' },
+          } },
         ] },
       ] },
     ],

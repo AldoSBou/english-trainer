@@ -94,6 +94,14 @@
       ['Writing', 'Las cinco partes de un résumé (experiencia, estudios, habilidades, intereses)', 'Corrige la frase, pide permiso con el patrón correcto y checklist del résumé'],
       ['Social English', '<i>I think I can handle that / That concerns me a little / The thing is…</i>', 'Frases por situación, ordenar diálogos y respuesta rápida'],
     ],
+    cando: [
+      'Decir qué es obligatorio en mi trabajo con <i>have to</i>, <i>need to</i> y <i>must</i> (<i>You must bring your ID badge</i>)',
+      'Distinguir lo que no hace falta (<i>don\'t have to</i>, <i>doesn\'t need to</i>) de lo que está prohibido (<i>can\'t</i>, <i>must not</i>)',
+      'Pedir permiso con <i>Can / Could / May I…?</i> y darlo con <i>you can</i> o <i>you may</i>, nunca con <i>you could</i>',
+      'Nombrar asignaturas universitarias (<i>architecture, engineering, political science…</i>) y hablar de mis estudios (<i>degree, campus, internship, full-time</i>)',
+      'Hablar de empleo con <i>apply for, hire, fire, salary, wage, contract, working hours</i> y describir mi <i>career</i>',
+      'Expresar confianza o dudas ante un reto (<i>I think I can handle that</i>, <i>That concerns me a little</i>) y dar mi razón real con <i>The thing is, …</i>',
+    ],
 
     sections: [
       { id: 'home', label: 'Inicio', render: 'overview', activities: [] },
@@ -355,6 +363,58 @@
           { q: 'El trabajo incluye levantar cajas muy pesadas y no te ves capaz físicamente.', opts: ["I don't think I'm strong enough.", "That won't be a problem.", 'I think I can handle that.'], a: "I don't think I'm strong enough.", why: '<i>Strong enough</i> = lo bastante fuerte. Expresa falta de confianza concreta.' },
           { q: 'El nuevo horario te preocupa un poco, pero no lo rechazas del todo.', opts: ['That concerns me a little.', "That doesn't bother me.", 'You have all the right skills.'], a: 'That concerns me a little.', why: '<i>Concern</i> es más suave que <i>worry</i>: preocupación moderada.' },
           { q: 'Tu jefa te pregunta si puedes aprender una tecnología nueva en un mes. Te ves capaz.', opts: ["That won't be a problem.", "I'm not sure I can handle that.", 'The thing is, I am scared.'], a: "That won't be a problem.", why: '<i>That won\'t be a problem</i> = confianza tranquila, sin presumir.' },
+        ] },
+        { label: 'Role-play', type: 'roleplay', eyebrow: 'Role-play con ramas', title: 'Tu jefa te ofrece liderar un equipo', intro: 'Patricia, tu jefa en el banco, te propone liderar el equipo de la migración. Expresa confianza y dudas con las frases de la unidad, pregunta por las normas con <i>have to</i> y <i>can\'t</i>, y pide permiso con <i>Could I…?</i>. Si suenas seco o confundes "no hace falta" con "está prohibido", la escena se tuerce.', scenes: [
+          { t: 'La propuesta de tu jefa', you: 'Aldo, desarrollador senior del banco', partner: 'Patricia', role: 'tu jefa; te ofrece liderar un equipo nuevo de doce personas', goal: 'Acepta el reto mostrando confianza, pregunta por las obligaciones con Do I have to…?, pide permiso para teletrabajar y da tu razón real con The thing is, …', start: 'a', nodes: {
+            a: { say: "Aldo, do you have a minute? We're starting the core banking migration next month, and I'd like you to lead the new team. Twelve people.", opts: [
+              { t: "Twelve people… I think I can handle that. But could I ask a few questions first?", ok: 2, why: "Confianza con la frase de la unidad, <b>I think I can handle that</b>, y pides permiso para preguntar con <b>Could I…?</b>. Seguro sin presumir.", next: 'b' },
+              { t: "Wow, thank you. That won't be a problem, but I have some questions.", ok: 1, why: "Correcta: <b>That won't be a problem</b> expresa confianza tranquila. Pedir permiso para preguntar (<i>Could I ask…?</i>) suena algo más natural con una jefa.", next: 'b' },
+              { t: "Twelve people? I don't think I'm strong enough.", ok: 0, why: "<b>I don't think I'm strong enough</b> habla de fuerza (física o emocional), no de capacidad para liderar; aquí desconcierta. Para dudas de capacidad: <b>I'm not sure I can handle that</b>.", next: 'a2' },
+            ] },
+            a2: { say: "Strong enough? It's a software team, Aldo, not a gym. Are you saying no?", opts: [
+              { t: "No, sorry, that came out wrong. I'm not sure I can handle twelve people yet, but I'd like to try.", ok: 2, why: "Reparas el malentendido y usas la frase correcta para la duda: <b>I'm not sure I can handle that</b>, seguida de disposición.", next: 'b' },
+              { t: "Sorry, I mean the size of the team concerns me a little.", ok: 1, why: "Correcta: <b>That concerns me a little</b> es la preocupación moderada de la unidad. Añadir que quieres intentarlo cerraría mejor.", next: 'b' },
+              { t: "No, I say I am not sure if I can to handle it.", ok: 0, why: "<b>can</b> nunca lleva <i>to</i> (<i>I can handle it</i>), y para aclarar lo que acabas de decir se usa <b>I mean…</b> o <b>I meant…</b>, no <i>I say</i>.", next: 'b' },
+            ] },
+            b: { say: "Of course. Ask me anything.", opts: [
+              { t: "Do I have to be in the office every day? The thing is, I'm finishing my thesis this semester.", ok: 2, why: "Pregunta de obligación con <b>Do I have to…?</b> y la razón real introducida con <b>The thing is, …</b>, tal como lo enseña la unidad.", next: 'c' },
+              { t: "What are the working hours for the team? Do we need to be here at nine?", ok: 1, why: "Correcta: <b>Do we need to…?</b> y el vocabulario <b>working hours</b>. Solo falta contarle tu situación para que pueda ayudarte.", next: 'c' },
+              { t: "I must to be in the office every day?", ok: 0, why: "Dos fallos: <b>must</b> nunca lleva <i>to</i>, y una pregunta de obligación se hace con <b>Do I have to…?</b> (con <i>must</i> casi no se pregunta).", next: 'b2' },
+            ] },
+            b2: { say: "Sorry, I didn't catch that. What do you want to know exactly?", opts: [
+              { t: "Sorry. Do I have to be in the office every day?", ok: 2, why: "Reformulas con la estructura correcta: <b>Do I have to</b> + forma base.", next: 'c' },
+              { t: "Does the team have to work from the office?", ok: 1, why: "Correcta: <b>Does … have to</b> + forma base. Preguntar por ti mismo iría más al grano.", next: 'c' },
+              { t: "Does the team has to work in the office?", ok: 0, why: "Después de <b>does</b> el verbo vuelve a la forma base: <i>Does the team <b>have</b> to…?</i>", next: 'c' },
+            ] },
+            c: { say: "Not every day, no. But the team must be here on Mondays and Thursdays. And everybody has to wear the ID badge, even on the migration floor.", opts: [
+              { t: "That doesn't bother me. Mondays and Thursdays are fine. Could I work from home on Fridays, then?", ok: 2, why: "<b>That doesn't bother me</b> acepta la norma sin drama, y pides permiso con <b>Could I…?</b>, la fórmula de la unidad.", next: 'd' },
+              { t: "OK, that's fine. May I work from home on Fridays?", ok: 1, why: "Correcta: <b>May I…?</b> es la forma más formal de pedir permiso; con tu jefa funciona, aunque <i>Could I…?</i> suena más natural en una charla así.", next: 'd' },
+              { t: "OK. On Fridays I work from home.", ok: 0, why: "No pides permiso, lo anuncias. Con tu jefa se pide: <b>Could I work from home on Fridays?</b>", next: 'c2' },
+            ] },
+            c2: { say: "Excuse me? Is that a question or a decision?", opts: [
+              { t: "Sorry, it's a question. Could I work from home on Fridays, please?", ok: 2, why: "Rectificas y pides permiso con <b>Could I…?</b> + <i>please</i>. Tono recuperado.", next: 'd' },
+              { t: "A question, sorry. Can I work from home on Fridays?", ok: 1, why: "Correcta: <b>Can I…?</b> es la forma más informal de pedir permiso; vale, pero <i>Could I…?</i> queda mejor con una jefa.", next: 'd' },
+              { t: "A decision. I need it for my thesis.", ok: 0, why: "Imponer una condición a quien te está ofreciendo un puesto rompe la conversación. Primero se pide (<b>Could I…?</b>) y luego se explica con <b>The thing is, …</b>", next: 'fail' },
+            ] },
+            d: { say: "Yes, you can, as long as you're online for the stand-up. But remember: you can't share client data outside the bank's network. Not even from home.", opts: [
+              { t: "Understood. That won't be a problem. I never take client data out of the network anyway.", ok: 2, why: "Fíjate en que Patricia da permiso con <b>you can</b> (nunca <i>you could</i>). Tú respondes a la prohibición con <b>That won't be a problem</b>: confianza y respeto por la norma.", next: 'e' },
+              { t: "Of course. I know that's not allowed.", ok: 1, why: "Correcta y clara: <i>not allowed</i> = prohibido. Una frase de confianza de la unidad la haría más tranquilizadora.", next: 'e' },
+              { t: "Don't worry, I don't have to share it.", ok: 0, why: "La trampa número dos de la unidad: <b>don't have to</b> = no hace falta (pero podrías). Aquí está <b>prohibido</b>: <b>can't</b> o <b>must not</b>.", next: 'd2' },
+            ] },
+            d2: { say: "It's not that you don't have to. You must not. There's a difference, and Compliance will ask you about it.", opts: [
+              { t: "You're right, sorry. We must not share client data, and I'll make sure the team knows.", ok: 2, why: "Corriges con el modal de prohibición, <b>must not</b>, y lo extiendes al equipo. Justo lo que una jefa quiere oír.", next: 'e' },
+              { t: "Right. It's forbidden, I understand.", ok: 1, why: "Correcta: <i>forbidden</i> = prohibido. Repetir la norma con <b>must not</b> dejaría claro que la has entendido.", next: 'e' },
+              { t: "Yes, yes. It's the same thing.", ok: 0, why: "No es lo mismo, y decirlo así suena a que no escuchas. <b>Don't have to</b> (opcional) y <b>must not</b> (prohibido) son contrarios en una norma de datos.", next: 'meh' },
+            ] },
+            e: { say: "Good. One more thing: there's a two-day leadership course next month. It's on a Saturday and Sunday. Is that OK for you?", opts: [
+              { t: "A weekend… that concerns me a little. The thing is, my wife and I run a small food business on Saturdays. Could I take the course on weekdays instead?", ok: 2, why: "Las tres piezas de la unidad en orden: preocupación moderada (<b>That concerns me a little</b>), razón real (<b>The thing is, …</b>) y petición con <b>Could I…?</b> más una alternativa.", next: 'win' },
+              { t: "I'm not sure I can handle a weekend course. We have our food business on Saturdays. Is there another date?", ok: 1, why: "Correcta: <b>I'm not sure I can handle that</b> y una alternativa. Para un tema de agenda, <i>That concerns me a little</i> suena más ajustado que una duda de capacidad.", next: 'win' },
+              { t: "No. The weekend is not possible for me.", ok: 0, why: "Demasiado seco con tu jefa: ni razón ni alternativa. Suaviza con <b>The thing is, …</b> y pide otra opción con <b>Could I…?</b>", next: 'meh' },
+            ] },
+            win: { say: "Of course you can. I'll move you to the weekday session. Welcome aboard, team lead.", end: true, outcome: 'win', note: 'Mostraste confianza (<b>I think I can handle that</b>, <b>That won\'t be a problem</b>), preguntaste por las obligaciones con <b>Do I have to…?</b>, pediste permiso con <b>Could I…?</b> y diste tu razón real con <b>The thing is, …</b>. Fíjate en cómo Patricia da permiso: <b>you can</b>, nunca <i>you could</i>.' },
+            meh: { say: "Hmm. OK. Let's talk about the details again on Monday.", end: true, outcome: 'meh', note: 'Tienes el puesto, pero el cierre fue flojo: o confundiste <b>don\'t have to</b> (opcional) con <b>must not</b> (prohibido), o dijiste que no sin razón ni alternativa. Con tu jefa: <b>That concerns me a little. The thing is, …</b> + <b>Could I…?</b>' },
+            fail: { say: "A decision? Aldo, I'm offering you a team, not a schedule. Let's talk another day.", end: true, outcome: 'fail', note: 'Imponer condiciones a quien te ofrece un puesto cierra la puerta. El orden que enseña la unidad: pide permiso (<b>Could I work from home on Fridays?</b>), explica con <b>The thing is, …</b> y acepta la respuesta (<i>Yes, you can</i> / <i>No, you can\'t</i>).' },
+          } },
         ] },
       ] },
     ],

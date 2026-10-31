@@ -126,6 +126,14 @@
       ['Writing', 'Conectores de contraste: <i>but, though, however, although</i>', 'Corrige errores, reescribe con contraste, checklist'],
       ['Social English', '<i>Are you sure you want to…? / That\'s what I would do. / On second thought…</i>', 'Frases por situación, ordenar diálogos, respuesta rápida'],
     ],
+    cando: [
+      "Describir de qué está hecho un objeto y qué cualidades tiene (<i>It's made of glass, so it's fragile but eco-friendly</i>)",
+      "Explicar cómo se produce y distribuye un producto con el pasivo de presente (<i>Coffee is grown in the mountains, then it's stored and exported</i>)",
+      "Contar la historia de un objeto con el pasivo de pasado y <i>by</i> + agente (<i>The bridge was bought in 1968 and taken apart by workers</i>)",
+      "Formar palabras con sustantivo + <i>-friendly</i> y distinguir <i>made of / out of / from</i> (<i>a budget-friendly car, polyester is made from plastic</i>)",
+      "Mostrar contraste al escribir con <i>but, though, however, although</i> en el registro adecuado (<i>However, it isn't eco-friendly.</i>)",
+      "Cuestionar una decisión con tacto, aprobarla y cambiar de opinión (<i>Are you sure you want to…? / That's what I would do. / On second thought, …</i>)",
+    ],
     weak: [
       '<b>Pronombre sujeto</b>: escribiste <i>"Him represents dedication and hard work"</i> → <i><b>He</b> represents dedication and hard work</i>. Detrás del verbo va <i>him</i>; delante, como sujeto, siempre <b>he</b>.',
       '<b>set vs set up</b>: <i>"If you set up realistic goals today…"</i> → <i>If you <b>set</b> realistic goals today…</i>. <b>set up</b> = montar/instalar (una empresa, un equipo); con <i>goals</i> se dice solo <b>set</b>.',
@@ -415,6 +423,63 @@
           { q: 'Tu amigo te ha convencido de cambiar de opinión. ¿Cómo lo admites?', opts: ['OK, you convinced me.', 'Are you sure you want to?', 'Do you really need it?', 'Why would you want to?'], a: 'OK, you convinced me.', why: 'Frase del diálogo del curso para aceptar el argumento del otro.' },
           { q: '¿Cuál de estas suena MÁS crítica y directa?', opts: ['Why would you want to do that?', 'Are you sure you want to do that?', "That's a good idea.", 'On second thought, …'], a: 'Why would you want to do that?', why: '<i>Why would you want to…?</i> casi implica que la idea es mala. Úsala solo con mucha confianza.' },
           { q: 'Tu colega compró el mismo modelo de coche que tú y te pregunta qué te parece.', opts: ['I think you made the right choice.', 'Do you really need a car?', 'Are you sure you want to?', 'Why would you want that?'], a: 'I think you made the right choice.', why: 'Es exactamente la frase del diálogo del curso: <i>It\'s great. I think you made the right choice.</i>' },
+        ] },
+        { label: 'Role-play', type: 'roleplay', eyebrow: 'Role-play con ramas', title: 'Frascos de vidrio y un horno importado', intro: 'Tu esposa quiere cambiar todos los envases del negocio de comida a frascos de vidrio y, de paso, comprar un horno italiano de cuatro mil dólares. Cuestiona las decisiones con tacto, deja que te convenza cuando tenga razón, aprueba lo que sea sensato y cambia de opinión sin perder el buen tono. Si suenas crítico o seco, la conversación se acaba.', scenes: [
+          { t: 'Decisiones del negocio', you: 'Aldo, socio del negocio de comida', partner: 'Tu esposa', role: 'tu esposa y socia; llega con dos decisiones tomadas y ganas de ejecutarlas mañana', goal: 'Cuestiona sin criticar, acepta el argumento bueno, frena el gasto grande con suavidad y aprueba la decisión final con las frases de la unidad.', start: 'a', nodes: {
+            a: { say: "OK, I've decided. We're switching all our containers to glass jars. I'm ordering three hundred tomorrow.", opts: [
+              { t: "Are you sure you want to order that many? Glass is fragile, and we deliver by motorbike.", ok: 2, why: "<b>Are you sure you want to…?</b> es la forma neutra de cuestionar una decisión, y das un motivo concreto con vocabulario de la unidad (<b>fragile</b>).", next: 'b' },
+              { t: "Hmm, do you really need three hundred? Maybe start with fifty.", ok: 1, why: "Correcta: <b>Do you really need…?</b> cuestiona la necesidad y propones una alternativa. Un poco más directa que <i>Are you sure…?</i>, pero entre pareja funciona.", next: 'b' },
+              { t: "Why would you want to do that? That's a terrible idea.", ok: 0, why: "<b>Why would you want to…?</b> ya suena crítico; rematado con <i>terrible idea</i> es un ataque, no una pregunta. La unidad avisa: esa fórmula solo con mucha confianza y nunca con un juicio detrás.", next: 'a2' },
+            ] },
+            a2: { say: "Wow. Thanks for the support, Aldo.", opts: [
+              { t: "Sorry, that came out wrong. Are you sure you want to switch everything at once? Glass breaks easily.", ok: 2, why: "Reparas el tono y reformulas con la fórmula neutra de la unidad: <b>Are you sure you want to…?</b> + motivo.", next: 'b' },
+              { t: "Sorry. I just mean, do you really need to change all of them now?", ok: 1, why: "Correcta: te disculpas y pasas a <b>Do you really need…?</b>, que cuestiona la necesidad sin juzgar la idea.", next: 'b' },
+              { t: "I am only saying the true.", ok: 0, why: "Calco de “solo digo la verdad”: en inglés es <i>the truth</i>, y además insistes en el tono. Con <i>I'm only saying…</i> no arreglas nada; hace falta una disculpa.", next: 'fail' },
+            ] },
+            b: { say: "Well, plastic isn't eco-friendly, and customers notice. Glass looks much better in photos.", opts: [
+              { t: "That's true. Now that I think about it, the glass jars would look great on Instagram. But how are they delivered?", ok: 2, why: "Cedes en lo que tiene razón con <b>Now that I think about it, …</b> (= ahora que lo pienso) y sigues con una pregunta en pasivo: <b>How are they delivered?</b>", next: 'c' },
+              { t: "OK, that's a good point. But glass is heavy, and our delivery bags aren't made for it.", ok: 1, why: "Correcta y razonable: reconoces el argumento y objetas con vocabulario de la unidad (<b>heavy</b>, <b>aren't made for</b>).", next: 'c' },
+              { t: "Plastic is more cheap and it don't break.", ok: 0, why: "Dos errores: <i>cheap</i> es corto → <b>cheaper</b>; y con <i>it</i> → <b>doesn't</b>. Además ignoras su argumento en vez de responderlo.", next: 'c' },
+            ] },
+            c: { say: "The jars are made in Lima, so they can be delivered in two days. And they're cheaper than I thought: they're actually budget-friendly.", opts: [
+              { t: "OK, you convinced me. Let's order a hundred and see how it goes.", ok: 2, why: "<b>OK, you convinced me</b> es la frase de la unidad para aceptar el argumento del otro, y propones empezar pequeño. Fíjate en su pasivo: <i>are made in Lima</i>, <i>can be delivered</i>.", next: 'd' },
+              { t: "Fine, that's a good idea. But let's start with a hundred.", ok: 1, why: "Correcta: <b>That's a good idea</b> aprueba, aunque <i>fine</i> suena algo resignado. <i>OK, you convinced me</i> es más generoso.", next: 'd' },
+              { t: "OK, OK. Do what you want.", ok: 0, why: "“Haz lo que quieras” no es aprobar: es cerrar la discusión de mala gana. Si te ha convencido, dilo: <b>OK, you convinced me</b>.", next: 'c2' },
+            ] },
+            c2: { say: "Do what I want? Aldo, this is our business, not mine.", opts: [
+              { t: "You're right, sorry. On second thought, I think glass is the right choice. Let's order a hundred to start.", ok: 2, why: "Te disculpas y anuncias el cambio de opinión con <b>On second thought, …</b> (= pensándolo bien), con una propuesta concreta.", next: 'd' },
+              { t: "Sorry. I agree with you. Let's try the glass jars.", ok: 1, why: "Correcta y clara. <i>On second thought</i> habría marcado mejor que cambiaste de opinión de verdad.", next: 'd' },
+              { t: "I said OK already.", ok: 0, why: "Insistir en el tono seco después de un aviso es la forma segura de que la conversación termine mal.", next: 'fail' },
+            ] },
+            d: { say: "Great. Oh, and one more thing: I want to buy that Italian oven we saw. It's imported, so it's about four thousand dollars.", opts: [
+              { t: "Do you really need a new oven right now? Ours was bought last year and it works fine.", ok: 2, why: "<b>Do you really need…?</b> cuestiona la necesidad de un gasto grande, y el argumento va en pasivo de pasado: <b>was bought last year</b>.", next: 'e' },
+              { t: "Are you sure you want to spend that much this month? We just paid for the jars.", ok: 1, why: "Correcta: <b>Are you sure you want to…?</b> + un motivo de dinero. Igual de válida; aquí la necesidad es el punto más fuerte.", next: 'e' },
+              { t: "No. We don't have money.", ok: 0, why: "Un <i>no</i> seco corta la conversación y suena a orden. La unidad te da preguntas para cuestionar sin imponer. Y en inglés sería <i>we don't have <b>the</b> money</i>.", next: 'd2' },
+            ] },
+            d2: { say: "That's not an answer. Why not?", opts: [
+              { t: "Sorry. What I mean is: do you really need it now? Our oven was manufactured last year and it still works perfectly.", ok: 2, why: "Reformulas con <b>Do you really need…?</b> y usas el pasivo de pasado con un verbo de la unidad: <b>was manufactured</b>.", next: 'e' },
+              { t: "I mean, are you sure? It's a lot of money for an oven.", ok: 1, why: "Correcta: <b>Are you sure?</b> a secas suaviza el <i>no</i> anterior. Un argumento más concreto ayudaría.", next: 'e' },
+              { t: "Because I say it.", ok: 0, why: "Calco de “porque lo digo yo”: en inglés es <i>because I say so</i>, y en cualquier idioma es la peor respuesta posible a tu socia.", next: 'fail' },
+            ] },
+            e: { say: "Hmm. The Italian one is made of steel, and it's supposed to last twenty years. But you're right, ours is fine. On second thought, maybe I should wait until the jars pay for themselves.", opts: [
+              { t: "I think you made the right decision. If the jars sell well, we can get it in December.", ok: 2, why: "Aprobación de la unidad: <b>I think you made the right decision</b>. Ella cambió de opinión con <i>On second thought</i>; tú lo reconoces y le das un horizonte.", next: 'f' },
+              { t: "That's what I would do. Let's wait a few months.", ok: 1, why: "Correcta: <b>That's what I would do</b> = yo haría lo mismo. Natural y breve.", next: 'f' },
+              { t: "Yes, you see? I have the reason.", ok: 0, why: "Calco de “tengo razón”: en inglés es <b>I'm right</b>. Y regodearse cuando el otro cede es justo lo contrario de aprobar su decisión.", next: 'e2' },
+            ] },
+            e2: { say: "You have the reason? Please don't gloat, Aldo.", opts: [
+              { t: "Sorry! I mean, I think you made the right choice. We'll buy it when the business is ready.", ok: 2, why: "Corriges y apruebas con la fórmula de la unidad: <b>I think you made the right choice</b>.", next: 'f' },
+              { t: "Sorry, you're right. Good decision.", ok: 1, why: "Correcta y breve. <i>I think you made the right decision</i> suena más completo.", next: 'f' },
+              { t: "Whatever. Buy it if you want.", ok: 0, why: "<i>Whatever</i> es desdén puro. Después de pedirte que no te regodees, esto cierra la conversación.", next: 'fail' },
+            ] },
+            f: { say: "Deal. So, a hundred glass jars. Can you place the order tonight? The website is in English.", opts: [
+              { t: "Sure. Now that I think about it, let's ask if the jars are shipped in boxes. We don't want them to arrive broken.", ok: 2, why: "Aceptas y añades una idea con <b>Now that I think about it, …</b>, en pasivo: <b>are shipped</b>. Cierras el tema del vidrio <i>fragile</i> con el que empezaste.", next: 'win' },
+              { t: "Of course. I'll order them tonight and ask about the delivery.", ok: 1, why: "Correcta: <b>I'll</b> para una decisión que tomas en el momento, y te ocupas del envío.", next: 'win' },
+              { t: "Yes. I order it tonight.", ok: 0, why: "Decisión espontánea → <b>I'll order them tonight</b>, no presente simple. Y los frascos son plural: <i>them</i>.", next: 'meh' },
+            ] },
+            win: { say: "Perfect. Glass jars this month, oven in December. See? We make a good team.", end: true, outcome: 'win', note: "Cuestionaste con tacto (<b>Are you sure you want to…?</b>, <b>Do you really need…?</b>), cediste cuando tocaba (<b>OK, you convinced me</b>, <b>Now that I think about it, …</b>) y aprobaste la decisión final (<b>I think you made the right decision</b>). De fondo, el pasivo de la unidad: <i>are made in Lima</i>, <i>was bought last year</i>, <i>are shipped in boxes</i>." },
+            meh: { say: "OK, thanks. Let's see how they arrive.", end: true, outcome: 'meh', note: "Negociaste bien de principio a fin, pero la última frase falló: para una decisión que tomas en el momento se usa <b>I'll order them tonight</b>, no <i>I order it</i>. Ella no dijo nada; un nativo lo nota." },
+            fail: { say: "You know what? Forget it. I'll decide on my own.", end: true, outcome: 'fail', note: "El tono lo decidió todo. Para cuestionar sin herir, la unidad te da <b>Are you sure you want to…?</b> (neutra) y <b>Do you really need…?</b>; <b>Why would you want to…?</b> solo con mucha confianza y nunca con un juicio detrás. Y si te convence, dilo: <b>OK, you convinced me</b> / <b>On second thought, …</b>" },
+          } },
         ] },
       ] },
     ],

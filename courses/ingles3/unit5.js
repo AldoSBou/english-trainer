@@ -54,6 +54,14 @@
       ['Writing', 'Escribir una historia corta usando expresiones de storytelling', 'Corrige la frase, añade expresiones narrativas y checklist'],
       ['Social English', '<i>You\'ll never guess… / You\'re kidding! / Seriously?</i>', 'Frases por situación, ordenar diálogos y respuesta rápida'],
     ],
+    cando: [
+      'Contar qué perdí y cómo lo recuperé con los verbos de <i>losing and finding things</i> (<i>leave it behind, drop, search for, locate, get it back</i>)',
+      'Contar una vez que estuve en apuros o que alguien me ayudó: <i>break down, figure out, be in trouble, give someone a ride, take care of, be grateful to</i>',
+      'Narrar en pasado con verbos regulares e irregulares y preguntar con <i>did</i> (<i>How did you lose your purse?</i>, no <i>lost</i>)',
+      'Combinar <i>past continuous</i> y <i>simple past</i> con <i>when</i> / <i>while</i> para el fondo y el suceso (<i>I was getting off the bus when I noticed…</i>)',
+      'Dar y reaccionar a noticias sorprendentes (<i>You\'ll never guess…</i>, <i>You\'re not going to believe this…</i>, <i>Seriously?</i>, <i>You\'re kidding!</i>, <i>Is that true?</i>) y repetir la palabra clave para expresar sorpresa (<i>A turkey? A turkey!</i>)',
+      'Escribir una historia corta con expresiones de storytelling (<i>When I was a child…</i>, <i>One afternoon…</i>, <i>Then…</i>, <i>A few minutes later…</i>, <i>In the end…</i>)',
+    ],
     weak: [
       '<b>Emparejar past continuous + simple past</b>: fallaste las cuatro frases de la historia de la tormenta. Escribiste <i>"I was talking to my neighbor <s>when the lights went off</s>"</i>, pero lo correcto era <i>when we <b>heard about the storm</b></i>.',
       '<i>"We were calling for help <s>when we heard about the storm</s>"</i> → <i>when the <b>lights went off</b></i>. Primero te enteras de la tormenta; la luz se va después y por eso pides ayuda.',
@@ -357,6 +365,64 @@
           { q: 'Alguien acaba de enseñarte la prueba de la noticia (una invitación, una foto).', opts: ["That's incredible!", "You'll never guess.", 'Is that true?', 'Are you serious?'], a: "That's incredible!", why: 'Ya no dudas de la noticia; ahora comentas lo asombrosa que es.' },
           { q: 'Perdiste el móvil otra vez y tu amigo no se lo cree.', opts: ['No way! You lost your phone again?', "You'll never guess.", 'I had a real surprise.', "That's incredible!"], a: 'No way! You lost your phone again?', why: '<i>No way!</i> es sorpresa informal con un punto de incredulidad o reproche.' },
           { q: '¿Cuál de estas NO sirve para reaccionar con sorpresa?', opts: ["You'll never guess…", "You're kidding!", 'Seriously?', 'Is that true?'], a: "You'll never guess…", why: '<i>You\'ll never guess…</i> se usa para <b>dar</b> la noticia, no para reaccionar a ella.' },
+        ] },
+
+        { label: 'Role-play', type: 'roleplay', eyebrow: 'Role-play con ramas', title: 'En la cafetería del banco: noticias sorprendentes', intro: 'Pausa del café en el banco. Rocío, de tu equipo, llega con una noticia; tú traes otra: ayer dejaste la mochila del portátil en el bus y un desconocido te la devolvió. Reacciona con sorpresa, cuenta tu historia en pasado y cuida el registro cuando aparezca el gerente. Las frases de <i>Frases</i> y la estrategia de <b>repetir la palabra clave</b> son tus herramientas.', scenes: [
+          { t: 'Pausa del café', you: 'Aldo, desarrollador senior del banco', partner: 'Rocío', role: 'compañera de tu equipo; después, el Sr. Vargas, gerente de tecnología', goal: 'Reacciona a la noticia de Rocío, cuenta lo de la mochila con past continuous + simple past y las frases de dar noticias, y responde al gerente con sorpresa pero en registro formal.', start: 'a', nodes: {
+            a: { say: "Hey, Aldo! You're not going to believe this. Diego from QA is leaving. He got a job in Madrid!", opts: [
+              { t: "Seriously? Diego? When did he decide that?", ok: 2, why: '<b>Seriously?</b> es la reacción corta de la unidad; repetir la palabra clave (<b>Diego?</b>) es la <i>real-world strategy</i> y la pregunta va bien formada: <i>When <b>did</b> he <b>decide</b>…?</i>', next: 'b' },
+              { t: "Really? Is that true?", ok: 1, why: 'Correcta: <b>Is that true?</b> está en la lista. Con una amiga del equipo puedes soltarte más (<i>Seriously? / You\'re kidding!</i>).', next: 'b' },
+              { t: "Yes, I know, he is good.", ok: 0, why: 'No reaccionas a la sorpresa y además suena a que ya lo sabías. Tras <i>You\'re not going to believe this…</i> se espera <b>Seriously? / You\'re kidding! / Are you serious?</b>', next: 'a2' },
+            ] },
+            a2: { say: "Wait, you knew? You don't look surprised at all.", opts: [
+              { t: "No, I didn't know! You're kidding! Madrid? When is he leaving?", ok: 2, why: 'Aclaras y reaccionas de verdad: <b>You\'re kidding!</b> + repites la palabra clave (<b>Madrid?</b>) + pregunta correcta en presente continuo para un plan.', next: 'b' },
+              { t: "Sorry, I was distracted. Are you serious? That's big news.", ok: 1, why: 'Correcta: te disculpas y usas <b>Are you serious?</b>. Un poco más larga de lo necesario, pero natural.', next: 'b' },
+              { t: "I am very surprise. Where he goes?", ok: 0, why: 'Dos errores típicos: <i>surprise</i> es el sustantivo, el adjetivo es <b>surprised</b>; y la pregunta necesita auxiliar: <b>Where is he going?</b>', next: 'b' },
+            ] },
+            b: { say: "Next month. He told me this morning. I still can't believe it.", opts: [
+              { t: "That's incredible! Well, I had a real surprise yesterday, too.", ok: 2, why: 'Cierras su noticia (<b>That\'s incredible!</b>) y abres la tuya con la frase de la unidad para introducir una historia: <b>I had a real surprise…</b>', next: 'c' },
+              { t: "Wow. OK, listen, something strange happened to me yesterday, too.", ok: 1, why: 'Correcta y natural, pero desaprovechas la frase hecha de la unidad: <b>I had a real surprise yesterday</b>.', next: 'c' },
+              { t: "Me too, I had a surprise real yesterday.", ok: 0, why: 'Calco del orden español: en inglés el adjetivo va delante, <b>a real surprise</b>. Y <i>me too</i> aquí suena a que también te vas.', next: 'c' },
+            ] },
+            c: { say: "Oh? What happened?", opts: [
+              { t: "I was getting off the bus near the office when I realized I didn't have my laptop bag. I left it behind on the seat.", ok: 2, why: 'La estructura de la unidad: <b>past continuous</b> para el fondo (<i>I was getting off</i>) + <b>when</b> + <b>simple past</b> para el suceso (<i>I realized</i>), y el verbo separable <b>left it behind</b>.', next: 'd' },
+              { t: "I lost my laptop bag on the bus. I left it on the seat.", ok: 1, why: 'Correcta y clara, pero sin escenario: la historia gana con <i>I <b>was getting off</b> the bus <b>when</b>…</i>', next: 'd' },
+              { t: "I was getting off the bus when I was realizing that I didn't had my bag.", ok: 0, why: 'Dos fallos: el suceso corto va en <b>simple past</b> (<i>I realized</i>, no <i>was realizing</i>) y tras <i>didn\'t</i> el verbo va en base: <b>didn\'t have</b>.', next: 'c2' },
+            ] },
+            c2: { say: "Hold on, slow down. You were getting off the bus… and then what?", opts: [
+              { t: "Then I realized I didn't have my laptop bag. I left it behind on the seat.", ok: 2, why: 'Ahora sí: <b>Then</b> + <b>simple past</b> (<i>realized, didn\'t have, left it behind</i>). Lo corto y lo que avanza la historia siempre en simple past.', next: 'd' },
+              { t: "I noticed my bag wasn't with me. I forgot it on the bus.", ok: 1, why: 'Correcta. En inglés para un objeto olvidado en un sitio suena más natural <b>I left it behind</b> que <i>I forgot it</i>.', next: 'd' },
+              { t: "I was forgetting my bag in the bus.", ok: 0, why: 'Otra vez el continuo donde va el simple past, y es <b>on the bus</b>, no <i>in</i>. Mejor: <b>I left my bag behind on the bus</b>.', next: 'd' },
+            ] },
+            d: { say: "No way! Your work laptop? Did you get it back?", opts: [
+              { t: "You're not going to believe this: a stranger found it, saw my card inside and contacted me. I got it back last night!", ok: 2, why: 'Frase-puente de la unidad antes del remate (<b>You\'re not going to believe this</b>) y tres expresiones del vocabulario: <b>a stranger</b>, <b>contacted me</b>, <b>got it back</b>.', next: 'e' },
+              { t: "Yes, luckily. Someone found it and called me.", ok: 1, why: 'Correcta, pero pierdes el suspense: la unidad te da <b>You\'re not going to believe this…</b> justo para este momento.', next: 'e' },
+              { t: "Yes, I recovered it. A strange person called me.", ok: 0, why: 'Falso amigo: <i>a strange person</i> es una persona rara. Un desconocido es <b>a stranger</b>. Y para esta situación <b>I got it back</b> suena más natural que <i>recovered</i>.', next: 'd2' },
+            ] },
+            d2: { say: "A strange person? Like… a weird guy? That sounds scary.", opts: [
+              { t: "No, I mean a stranger, someone I didn't know. He was really kind. I was so grateful to him.", ok: 2, why: 'Reparas el malentendido con la palabra correcta (<b>a stranger</b>) y añades <b>I was so grateful to him</b>, con la preposición <b>to</b>.', next: 'e' },
+              { t: "Sorry, a stranger. A man I didn't know. He was very nice.", ok: 1, why: 'Correcta: corriges a <b>a stranger</b>. Faltaría decir cómo te sentiste (<i>grateful</i>), que es el vocabulario de la unidad.', next: 'e' },
+              { t: "Yes, strange, because he didn't know me.", ok: 0, why: 'Insistes en <i>strange</i> (= raro). La palabra es <b>stranger</b> (desconocido). Rocío sigue pensando que te llamó un tipo raro.', next: 'e' },
+            ] },
+            e: { say: "A stranger? A stranger just called you and gave it back? That's incredible!", opts: [
+              { t: "I know. I can't believe it. I was so grateful that I invited him to our food stand this weekend.", ok: 2, why: '<b>I can\'t believe it</b> es la frase de la unidad para rematar tu propia noticia; <b>grateful</b> + simple past (<i>invited</i>) cierran la historia.', next: 'f' },
+              { t: "Yes, I was really lucky. I'm going to invite him to lunch.", ok: 1, why: 'Correcta y natural. Te falta la frase de cierre de la unidad: <b>I can\'t believe it</b>.', next: 'f' },
+              { t: "Yes, I am very grateful with him.", ok: 0, why: 'Calco de «agradecido con»: en inglés es <b>grateful to</b> someone. Y la historia es de ayer: <b>I was</b> so grateful.', next: 'f' },
+            ] },
+            f: { who: 'Sr. Vargas', say: "Morning, both. Aldo, I heard something about a lost laptop, everything OK? By the way, the board just approved the core banking project. We start on Monday.", opts: [
+              { t: "Really? Is that true? That's great news. And yes, I got the laptop back last night, everything is fine.", ok: 2, why: 'Con el gerente cambias el registro: <b>Really? Is that true?</b> es la reacción de sorpresa formal de la unidad. Y respondes a su pregunta con <b>got it back</b>.', next: 'win' },
+              { t: "That's great news. And don't worry about the laptop, I got it back last night.", ok: 1, why: 'Correcta y profesional, pero sin reacción de sorpresa. Un <b>Really?</b> o <b>Is that true?</b> antes la haría más natural.', next: 'win' },
+              { t: "You're kidding! Seriously?! Monday?", ok: 0, why: '<b>You\'re kidding!</b> y <b>Seriously?</b> son informales, para Rocío. Con un gerente: <b>Really? Is that true?</b> Y no has respondido lo del portátil.', next: 'f2' },
+            ] },
+            f2: { who: 'Sr. Vargas', say: "Kidding? No, Aldo, I'm quite serious.", opts: [
+              { t: "Sorry, I didn't mean it that way. Is that true? That's great news for the team. And the laptop is fine, I got it back last night.", ok: 2, why: 'Reparas el tono (<b>I didn\'t mean it that way</b>), reaccionas en registro formal (<b>Is that true?</b>) y contestas la pregunta pendiente.', next: 'win' },
+              { t: "Sorry. Really? That's great.", ok: 1, why: 'Correcta: <b>Really?</b> es la reacción neutra. Pero sigues sin decirle qué pasó con el portátil del banco, y él preguntó primero por eso.', next: 'meh' },
+              { t: "Yes, kidding, kidding. Is it a joke?", ok: 0, why: 'Insistes en que bromea, y <i>Is it a joke?</i> suena a que dudas de él. Un gerente no espera eso. <b>Sorry, I didn\'t mean it that way</b> y a otra cosa.', next: 'fail' },
+            ] },
+            win: { who: 'Sr. Vargas', say: "Glad to hear it. See you both on Monday at nine. And Aldo, keep an eye on that bag!", end: true, outcome: 'win', note: 'Reaccionaste con <b>Seriously?</b> / <b>You\'re kidding!</b> y la repetición de la palabra clave, contaste tu historia con <b>I was getting off the bus when I realized…</b>, abriste y cerraste con <b>I had a real surprise…</b> / <b>You\'re not going to believe this…</b> / <b>I can\'t believe it</b>, y con el gerente pasaste a <b>Really? Is that true?</b> Eso es dominar el registro.' },
+            meh: { who: 'Sr. Vargas', say: "Right. Well, see you on Monday. And let me know about that laptop.", end: true, outcome: 'meh', note: 'La conversación salió, pero el gerente se fue sin la respuesta que había pedido. Cuando alguien pregunta por algo y luego da una noticia, reacciona a la noticia (<b>Is that true?</b>) <i>y</i> contesta la pregunta (<b>I got it back</b>).' },
+            fail: { who: 'Sr. Vargas', say: "I don't joke about projects, Aldo. Monday, nine o'clock.", end: true, outcome: 'fail', note: '<b>You\'re kidding!</b> y <b>Seriously?</b> son para amigos y compañeros; con un gerente o un cliente la sorpresa se muestra con <b>Really?</b>, <b>Is that true?</b> o <b>That\'s incredible</b>. Y si te sale el tono equivocado, repáralo una vez (<b>Sorry, I didn\'t mean it that way</b>) y sigue.' },
+          } },
         ] },
       ] },
     ],

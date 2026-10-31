@@ -96,6 +96,14 @@
       ['Writing', 'Solicitud para ser voluntario en un festival', 'Corrige errores típicos de artículos y modales, checklist de escritura'],
       ['Social English', 'Pedir y dar direcciones dentro de un edificio (<i>How do I get to…? It\'s on the left.</i>)', 'Ordenar diálogos, preguntas indirectas y respuesta rápida'],
     ],
+    cando: [
+      "Hablar de transporte público y viajes con el vocabulario de la unidad: <i>fare, schedule, route, direct, terminal, departure, arrival, book</i>",
+      "Nombrar lugares de la ciudad y describir una ciudad que me encantó: <i>trendy neighborhoods, amazing architecture, streetcars, vendors, boardwalk</i>",
+      "Elegir bien entre <i>a / an</i>, <i>the</i> y sin artículo: primera mención, lo ya conocido, profesiones (<i>He's a firefighter</i>), generalizaciones y países",
+      "Dar consejos con la fuerza justa (<i>You should…</i>, <i>You could…</i>, <i>I'd…</i>, <i>I wouldn't…</i>) y preguntar sin <i>do</i>: <i>Should I…? Could I…?</i>",
+      "Pedir direcciones dentro de un edificio con educación: <i>Can you tell me how to get to…?</i>, <i>Do you know where the stairs are?</i>, <i>Which way is…?</i>",
+      "Dar direcciones paso a paso: <i>Go down that hallway</i>, <i>Go through the lobby</i>, <i>Turn right</i>, <i>It's on your left</i>",
+    ],
 
     sections: [
       { id: 'home', label: 'Inicio', render: 'overview', activities: [] },
@@ -324,6 +332,63 @@
           { q: 'Llamas a un restaurante para reservar mesa para cuatro.', opts: ["Hi, I'd like to book a table for four people, please.", "Hi, I'd like book a table for four people, please.", "Hi, I want that you book a table for four.", "Hi, I'd like to reserve a table of four people, please."], a: "Hi, I'd like to book a table for four people, please.", why: '<b>I\'d like to book</b> es la fórmula del curso. <i>Book</i> = reservar.' },
           { q: 'Preguntas si hay que cambiar de línea o si el trayecto es directo.', opts: ['Is it a direct route, or do I need to change lines?', 'Is it direct route, or do I need change the lines?', 'It is a direct route, or I need to change lines?', 'Is it the direct route, or do I need to change a lines?'], a: 'Is it a direct route, or do I need to change lines?', why: '<b>a</b> direct route (primera mención) y <b>change lines</b> sin artículo.' },
           { q: 'Alguien pregunta "Could I walk to the station from here?" y sí es posible, pero hay algo más rápido.', opts: ['Yes, you could. But it would be faster to get a taxi.', 'Yes, you can could. But it would faster to get a taxi.', 'Yes, you could to. But it would be more fast to get a taxi.', 'Yes, you would. But it could be faster to get a taxi.'], a: 'Yes, you could. But it would be faster to get a taxi.', why: 'Respuesta corta con <b>could</b> + opinión con <b>would</b>.' },
+        ] },
+        { label: 'Role-play', type: 'roleplay', eyebrow: 'Role-play con ramas', title: 'Primer día en la nueva sede: direcciones y consejos de viaje', intro: 'El banco acaba de mudarse a una sede nueva en San Isidro y tienes una reunión en la sala C. Primero pide direcciones en recepción con educación (<i>Can you tell me how to get to…?</i>, <i>Which way is…?</i>); después, Diego, un colega de Arequipa, te pide consejo para llegar al aeropuerto. Aconséjalo con <i>should</i>, <i>could</i> y <i>I wouldn\'t</i>, y cuida los artículos.', scenes: [
+          { t: 'Nueva sede', you: 'Aldo, recién llegado al edificio', partner: 'Rosa', role: 'recepcionista del vestíbulo; después, Diego, colega de la sucursal de Arequipa', goal: 'Llega a la sala de reuniones C preguntando con las fórmulas de la unidad y luego da a Diego consejos claros y realistas para llegar al aeropuerto.', start: 'a', nodes: {
+            a: { say: "Good morning, welcome to the new building. Can I help you?", opts: [
+              { t: "Good morning. Can you tell me how to get to meeting room C?", ok: 2, why: "La fórmula educada de la unidad: <b>Can you tell me how to get to…?</b> Pregunta indirecta, sin inversión (<i>how to get</i>, no <i>how do I get</i>).", next: 'b' },
+              { t: "Hi. How do I get to meeting room C?", ok: 1, why: "Correcta: <b>How do I get to…?</b> es la pregunta directa del curso. Con una desconocida, la versión indirecta suena algo más suave.", next: 'b' },
+              { t: "Hi. Can you tell me where is meeting room C?", ok: 0, why: "Después de <b>Can you tell me…</b> ya no se invierte: <b>where meeting room C is</b>. Es el error más típico de hispanohablante en preguntas indirectas.", next: 'a2' },
+            ] },
+            a2: { say: "Sorry, say that again? It's a bit noisy in here this morning.", opts: [
+              { t: "Sure. Do you know where meeting room C is?", ok: 2, why: "Reformulas bien: <b>Do you know where … is?</b>, con el verbo al final, como en <i>Do you know where the stairs are?</i>", next: 'b' },
+              { t: "Which way is meeting room C?", ok: 1, why: "Correcta: <b>Which way is…?</b> es otra fórmula del curso. Un <i>Sure</i> o <i>Sorry</i> delante la haría más natural tras repetir.", next: 'b' },
+              { t: "Where is the meeting room C? I have meeting at nine.", ok: 0, why: "Dos fallos de artículo: <i>meeting room C</i> es un nombre propio y va <b>sin artículo</b>; en cambio <b>I have a meeting</b> lo necesita (singular contable, primera mención).", next: 'b' },
+            ] },
+            b: { say: "Of course. Meeting room C is on the fourth floor. Take the elevator, go down the hallway, and it's on your left.", opts: [
+              { t: "Thanks. And which way is the elevator?", ok: 2, why: "<b>Which way is the elevator?</b>: la pregunta exacta de la unidad para orientarte. <i>The</i> porque en este vestíbulo está claro cuál es.", next: 'c' },
+              { t: "Great, thanks. Where is the elevator?", ok: 1, why: "Correcta y clara. <b>Which way is…?</b> o <b>Do you know where the elevator is?</b> suenan un punto más amables.", next: 'c' },
+              { t: "Thanks. Where is elevator?", ok: 0, why: "Falta el artículo: <b>the elevator</b>. En inglés los singulares contables casi nunca van solos, aunque en español digas «¿dónde está el ascensor?» sin pensar.", next: 'c' },
+            ] },
+            c: { say: "Go through the lobby, and it's on the left. Oh, but it's out of service this morning, I'm afraid. Do you know where the stairs are?", opts: [
+              { t: "No, I don't. Can you tell me where they are?", ok: 2, why: "Respuesta corta + pregunta indirecta sin inversión: <b>Can you tell me where they are?</b> Y <i>stairs</i> es plural → <b>they</b>, no <i>it</i>.", next: 'd' },
+              { t: "No. Could I walk up to the fourth floor, do you think?", ok: 1, why: "Correcta: pregunta con modal sin <i>do</i> (<b>Could I…?</b>) y el <b>do you think</b> del curso. Pero no le has preguntado dónde están las escaleras.", next: 'd' },
+              { t: "No. Do you know where are the stairs?", ok: 0, why: "Tras <b>Do you know…</b> el verbo va al final: <b>where the stairs are</b>. Fíjate en que Rosa acaba de decirlo bien.", next: 'd' },
+            ] },
+            d: { say: "Right behind you, next to the coffee machine. It's four floors, though. You could wait ten minutes for the technician.", opts: [
+              { t: "I think I should take the stairs. I don't want to be late for my first meeting here.", ok: 2, why: "<b>I should take</b>: modal + infinitivo sin <i>to</i>, y das el motivo. Natural y decidido.", next: 'e' },
+              { t: "I'll take the stairs, thanks.", ok: 1, why: "Correcta y breve. La unidad te pide practicar los modales: <i>I should take the stairs</i> aprovecha mejor el momento.", next: 'e' },
+              { t: "I should to take the stairs, I think.", ok: 0, why: "Nunca <i>should to</i>: detrás de un modal va el <b>infinitivo sin <i>to</i></b>: <b>I should take the stairs</b>.", next: 'e' },
+            ] },
+            e: { who: 'Diego', say: "Aldo! You made it. Hey, you know Lima. My flight is at six. How do I get to the airport from here? A taxi at five?", opts: [
+              { t: "I wouldn't take a taxi at five. There's too much traffic. You should take the airport bus.", ok: 2, why: "Consejo negativo + positivo con la fuerza justa: <b>I wouldn't…</b> (yo que tú, no) y <b>You should…</b> (es buena idea). Y <i>there's too much traffic</i>, sin artículo: incontable en general.", next: 'f' },
+              { t: "You could take a taxi, but it would be faster to take the airport bus.", ok: 1, why: "Correcta: <b>You could…</b> presenta la opción y <b>it would be faster to…</b> da tu opinión, como Molly en el diálogo del curso.", next: 'f' },
+              { t: "Don't take taxi. Take the bus.", ok: 0, why: "Falta el artículo (<b>a taxi</b>) y dos imperativos seguidos suenan a orden, no a consejo. Usa los modales: <b>I wouldn't take a taxi; you should take the bus</b>.", next: 'e2' },
+            ] },
+            e2: { say: "The bus? With two suitcases? I don't know, man…", opts: [
+              { t: "Fair enough. Then I'd book a taxi for three thirty. You shouldn't leave at five: the traffic is terrible.", ok: 2, why: "Reconduces con <b>I'd…</b> (yo lo haría así) y <b>You shouldn't…</b> (mala idea), con motivo. Consejo útil y bien formulado.", next: 'f' },
+              { t: "OK, then you should book a taxi, but leave early.", ok: 1, why: "Correcta: <b>You should book…</b>. Algo más concreto (una hora) ayudaría más a Diego.", next: 'f' },
+              { t: "Yes, you should to take a taxi at five.", ok: 0, why: "<i>Should to</i> no existe (<b>should take</b>) y, encima, el consejo es malo: a las cinco la Javier Prado es un estacionamiento.", next: 'fail' },
+            ] },
+            f: { say: "OK. Is it a direct route, or do I need to change?", opts: [
+              { t: "It's a direct route, no changes. The fare is about twenty-five soles, and you can check the schedule on the app.", ok: 2, why: "Tres palabras clave de la unidad en una respuesta natural: <b>a direct route</b>, <b>the fare</b>, <b>the schedule</b>. Y <i>a direct route</i> con artículo: primera mención.", next: 'g' },
+              { t: "It's direct. You don't need to change.", ok: 1, why: "Correcta y clara. Añadir la tarifa o el horario sería lo que un amigo espera de alguien que conoce la ciudad.", next: 'g' },
+              { t: "Is direct. You no need to change.", ok: 0, why: "Falta el sujeto (<b>It's direct</b>) y la negación con <i>no</i> es calco: <b>You don't need to change</b>.", next: 'g' },
+            ] },
+            g: { say: "Perfect. Should I book a seat in advance?", opts: [
+              { t: "Yes, you should. The three thirty departure fills up fast.", ok: 2, why: "Respuesta corta que repite el modal: <b>Yes, you should</b>. Y <i>departure</i>, otra palabra de la unidad.", next: 'h' },
+              { t: "I would. It's safer.", ok: 1, why: "Correcta y natural: <b>I would</b> da tu opinión. La respuesta corta del curso a <i>Should I…?</i> es <b>Yes, you should</b>.", next: 'h' },
+              { t: "Yes, you do.", ok: 0, why: "La pregunta lleva <i>should</i>, así que la respuesta corta también: <b>Yes, you should</b>. Nunca mezcles <i>do</i> con un modal.", next: 'h' },
+            ] },
+            h: { say: "Thanks. By the way, which way is the elevator? I've got two suitcases.", opts: [
+              { t: "Go down that hallway, and it's on your right. But it's out of service this morning, so we should take the stairs. I'll take one suitcase.", ok: 2, why: "Direcciones de manual: <b>Go down that hallway</b> + <b>it's on your right</b>, más un consejo con <b>should</b> y una mano con la maleta.", next: 'win' },
+              { t: "It's on the right, at the end of the hallway. But it isn't working today.", ok: 1, why: "Correcta: <b>It's on the right</b>. Con el phrasal verb <b>go down</b> la indicación queda más completa.", next: 'win' },
+              { t: "Go down the hallway and is on the right. But today no works.", ok: 0, why: "En inglés el sujeto no se omite: <b>it's on the right</b>, <b>it isn't working today</b>. Y la negación va con el auxiliar, no con <i>no</i>.", next: 'meh' },
+            ] },
+            win: { say: "You're a lifesaver: seat booked, plenty of time, and the stairs it is. Let's go!", end: true, outcome: 'win', note: 'Pediste direcciones con las fórmulas de la unidad (<b>Can you tell me how to get to…?</b>, <b>Which way is…?</b>, <b>Do you know where … are?</b>), aconsejaste con la fuerza justa (<b>I wouldn\'t…</b>, <b>You should…</b>, <b>Yes, you should</b>) y usaste el vocabulario de transporte (<b>direct route, fare, schedule, departure</b>).' },
+            meh: { say: "Hmm… on the right. OK, I'll find it. Thanks, Aldo.", end: true, outcome: 'meh', note: 'Buen consejo de viaje de principio a fin, pero la última indicación se entendió a medias: en inglés nunca se omite el sujeto (<b>it\'s on the right</b>, <b>it isn\'t working</b>) y la negación va con el auxiliar, no con <i>no</i>.' },
+            fail: { say: "Five o'clock taxi it is. …Aldo? It's ten past six and I'm still on Javier Prado. I missed my flight.", end: true, outcome: 'fail', note: 'Un consejo mal construido (<i>should to</i>) y mal pensado (taxi a las cinco) tiene consecuencias. La unidad te da los grados: <b>You could…</b> (es posible) → <b>You should…</b> (buena idea) → <b>I\'d…</b> (yo lo haría así) → <b>I wouldn\'t… / You shouldn\'t…</b> (no lo hagas). Y siempre modal + infinitivo sin <i>to</i>.' },
+          } },
         ] },
       ] },
     ],

@@ -57,7 +57,7 @@ window.UNIT_DATA['ingles4/unitN'] = {
   source: 'Evolve · Unit N · <tema>',
   description: '<una línea en español, texto plano; solo se admiten <i> y <b>>',
   map: [['Área', 'Contenido del curso', 'Aquí practicas'], ...],   // tabla de la portada, 3 columnas
-  cando: ['Puedo contar un plan que salió mal con <i>was going to</i>', ...],  // opcional: checklist "Puedo…" (CEFR can-do) de la portada
+  cando: ['Contar un plan que salió mal con <i>was going to</i>', ...],  // opcional: checklist "Puedo…" (CEFR can-do) de la portada; cada ítem en infinitivo, la portada pone el "Puedo…"
   weak: ['<html: error propio detectado>'], weakLink: '…',         // solo si hay ejercicios resueltos del alumno
   sections: [
     { id:'home', label:'Inicio', render:'overview', activities:[] },   // siempre primero, sin actividades
@@ -68,7 +68,7 @@ window.UNIT_DATA['ingles4/unitN'] = {
 
 Tipos de actividad (`type`): `notes` (html) · `flashcards` (cards:{cat,w,def,ex,ask,say?}) · `match` (pairs, round) · `mcq` (items:{q,opts,a,why,blank?} o `build(util)`, `pool`) · `dictation` (sentences) · `dialog` (lines:[[speaker,text]], questions) · `speaking` (challenges:{t,task,model,tags}) · `stress` (pairs:[[label,say]]) · `reading` (paragraphs, main, infer, think) · `fix` (items:{bad,good,why}) · `soft` (items:{h,a}, pattern RegExp, missing) · `comment` (checks:{label, re|words}, min, max, need) · `order` (dialogs:[["Nombre: texto"]]) · `recall` (cards como flashcards, pool) · `cloze` (sentences, gaps) · `build` (sentences) · `say` (sentences: escucha, dilo y compara con reconocimiento de voz; autoevaluación si no hay) · `timed` (paragraphs, main, infer, key: lectura cronometrada con ppm, comprensión e historial en `et-reading`) · `roleplay` (scenes:{t,you,partner,role,goal,start,nodes}: conversación con ramas; cada nodo tiene `say` de la otra persona y 3 `opts` {t, ok:2|1|0, why, next}, o `end:true, outcome:'win'|'meh'|'fail', note`; la rama sigue la opción elegida, los fallos entran al cuaderno como mcq y la frase buena se practica con Dilo). Los cinco anteriores a `roleplay` se generan solos (actividades virtuales: `say` en speak con las frases de los modelos de los retos + dictado; `timed` en read con el texto y las preguntas del `reading`); solo decláralos a mano si quieres frases o tarjetas distintas.
 
-`cando`: las ocho unidades de Inglés 4 ya lo tienen (5-6 frases "Puedo…" con HTML ligero). Al crear una unidad nueva, escríbelo a partir de la gramática, el vocabulario y el functional language de la unidad; el estado de las casillas vive en `et-cando`.
+`cando`: las 18 unidades (Inglés 3 y 4) ya lo tienen (5-6 ítems en infinitivo con HTML ligero; la portada imprime el encabezado "Puedo…"). Todas tienen también un `roleplay` en Social. Al crear una unidad nueva, escríbelo a partir de la gramática, el vocabulario y el functional language de la unidad; el estado de las casillas vive en `et-cando`.
 
 Reglas que el validador comprueba y que te ahorran bugs:
 - En `mcq`, **`a` es el string de la opción correcta**, no un índice; sin opciones repetidas; `blank:1` ⇔ la pregunta contiene `___` (solo se sustituye la primera).

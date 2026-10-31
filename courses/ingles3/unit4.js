@@ -80,6 +80,14 @@
       ['Writing', 'Email de invitación con conectores de orden (<i>to start, then, after that, finally</i>)', 'Corrige tus propios errores + escribe la invitación con checklist'],
       ['Social English', 'Ofrecer y responder a <i>reassurance</i>; <i>at least</i> para ver el lado bueno', 'Ordenar diálogos, respuesta rápida, reescribir con <i>at least</i>'],
     ],
+    cando: [
+      'Decir cómo me siento y cómo es lo que lo provoca sin confundir <i>-ed</i> e <i>-ing</i> (<i>I was surprised · it was surprising</i>)',
+      'Hacer predicciones con <i>will</i> cuando es mi opinión y con <i>be going to</i> cuando tengo pruebas, y negarlas con <i>I don\'t think…</i>',
+      'Tomar una decisión en el momento con <i>I\'ll…</i> y contar un plan ya acordado con el present continuous (<i>I\'m meeting up with…</i>)',
+      'Organizar planes con <i>arrange, check, deal with, look into, get in touch with, let someone know</i> y usar sus pasados (<i>forgot, dealt with, thought about</i>)',
+      'Tranquilizar a alguien (<i>There\'s no need to worry. These things happen sometimes.</i>) y responder al ánimo (<i>I really appreciate it · I hope so</i>)',
+      'Señalar el lado bueno de un problema con <i>At least…</i> y ordenar una invitación con <i>to start, after that, finally</i>',
+    ],
     weak: [
       '<b>Pasado simple regular</b>: escribiste <i>check</i> como pasado de <i>check</i> → <i>check<b>ed</b></i>. Solo <i>forget/let/think</i> son irregulares (<i>forgot, let, thought</i>).',
       '<b>that reminds me</b>: escribiste <i>"that remind me"</i> → <i>that <b>reminds</b> me</i> (tercera persona con <i>-s</i>).',
@@ -352,6 +360,63 @@
           { h: '"Only eight people came to the cleanup."', a: 'Don’t worry about it. At least eight people care about the park.' },
           { h: '"I failed my driving test again."', a: 'These things happen sometimes. At least you know the route now.' },
           { h: '"They moved me to the Denver office for a year."', a: 'It’ll be fine. At least it’s an interesting city, and the pay is good.' },
+        ] },
+        { label: 'Role-play', type: 'roleplay', eyebrow: 'Role-play con ramas', title: 'El despliegue que salió mal', intro: 'Viernes por la tarde en el banco. Diego, el desarrollador junior de tu equipo, acaba de romper un servicio en producción y está hundido. Tranquilízalo sin restarle importancia al problema, decide sobre la marcha qué hacer y, cuando te toque a ti meter la pata, acepta el ánimo con naturalidad.', scenes: [
+          { t: 'Viernes en producción', you: 'Aldo, desarrollador senior', partner: 'Diego', role: 'desarrollador junior de tu equipo, muy nervioso', goal: 'Ofrece <i>reassurance</i> con las frases de la unidad, señala el lado bueno con <b>at least</b>, toma decisiones con <b>I\'ll…</b> y responde al ánimo cuando Diego te lo devuelva.', start: 'a', nodes: {
+            a: { say: "Aldo, I think I broke the payments service. The deploy failed and the dashboard is all red. I feel terrible.", opts: [
+              { t: "There's no need to worry. These things happen sometimes. Let's look into it together.", ok: 2, why: "Dos frases de ánimo de la unidad seguidas, <b>There's no need to worry</b> y <b>These things happen sometimes</b>, más un verbo de planes: <b>look into</b> (investigar). Calmas y pasas a la acción.", next: 'b' },
+              { t: "Don't worry about it. Show me the logs.", ok: 1, why: "Correcta: <b>Don't worry about it</b> es una de las fórmulas. Un poco seca para alguien que dice <i>I feel terrible</i>; una segunda frase de ánimo ayudaría.", next: 'b' },
+              { t: "Don't preoccupy. Is not a problem.", ok: 0, why: "<i>Preoccupy</i> es un calco de <i>preocuparse</i>: en inglés es <b>don't worry</b>. Y falta el sujeto: <b>It's</b> no problem.", next: 'a2' },
+            ] },
+            a2: { say: "Sorry, what? I… I really don't know what to do right now.", opts: [
+              { t: "Sorry, I mean: don't worry about it. It'll be fine. I'll check the logs with you right now.", ok: 2, why: "Reparas la frase con dos fórmulas de la unidad, <b>Don't worry about it</b> e <b>It'll be fine</b>, y decides en el momento con <b>I'll check</b>.", next: 'b' },
+              { t: "I mean, it's no problem. Let's check the logs.", ok: 1, why: "Correcta: <b>It's no problem</b> quita hierro. Funciona, aunque <i>It'll be fine</i> tranquiliza más cuando la persona está asustada.", next: 'b' },
+              { t: "Calm down. You should have tested it.", ok: 0, why: "Reprochar en ese momento no es <i>reassurance</i>, es lo contrario. Y <i>calm down</i> suele irritar más que calmar.", next: 'fail' },
+            ] },
+            b: { say: "OK… It's the second time this month. The manager is going to be so annoyed with me.", opts: [
+              { t: "Maybe, but at least you noticed it before the customers did. I'll let her know myself.", ok: 2, why: "<b>At least</b> introduce el lado bueno (la estrategia de la unidad) y <b>I'll let her know</b> es una decisión tomada al hablar con el verbo de planes <i>let someone know</i>.", next: 'c' },
+              { t: "She might be annoyed, but you'll be fine. I'll talk to her.", ok: 1, why: "Correcta: <b>You'll be fine</b> es una fórmula de la unidad y <i>I'll talk to her</i> es una decisión espontánea bien formada. Falta señalar el lado bueno.", next: 'c' },
+              { t: "Yes, she will be very annoying.", ok: 0, why: "Confundiste <b>annoyed</b> (cómo se siente ella) con <b>annoying</b> (pesada, que molesta). Le acabas de decir que la jefa es insoportable… y además le das la razón en lo peor.", next: 'b2' },
+            ] },
+            b2: { say: "Annoying? Wait, you mean she's going to be angry with me?", opts: [
+              { t: "Sorry, I meant annoyed, not annoying. But at least you caught it early. I'll let her know.", ok: 2, why: "Corriges el adjetivo (<b>annoyed</b> = sentimiento de la persona) y recuperas la escena con <b>at least</b> + <b>I'll let her know</b>.", next: 'c' },
+              { t: "I meant annoyed. Don't worry about it, I'll deal with her.", ok: 1, why: "Correcta: <b>Don't worry about it</b> y <i>deal with</i> (ocuparse de). Quizá un poco brusco hablar de la jefa como un problema que hay que <i>deal with</i>.", next: 'c' },
+              { t: "Annoyed, annoying, same thing. Just fix it.", ok: 0, why: "No es lo mismo: <b>-ed</b> es cómo se siente alguien, <b>-ing</b> es cómo es la cosa que lo provoca. Y <i>Just fix it</i> deja a Diego solo con el problema.", next: 'c' },
+            ] },
+            c: { say: "Thanks. So what do we do now? I can roll back, but we lose this afternoon's data.", opts: [
+              { t: "Look at the error rate, it's going to get worse if we wait. Roll back now. I'll get in touch with the data team.", ok: 2, why: "Predicción con evidencia a la vista: <b>it's going to get worse</b>. Decisión en el momento: <b>I'll get in touch with</b> (ponerse en contacto con, verbo de la unidad).", next: 'd' },
+              { t: "Roll back now. I'll call the data team.", ok: 1, why: "Correcta: decisión espontánea con <b>I'll</b>. Explicar por qué (<i>it's going to get worse</i>) habría tranquilizado más a Diego.", next: 'd' },
+              { t: "Look at the dashboard, it will get worse. I call the data team.", ok: 0, why: "Con una prueba delante (el dashboard) va <b>be going to</b>, no <i>will</i>. Y una decisión tomada ahora mismo lleva <b>I'll call</b>, no el presente simple.", next: 'c2' },
+            ] },
+            c2: { say: "Sorry, you call them… when? Do you want me to do it?", opts: [
+              { t: "No, I'll do it right now. You deal with the rollback.", ok: 2, why: "Ahora sí: <b>I'll do it</b> es la decisión en el momento de hablar, y repartes tareas con <b>deal with</b>.", next: 'd' },
+              { t: "I'm going to call them now. You do the rollback.", ok: 1, why: "Correcta, se entiende. Pero para algo que acabas de decidir lo más natural es <b>I'll call them</b>; <i>going to</i> suena a plan previo.", next: 'd' },
+              { t: "I call them now, don't worry.", ok: 0, why: "Sigue el mismo error: el presente simple no sirve para una decisión que tomas ahora. <b>I'll call them now</b>.", next: 'd' },
+            ] },
+            d: { say: "Done. Rolled back. Everything's green again. Honestly, Aldo, I feel so bad about this.", opts: [
+              { t: "Don't worry about it. It's no problem. And at least now you know the rollback by heart.", ok: 2, why: "<b>Don't worry about it</b> + <b>It's no problem</b> quitan importancia, y <b>at least</b> cierra con el lado bueno. Es exactamente la secuencia de la unidad.", next: 'e' },
+              { t: "These things happen sometimes. You'll be fine.", ok: 1, why: "Correcta y amable: dos fórmulas de <i>reassurance</i>. Sin el <i>at least</i>, pero cumple.", next: 'e' },
+              { t: "You're right, it was really bad. Don't repeat it.", ok: 0, why: "Confirmar que fue terrible y rematar con una orden hunde a quien ya se siente mal. Aquí toca <b>Don't worry about it</b>.", next: 'd2' },
+            ] },
+            d2: { say: "…OK. I guess I'll start updating my CV, then.", opts: [
+              { t: "Hey, that came out wrong. There's no need to worry. Nobody is losing their job over a rollback.", ok: 2, why: "Reparas el tono (<i>that came out wrong</i>) y vuelves a la fórmula: <b>There's no need to worry</b>, con un motivo concreto.", next: 'e' },
+              { t: "No, no. Don't worry about it. It's fine.", ok: 1, why: "Correcta: <b>Don't worry about it</b>. Breve; un motivo (<i>nobody loses their job over this</i>) habría ayudado.", next: 'e' },
+              { t: "Maybe. The manager decides.", ok: 0, why: "Lo dejas caer. Después de un reproche, la única salida era tranquilizar de verdad; esto confirma su miedo.", next: 'fail' },
+            ] },
+            e: { say: "Thanks, Aldo. I really appreciate it. By the way, are you still meeting with the manager at three?", opts: [
+              { t: "Oh no, I totally forgot! I'm picking up the ingredients for our restaurant at three. My wife reminded me twice.", ok: 2, why: "Tres piezas de la unidad: <b>I totally forgot</b> (pasado irregular), <b>I'm picking up… at three</b> (plan ya acordado → present continuous) y <b>reminded me</b> (recordarle algo a alguien).", next: 'f' },
+              { t: "Oh no, I forgot. I have to go to the market at three for the restaurant.", ok: 1, why: "Correcta: <b>forgot</b> bien conjugado. Para un plan con hora fijada, el present continuous (<i>I'm going to the market at three</i>) es lo más natural.", next: 'f' },
+              { t: "Oh no, I forget! I will pick up the ingredients at three, my wife remembered me.", ok: 0, why: "Tres fallos típicos: el pasado es <b>forgot</b>; un plan acordado va en present continuous (<b>I'm picking up</b>), no con <i>will</i>; y <i>remembered me</i> es un calco: <b>reminded me</b>.", next: 'f' },
+            ] },
+            f: { say: "Don't worry about it. I'll go to the meeting and let her know you're joining later. It'll be fine.", opts: [
+              { t: "Thanks, I really appreciate it. I'll get in touch with her as soon as I'm back.", ok: 2, why: "Respondes al ánimo con la fórmula de la unidad, <b>I really appreciate it</b>, y añades una decisión en el momento: <b>I'll get in touch with her</b>.", next: 'win' },
+              { t: "I hope so. Thanks, Diego.", ok: 1, why: "Correcta: <b>I hope so</b> acepta el ánimo sin sonar del todo seguro. Un poco corta para un favor así; <i>I really appreciate it</i> encaja mejor.", next: 'win' },
+              { t: "I appreciate. I am sorry so much.", ok: 0, why: "<i>Appreciate</i> necesita objeto: <b>I appreciate it</b>. Y el orden es <b>I'm so sorry</b>, no <i>sorry so much</i>.", next: 'meh' },
+            ] },
+            win: { say: "Go, go! Say hi to your wife. And thanks again, really.", end: true, outcome: 'win', note: 'Tranquilizaste con las fórmulas de la unidad (<b>There\'s no need to worry</b>, <b>These things happen sometimes</b>, <b>Don\'t worry about it</b>), señalaste el lado bueno con <b>at least</b>, decidiste sobre la marcha con <b>I\'ll…</b> (<i>let her know, get in touch with</i>) y aceptaste el ánimo con <b>I really appreciate it</b>. Fíjate: el plan con hora fue en present continuous (<i>I\'m picking up… at three</i>) y la decisión del momento con <i>will</i>.' },
+            meh: { say: "Uh… sure. Go, you'll be late!", end: true, outcome: 'meh', note: 'Hiciste bien todo el rescate, pero la última frase se cayó: <b>I really appreciate it</b> lleva siempre el <i>it</i>, y se dice <b>I\'m so sorry</b>. Diego lo entendió; un nativo lo nota.' },
+            fail: { say: "Right. I'll go and finish the rollback report… and my CV.", end: true, outcome: 'fail', note: 'Reprochar o dejar caer a alguien que ya se siente fatal no es <i>reassurance</i>. La unidad te da la secuencia: calmar (<b>There\'s no need to worry</b> / <b>Don\'t worry about it</b>), normalizar (<b>These things happen sometimes</b>), señalar lo bueno (<b>At least…</b>) y actuar (<b>I\'ll look into it</b>).' },
+          } },
         ] },
       ] },
     ],

@@ -78,6 +78,14 @@
       ['Writing', 'Review your writing skills: perfil personal', 'Corrige tus propios errores, reescribe en forma indirecta, checklist'],
       ['Social English', 'Lesson 3 "Nice talking to you": presentaciones, cómo conoces a alguien, cerrar una conversación, <i>hold on a sec</i>', 'Ordenar diálogos y responder rápido'],
     ],
+    cando: [
+      "Presentarme y presentar a alguien (<i>Hello, I'm Aldo</i> · <i>This is Nina, Jodi's coworker</i>) y decir cómo conozco a una persona (<i>How do you know Jodi? — I work with her</i>)",
+      "Describir la personalidad de alguien con los adjetivos de la unidad (<i>reliable, easygoing, generous, honest, selfish…</i>) y dar un ejemplo concreto",
+      "Dar información personal con <i>be born / be raised / be married to / be single / be into / live alone / retire</i>",
+      "Elegir la palabra interrogativa correcta: <i>which</i> (grupo cerrado), <i>whose</i> (posesión), <i>how</i> (manera), <i>where / when / why / what</i>",
+      "Hacer preguntas indirectas para sonar más educado (<i>Can you tell me where you were raised?</i> · <i>I wonder if…</i>) con orden de afirmativa, sin <i>do/does/did</i> y con <i>if</i> en las de sí/no",
+      "Reaccionar a <i>I've heard a lot about you</i> (<i>Good things, I hope!</i>), interrumpir con <i>Hold on a sec</i> y cerrar una conversación (<i>I should let you go. It was nice to meet you</i>)",
+    ],
     weak: [
       '<b>Orden de palabras</b>: escribiste <i>"I want to find out how expensive <s>is</s>…"</i> → <i>how expensive <b>it is</b></i>. En una pregunta indirecta el orden es de <b>frase afirmativa</b>: sujeto + verbo.',
       '<b>Orden de palabras</b>: <i>"I\'d like to know who <s>are those people</s>."</i> → <i>who <b>those people are</b></i>.',
@@ -346,6 +354,63 @@
           { q: 'Presentas a tu hermana Mia a un grupo.', opts: ["This is Mia, my sister.", 'Here you have Mia.', 'Mia is presented.'], a: 'This is Mia, my sister.', why: 'Fórmula de presentación: <b>This is + nombre + relación</b>.' },
           { q: 'Tienes que irte porque llegas tarde.', opts: ['Sorry, I have to go now.', 'I am going out.', 'Let you go, sorry.'], a: 'Sorry, I have to go now.', why: 'Fórmula fija para marcharte con educación.' },
           { q: 'Te presentas a alguien en una fiesta por primera vez.', opts: ["Hello, I'm Aldo.", 'Hello, my name is being Aldo.', 'Hello, do you know me?'], a: "Hello, I'm Aldo.", why: 'Presentación simple y natural: <i>Hello, I\'m…</i>' },
+        ] },
+        { label: 'Role-play', type: 'roleplay', eyebrow: 'Role-play con ramas', title: 'Almuerzo de bienvenida en el banco', intro: 'El banco recibe al equipo de Toronto con un almuerzo y Rodrigo, tu jefe, ha hablado de ti. Una desarrolladora se te acerca. Preséntate, di cómo conoces a Rodrigo, reacciona a <i>I\'ve heard a lot about you</i>, pregunta con educación (preguntas indirectas) y cierra la conversación sin sonar brusco. Ojo: es la primera vez que la ves.', scenes: [
+          { t: 'En el almuerzo', you: 'Aldo, desarrollador senior del banco', partner: 'Emma', role: 'desarrolladora del equipo de Toronto; trabaja con Rodrigo en remoto', goal: 'Preséntate, descubre cómo conoce a Rodrigo, responde con gracia a lo que ha oído de ti, pregunta por su vida con preguntas indirectas y despídete con la fórmula correcta para una primera vez.', start: 'a', nodes: {
+            a: { say: "Hi! I don't think we've met. I'm Emma, from the Toronto team.", opts: [
+              { t: "Hello, I'm Aldo. I'm one of the senior developers here. How do you know Rodrigo?", ok: 2, why: "Presentación de la unidad (<b>Hello, I'm…</b>) y la pregunta más segura para arrancar: <b>How do you know Rodrigo?</b>", next: 'b' },
+              { t: "Hi, Aldo. Nice to meet you.", ok: 1, why: "Correcta y amable, pero deja que ella haga todo el trabajo. Añade <b>How do you know…?</b> para abrir la conversación.", next: 'b' },
+              { t: "Hello, I am Aldo. I have 38 years and I work here.", ok: 0, why: "Calco de <i>tengo 38 años</i>: en inglés la edad va con <i>be</i> (<b>I'm 38</b>). Además, la edad no se suelta al presentarse.", next: 'a2' },
+            ] },
+            a2: { say: "Thirty-eight years? Oh, you mean you're 38! Sorry, my Spanish is terrible.", opts: [
+              { t: "Ha, yes, I'm 38. That was my Spanish talking. So, how do you know Rodrigo?", ok: 2, why: "Te ríes del fallo, lo corriges (<b>I'm 38</b>) y recuperas el guion con <b>How do you know Rodrigo?</b>", next: 'b' },
+              { t: "Yes, I'm 38. Sorry about that.", ok: 1, why: "Correcta. Falta devolver la pelota con una pregunta para que la conversación siga.", next: 'b' },
+              { t: "No problem. And you? Which is your age?", ok: 0, why: "Dos problemas: preguntar la edad a alguien recién conocido suena <i>nosy</i>, y <i>which</i> es para un grupo cerrado; la forma sería <b>How old are you?</b>", next: 'b' },
+            ] },
+            b: { say: "I work with him on the payments project, remotely. Actually, I've heard a lot about you!", opts: [
+              { t: "Good things, I hope!", ok: 2, why: "La respuesta de la unidad a <b>I've heard a lot about you</b>: <b>Good things, I hope!</b> Simpática y sin arrogancia.", next: 'c' },
+              { t: "Oh, really? That's nice to hear.", ok: 1, why: "Correcta y modesta, parecida a <i>Oh, that's nice</i>. La fórmula con humor queda más natural aquí.", next: 'c' },
+              { t: "Yes, I know. Everybody knows me here.", ok: 0, why: "Suena arrogante. A un cumplido se responde con humor o modestia, no confirmándolo.", next: 'b2' },
+            ] },
+            b2: { say: "Ha… OK. Well, Rodrigo did say you were the honest type.", opts: [
+              { t: "Sorry, that came out wrong. Good things, I hope!", ok: 2, why: "Reparas el tono y usas la fórmula de la unidad: <b>Good things, I hope!</b>", next: 'c' },
+              { t: "Sorry, bad joke. I'm always a bit nervous at these events.", ok: 1, why: "Correcta y humana: usas <b>nervous</b> del vocabulario para explicarte. Funciona.", next: 'c' },
+              { t: "I don't joke. I am a serious person.", ok: 0, why: "Insistir en el tono seco después de un aviso cierra la conversación. <b>Serious</b> está bien como adjetivo, pero no como excusa.", next: 'fail' },
+            ] },
+            c: { say: "He said you built half the payments system. And that you run a food business with your wife?", opts: [
+              { t: "That's right! My wife and I have a small food business on weekends. I'm really into cooking. And you? Can you tell me where you were raised?", ok: 2, why: "Das información personal con <b>be into</b> y preguntas con educación usando la pregunta indirecta de la unidad: <b>Can you tell me where you were raised?</b>", next: 'd' },
+              { t: "Yes, with my wife. Where are you from?", ok: 1, why: "Correcta. La pregunta directa está bien, pero la indirecta (<i>Can you tell me…?</i>) suena más suave con alguien nuevo.", next: 'd' },
+              { t: "Yes. Are you married? Do you live alone?", ok: 0, why: "Vocabulario correcto, pregunta equivocada: estado civil y con quién vive son temas <i>nosy</i> en inglés. Y menos a bocajarro.", next: 'c2' },
+            ] },
+            c2: { say: "Wow, straight to the personal questions!", opts: [
+              { t: "Sorry, that was too direct. I'd just like to know a bit more about you. Where were you raised?", ok: 2, why: "Te disculpas, usas un arranque suave (<b>I'd like to know…</b>) y cambias a un tema seguro: <b>Where were you raised?</b>", next: 'd' },
+              { t: "Sorry, I was just trying to make conversation.", ok: 1, why: "Correcta como disculpa, pero no propones otro tema; ella tiene que rescatar la charla.", next: 'd' },
+              { t: "Why? Is a secret?", ok: 0, why: "Falta el sujeto (<b>Is it a secret?</b>) y el tono es de reproche. Después de un aviso así, toca disculparse.", next: 'fail' },
+            ] },
+            d: { say: "I was born in Lima, actually! But I was raised in Toronto. My parents moved when I was three.", opts: [
+              { t: "No way! I was born and raised in Lima. Which neighborhood did your family live in?", ok: 2, why: "<b>I was born and raised in</b> con el verbo <i>be</i> en su sitio, y <b>which</b> porque preguntas dentro de un grupo concreto: los barrios de Lima.", next: 'e' },
+              { t: "Really? So you're Peruvian too. Do you still have family here?", ok: 1, why: "Correcta y natural. Se pierde la ocasión de contar lo tuyo (<i>I was born in Lima too</i>).", next: 'e' },
+              { t: "No way! I born in Lima too. Where you live now?", ok: 0, why: "Dos errores típicos: <b>I was born</b> (siempre con <i>be</i>) y la pregunta sin auxiliar: <b>Where do you live now?</b>", next: 'e' },
+            ] },
+            e: { say: "Miraflores, I think. Hey, is that your phone? It's been buzzing for a while.", opts: [
+              { t: "Oh! Hold on a sec. It's my wife, about a big order for Saturday. Sorry about that.", ok: 2, why: "<b>Hold on a sec</b> es la expresión informal de la unidad para pedir un momento sin sonar brusco. Luego te disculpas y explicas.", next: 'f' },
+              { t: "Sorry, one moment, please.", ok: 1, why: "Correcta y educada, algo más formal. En una charla relajada <i>Hold on a sec</i> suena más natural.", next: 'f' },
+              { t: "Wait me a second.", ok: 0, why: "Calco de <i>espérame</i>: <i>wait</i> no lleva objeto directo. Sería <b>Wait a second</b> o <b>Hold on a sec</b>.", next: 'f' },
+            ] },
+            f: { say: "Everything OK?", opts: [
+              { t: "Yes, all good. Listen, I'd like to know if you have time this week. I could show you the payments system.", ok: 2, why: "Pregunta indirecta de sí/no con <b>if</b> y orden de afirmativa: <b>I'd like to know if you have time</b>. Educado y útil.", next: 'g' },
+              { t: "Yes, all good. Do you have time this week to see the system?", ok: 1, why: "Correcta. La pregunta directa funciona entre colegas; la indirecta suena un punto más cuidada.", next: 'g' },
+              { t: "Yes. I want to know do you have time this week?", ok: 0, why: "Dentro de una pregunta indirecta no va <i>do</i>: <b>I want to know if you have time</b>. Y las de sí/no necesitan <b>if</b>.", next: 'g' },
+            ] },
+            g: { say: "I'd love that. Oh, Rodrigo is waving at me. I think the meeting is starting.", opts: [
+              { t: "I should let you go. It was nice to meet you, Emma.", ok: 2, why: "Cierre perfecto de la unidad: <b>I should let you go</b> + <b>It was nice to meet you</b>, porque es la primera vez que la ves.", next: 'win' },
+              { t: "Sorry, I have to go too. See you in the meeting!", ok: 1, why: "Correcta: <b>Sorry, I have to go</b> es otra fórmula de la unidad. Falta el toque de <i>nice to meet you</i>.", next: 'win' },
+              { t: "It was nice talking to you again.", ok: 0, why: "<b>It was nice talking to you</b> es para alguien que ya conocías, y <i>again</i> lo empeora: acabas de conocerla. Primera vez → <b>nice to meet you</b>.", next: 'meh' },
+            ] },
+            win: { say: "It was nice to meet you too, Aldo. See you in there!", end: true, outcome: 'win', note: 'Te presentaste (<b>Hello, I\'m Aldo</b>), preguntaste <b>How do you know Rodrigo?</b>, respondiste <b>Good things, I hope!</b>, preguntaste con educación (<b>Can you tell me where you were raised?</b>, <b>I\'d like to know if…</b>) y cerraste con <b>I should let you go. It was nice to meet you</b>. Recuerda: primera vez → <i>to meet</i>; si ya os conocíais → <i>talking to you</i>.' },
+            meh: { say: "Again? Ha, I think this is the first time we've met! But yes, nice to meet you, Aldo.", end: true, outcome: 'meh', note: 'Todo bien hasta la despedida: a alguien que acabas de conocer se le dice <b>It was nice to meet you</b>. <i>It was nice talking to you</i> es para gente que ya conocías. Fíjate también en la forma: <i>to meet</i> pero <i>talking</i>.' },
+            fail: { say: "Right… Well, I should let you go. Enjoy the lunch.", end: true, outcome: 'fail', note: 'Emma usa <b>I should let you go</b> para escapar: el tono cerró la puerta. Con alguien nuevo, a un cumplido se responde <b>Good things, I hope!</b>, los temas personales se suavizan con preguntas indirectas (<b>Can you tell me…?</b>, <b>I\'d like to know…</b>) y, si metes la pata, te disculpas en vez de insistir.' },
+          } },
         ] },
       ] },
     ],
