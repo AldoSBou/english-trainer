@@ -757,3 +757,6 @@ select{padding:7px 10px}
 .rp-end.fail{border-color:var(--bad);background:var(--bad-soft)}
 .rp-end .eyebrow{color:inherit}
 .rp-pick .chip b{margin-right:6px;opacity:.7}
+.msg.note{background:transparent;border:1px dashed var(--line-strong);justify-self:stretch;max-width:100%;padding:6px 12px}
+.msg.note .fbk{border-top:0;margin-top:0;padding-top:0}
+.msg.note .fbk summary{color:var(--ink)}

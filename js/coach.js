@@ -1,7 +1,7 @@
 /* ===========================================================
    coach.js — Speaking Coach
-   Conversa por voz sobre los temas del curso, evalúa lo que
-   dices y guarda tus errores para repasarlos.
+   Conversa por voz sobre los temas del curso, improvisa role-plays
+   con la IA, evalúa lo que dices y guarda tus errores para repasarlos.
 
    Tres "proveedores" de inteligencia, por orden de preferencia:
      1) claude  → la página abierta dentro de claude.ai (capacidad `sample`)
@@ -288,6 +288,158 @@ Include up to 6 errors, most important first. Be honest but kind.`;
     };
   }
 
+  /* ================= 1b. ROLE-PLAY LIBRE (improvisado con la IA) ================= */
+  const FREE_SCENES = [
+    { t: 'Llamada al banco por una tarjeta bloqueada', you: 'Cliente', partner: 'Agente de soporte', role: 'atiende la línea de tarjetas; sigue un protocolo y pide datos de verificación', goal: 'Explicar que tu tarjeta fue rechazada en el extranjero, pasar la verificación y conseguir que la desbloqueen hoy.', tags: ["I'm calling because", 'Could you check', 'How long will it take'] },
+    { t: 'Videollamada con mala conexión', you: 'Desarrollador', partner: 'Sam, product manager en EE. UU.', role: 'quiere una actualización rápida; se le corta el audio y a veces no te oye', goal: 'Dar la actualización del sprint, pedir que repita lo que no oíste y acordar el siguiente paso por escrito.', tags: ["You're breaking up", 'Could you repeat that', 'Let me summarize'] },
+    { t: 'Small talk en el ascensor', you: 'Tú', partner: 'Claire, colega de otra oficina', role: 'está de visita una semana; es simpática pero no te conoce', goal: 'Romper el hielo, mantener dos o tres intercambios naturales y despedirte proponiendo un café.', tags: ["How's your week going", 'Have you been to', 'We should'] },
+    { t: 'Pedir un aumento', you: 'Desarrollador senior', partner: 'Tu jefa', role: 'te valora, pero tiene el presupuesto ajustado y va a pedir argumentos concretos', goal: 'Pedir una revisión salarial con argumentos (resultados, mercado) y cerrar con un compromiso concreto de ella.', tags: ["I'd like to talk about", 'Over the last year', 'What would it take'] },
+    { t: 'Explicar un problema técnico a alguien no técnico', you: 'Desarrollador', partner: 'Lorena, gerenta de operaciones', role: 'no sabe de tecnología, está preocupada porque los clientes se quejan y quiere una fecha', goal: 'Explicar sin jerga qué pasó, qué estás haciendo y cuándo estará resuelto, sin prometer de más.', tags: ['In simple terms', 'What this means is', 'Realistically'] },
+    { t: 'Negociar una fecha de entrega', you: 'Líder técnico', partner: 'Mark, cliente', role: 'quiere todo para el viernes; presiona, pero escucha razones', goal: 'Explicar por qué no llega todo, proponer una entrega por partes y conseguir que acepte el nuevo plan.', tags: ['I understand that', 'What we can do is', 'Would that work for you'] },
+    { t: 'Devolver un coche de alquiler con un rayón', you: 'Cliente', partner: 'Empleado del rent-a-car', role: 'revisa el coche con una lista y quiere cobrarte el daño', goal: 'Explicar que el rayón ya estaba, pedir que revisen el informe de entrega y evitar el cargo o reducirlo.', tags: ['It was already there', 'Could you check the report', "I'd like to speak to"] },
+    { t: 'Defender tu tesis ante el jurado', you: 'Tesista', partner: 'Dra. Reyes, miembro del jurado', role: 'escucha con atención y hace preguntas incómodas sobre el método y las limitaciones', goal: 'Resumir tu tesis en tres o cuatro frases y responder a dos preguntas difíciles sin ponerte a la defensiva.', tags: ['The main finding is', "That's a fair point", 'One limitation is'] },
+  ];
+  const MOODS = { amable: 'friendly, patient and helpful', normal: 'realistic: polite but busy, expects clear answers and reacts to vagueness', dificil: 'difficult: impatient and skeptical, raises objections and pushes back (never insulting)' };
+  function scenes() {
+    const out = FREE_SCENES.map(s => ({ ...s, unit: 'Libre' }));
+    for (const c of COURSES.filter(c => c.available)) for (const u of c.units.filter(u => u.available)) {
+      const d = UNIT_DATA[c.id + '/' + u.id]; if (!d) continue;
+      const lbl = c.practical ? `Práctico · ${u.number}` : `${c.title.replace('Inglés ', 'I')} · U${u.number}`;
+      d.sections.forEach(s => s.activities.forEach(a => { if (a.type === 'roleplay') (a.scenes || []).forEach(sc => out.push({ t: strip(sc.t), you: strip(sc.you), partner: strip(sc.partner), role: strip(sc.role), goal: strip(sc.goal), unit: lbl })); }));
+    }
+    return out;
+  }
+  const RULES_RP = (sc, mood, n) => `You are running an improvised spoken role-play for an adult Spanish-speaking English learner (Peru, B1-B2 level). Stay fully in character.
+${sc.custom ? `Situation, as described by the student (may be in Spanish): "${sc.goal}". Decide who the other person is and play that character; the student plays themselves.` : `Situation: "${sc.t}". You play: ${sc.partner}${sc.role ? ` (${sc.role})` : ''}. The student plays: ${sc.you || 'themselves'}.
+The student's goal, in Spanish (do not translate it for them): "${sc.goal}".`}
+Your character is ${MOODS[mood] || MOODS.normal}.
+Rules for your lines ("say"): natural spoken English, 1-3 short sentences, level-appropriate, no lists, no stage directions, never mention that this is practice. React realistically to what the student actually says: if they are vague, rude or off-track, respond as that person really would; if they are clear and polite, move the situation forward. A realistic scene lasts about 6-10 exchanges.${n >= 8 ? ' It is time to bring the conversation to a natural close.' : ''}${n >= 11 ? ' This must be the final exchange: set "done" to true.' : ''}
+The student's messages are speech-to-text transcripts: ignore casing/punctuation and obvious recognizer glitches; judge grammar, vocabulary, register and naturalness.
+Reply with ONLY a JSON object:
+{"say": "<your next line, in character>",
+ "ok": <2|1|0>,
+ "better": "<the student's last turn rewritten the way a fluent speaker would say it in this situation, same meaning, 1-2 sentences; empty if it was already natural>",
+ "why": "<max 15 words in Spanish: why it works or what to change (register, naturalness, grammar)>",
+ "corrections": [{"you": "<exact fragment the student said>", "better": "<fix>", "why": "<max 10 words in Spanish>"}],
+ "hint": "<in Spanish, max 20 words: what the student could do next in the conversation, then one example line in English between quotes>",
+ "done": <true|false>,
+ "outcome": "<win|meh|fail — only when done>",
+ "note": "<only when done: 2 sentences in Spanish: whether the student achieved the goal and the main thing to improve>"${sc.custom && n === 0 ? ',\n "partner": "<who you are playing, in Spanish, max 6 words>",\n "goal": "<the student\'s goal in this situation, in Spanish, one sentence>"' : ''}}
+"ok": 2 = natural and appropriate for the situation; 1 = understandable but awkward, too direct or indirect, or with small errors; 0 = a real error, inappropriate, or did not answer. Max 2 corrections, most important first; empty array if none. Set "done" to true when the goal is clearly achieved, clearly failed (your character would end the interaction) or the conversation reached its natural end.`;
+
+  function renderRoleplay(root, ctx) {
+    const all = scenes(); const SHOW = 12;
+    let sc = null, mood = 'normal', turns = [], n = 0, hits = 0, lines = [], polished = [], rec = null, ctl = null, secs = 0, tmr = null, hint = '', over = false, speakOn = load(LS.auto, true);
+    root.innerHTML = `<div class="card"><div class="eyebrow" style="color:var(--coral)">Role-play libre · improvisa con la IA</div><h2>Sin opciones: di lo que tú dirías</h2>
+      <p class="muted small intro">Elige una situación (o inventa la tuya). El otro personaje te habla y tú respondes con tu voz. No hay tres réplicas para elegir: la IA reacciona a lo que digas de verdad, te enseña cómo lo diría un nativo y al final te dice si conseguiste tu objetivo.</p>
+      <div class="ai-state small" id="aiState4">Comprobando la IA…</div>
+      <div class="row" style="margin:6px 0 10px"><span class="small"><b>El otro personaje es:</b></span><div class="chips" id="rpMood">${[['amable', '🙂 Amable'], ['normal', '😐 Normal'], ['dificil', '😤 Difícil']].map(([k, l]) => `<button class="chip small ${k === mood ? 'sel' : ''}" data-m="${k}">${l}</button>`).join('')}</div></div>
+      <div class="chips rp-pick" id="rpScenes">${all.map((s, i) => `<button class="chip ${i >= SHOW ? 'more' : ''}" data-i="${i}" ${i >= SHOW ? 'hidden' : ''}><b>${esc(s.unit)}</b>${esc(s.t)}</button>`).join('')}${all.length > SHOW ? `<button class="chip ghost" id="rpMore">+ ${all.length - SHOW} situaciones más</button>` : ''}</div>
+      <div class="row" style="margin-top:10px"><input type="text" id="rpCustom" placeholder="…o describe tu situación: con quién hablas y qué quieres conseguir" style="flex:1;min-width:220px"><button class="btn ghost" id="rpUseCustom">Improvisar</button></div>
+    </div>
+    <div class="card" id="rpCard" hidden>
+      <div class="row between"><div class="rp-head" style="flex:1"></div><label class="small toggle"><input type="checkbox" id="rpAuto" ${speakOn ? 'checked' : ''}> Leer en voz alta</label></div>
+      <div class="chat rp-log" id="rpLog"></div>
+      <div class="rp-io">
+        <div class="row" style="margin-top:10px"><textarea id="rpIn" placeholder="Habla con el micrófono o escribe aquí lo que dirías…" style="min-height:64px;flex:1 1 240px"></textarea></div>
+        <div class="row" style="margin-top:8px">${micBtn('r-mic')}<button class="btn" id="rpSend">Enviar</button><button class="btn ghost" id="rpStop" hidden>⏹ Parar</button><span class="small muted" id="rpSecs"></span><button class="btn ghost" id="rpHintBtn">💡 Pista</button><button class="lnk" id="rpQuit" style="margin-left:auto">Terminar aquí</button></div>
+        <div class="fb" id="rpHint"></div>
+      </div>
+      <div id="rpEnd"></div>
+    </div>`;
+    AI.init().then(p => { $('#aiState4', root).innerHTML = p === 'local' ? '⚠️ <b>Sin IA conectada.</b> Improvisar necesita Claude o una API key (pestaña <b>Ajustes IA</b>). Mientras tanto tienes los <a href="#/method/roleplay">role-plays con ramas</a>, que funcionan sin conexión.' : `✅ IA: <b>${AI.label()}</b>`; });
+
+    const log = $('#rpLog', root), input = $('#rpIn', root), endBox = $('#rpEnd', root), io = $('.rp-io', root);
+    const me = () => (sc.you || 'Tú').split(/[,(·]/)[0].trim(), who = () => (sc.partner || 'La otra persona').split(/[,(·]/)[0].trim();
+    const bubble = (role, name, text) => { const d = document.createElement('div'); d.className = 'msg ' + role; d.innerHTML = `<b>${esc(name)}:</b> ${esc(text)}${role === 'tutor' ? ' <button class="lnk rp-say" title="Escuchar">🔊</button>' : ''}`; if (role === 'tutor') $('.rp-say', d).onclick = () => ctx.say(text, 1, 1); log.appendChild(d); log.scrollTop = log.scrollHeight; return d; };
+    const head = () => { $('.rp-head', root).innerHTML = `<div class="rp-goal"><div class="eyebrow">${esc(sc.t)}</div><p class="small" style="margin:4px 0"><b>Tú:</b> ${esc(sc.you || 'Tú')} · <b>${esc(sc.partner || 'La otra persona')}:</b> ${esc(sc.role || '')}</p><p class="small" style="margin:0"><b>Objetivo:</b> ${esc(sc.goal)}</p>${sc.tags?.length ? `<div class="tags" style="margin-top:6px">${sc.tags.map(t => `<span class="tag">${esc(t)}</span>`).join('')}</div>` : ''}</div>`; };
+    const stopAll = () => { if (rec) { try { rec.stop(); } catch (e) { } rec = null; } ctl?.abort(); clearInterval(tmr); };
+
+    async function start(s) {
+      await AI.init(); if (AI.provider === 'local') { ctx.toast('Conecta una IA en Ajustes IA para improvisar'); return; }
+      stopAll(); sc = { ...s }; turns = []; n = 0; hits = 0; lines = []; polished = []; hint = ''; over = false; log.innerHTML = ''; endBox.innerHTML = ''; io.hidden = false; $('#rpHint', root).className = 'fb';
+      $$('#rpScenes .chip', root).forEach(c => c.classList.toggle('sel', all[+c.dataset.i] === s));
+      $('#rpCard', root).hidden = false; head(); $('#rpCard', root).scrollIntoView({ behavior: 'smooth', block: 'start' });
+      const wait = bubble('tutor', who(), '…'); $('.rp-say', wait)?.remove();
+      try {
+        const r = await ask(`${RULES_RP(sc, mood, 0)}\n\nThe student has not spoken yet. Start the scene with your character's opening line. Use "ok": 2, "better": "", "why": "", "corrections": [] and "done": false.`, []);
+        if (sc.custom) { if (r.partner) sc.partner = String(r.partner); if (r.goal) sc.goal = String(r.goal); head(); }
+        wait.remove(); partner(r);
+      } catch (e) { wait.innerHTML = `<span class="muted">${errCopy(e.code)}</span>`; }
+    }
+    async function ask(rules, hist) {
+      ctl = new AbortController(); $('#rpStop', root).hidden = false; $('#rpSend', root).disabled = true;
+      try { return await AI.chat([{ role: 'user', content: rules }, ...hist], { json: true, signal: ctl.signal, tier: 'quick' }); }
+      finally { ctl = null; $('#rpStop', root).hidden = true; $('#rpSend', root).disabled = false; }
+    }
+    function partner(r) {
+      const say = String(r.say || '').trim(); hint = String(r.hint || '').trim();
+      if (say) { bubble('tutor', who(), say); lines.push([1, say]); polished.push([1, say]); turns.push({ role: 'assistant', content: say }); if (speakOn) ctx.say(say, 1, 1); }
+      if (r.done) finish(r.outcome, r.note); else input.focus();
+    }
+    function feedback(text, r) {
+      const ok = [0, 1, 2].includes(+r.ok) ? +r.ok : 1, better = String(r.better || '').trim(), corr = (Array.isArray(r.corrections) ? r.corrections : []).filter(c => c && c.you && c.better).slice(0, 2);
+      if (ok === 2) hits++;
+      const line = ok < 2 && better ? better : text;
+      const d = document.createElement('div'); d.className = 'msg note'; d.innerHTML = `<details class="fbk" ${ok < 2 ? 'open' : ''}><summary>${ok === 2 ? '✔ Natural' : ok === 1 ? '≈ Se entiende, pero se puede decir mejor' : '✘ Revisa esto'}${r.why ? ' · ' + esc(r.why) : ''}</summary>
+        ${ok < 2 && better ? `<p class="small" style="margin:6px 0"><b>Así lo diría un nativo:</b> <i>${esc(better)}</i></p>` : ''}${corr.length ? corrHtml(corr) : ''}
+        ${ok < 2 && better ? `<div class="row" style="margin-top:6px"><button class="btn ghost sm rp-play">▶ Escuchar</button>${Speech.supported ? '<button class="btn warm sm rp-rec">🎤 Dilo</button>' : ''}</div><div class="fb rp-said"></div>` : ''}</details>`;
+      log.appendChild(d); log.scrollTop = log.scrollHeight;
+      const pl = $('.rp-play', d); if (pl) pl.onclick = () => ctx.say(line, 1);
+      const rb = $('.rp-rec', d); let rr = null; if (rb) rb.onclick = () => {
+        if (rr) { rr.stop(); return; } if (window.speechSynthesis) speechSynthesis.cancel();
+        rb.textContent = '⏹ Detener'; rb.classList.add('rec'); const sf = $('.rp-said', d); sf.className = 'fb rp-said show good'; sf.textContent = 'Escuchando… di la frase.';
+        rr = listen({ continuous: false, onText: t => { sf.textContent = t; }, onEnd: said => { rr = null; rb.textContent = '🎤 Dilo'; rb.classList.remove('rec'); if (!said) { sf.className = 'fb rp-said show wrong'; sf.textContent = 'No se oyó nada. Inténtalo otra vez.'; return; } const p = Engine.util.matchScore(said, line); sf.className = 'fb rp-said show ' + (p >= 80 ? 'good' : 'wrong'); sf.innerHTML = `<b>${p}%</b> · <span class="diff">${diffWords(said, line)}</span>`; if (p >= 80) ctx.score(true, 5); }, onError: () => { rr = null; rb.textContent = '🎤 Dilo'; rb.classList.remove('rec'); ctx.toast('No se pudo usar el micrófono'); } });
+      };
+      polished.push([0, line]);
+      ctx.score(ok > 0, ok === 2 ? 10 : ok === 1 ? 5 : 0);
+      addErrors(corr.length ? corr : (ok < 2 && better ? [{ you: text, better, why: r.why || '' }] : []), 'roleplay');
+    }
+    async function send() {
+      const text = input.value.trim(); if (!text || !sc || over || ctl) return; input.value = ''; $('#rpHint', root).className = 'fb';
+      bubble('me', me(), text); lines.push([0, text]); turns.push({ role: 'user', content: text }); n++; secs = 0;
+      const wait = bubble('tutor', who(), '…'); $('.rp-say', wait)?.remove();
+      try {
+        const hist = [{ role: 'user', content: '[The scene begins. Say your opening line.]' }, ...turns.slice(-14)];
+        const r = await ask(RULES_RP(sc, mood, n), hist);
+        wait.remove(); feedback(text, r); partner(r);
+      } catch (e) { wait.innerHTML = `<span class="muted">${errCopy(e.code)}</span>`; if (e.code === 'cancelled') { wait.remove(); turns.pop(); n--; } }
+    }
+    function finish(outcome, note) {
+      over = true; stopAll(); io.hidden = true;
+      const oc = ['win', 'meh', 'fail'].includes(outcome) ? outcome : 'meh', T = { win: ['🎯', 'Objetivo conseguido'], meh: ['🙂', 'Conseguido a medias'], fail: ['💥', 'La conversación se torció'] }[oc];
+      endBox.innerHTML = `<div class="rp-end ${oc}"><div class="eyebrow">${T[0]} ${T[1]}</div>${note ? `<p>${esc(note)}</p>` : ''}<p class="small"><b>${hits} de ${n}</b> réplicas sonaron naturales a la primera.</p>
+        <div class="row" style="margin-top:10px"><button class="btn ghost rp-replay">🔊 Tal como fue</button><button class="btn ghost rp-polished">✨ Versión pulida</button><button class="btn rp-report">📋 Informe completo</button><button class="btn ghost rp-again">Otra vez</button><button class="btn ghost rp-other">Otra situación →</button></div><div class="fb rp-rep"></div></div>`;
+      ctx.score(oc !== 'fail', oc === 'win' ? 15 : oc === 'meh' ? 5 : 0);
+      $('.rp-replay', endBox).onclick = () => ctx.sayLines(lines); $('.rp-polished', endBox).onclick = () => ctx.sayLines(polished);
+      $('.rp-again', endBox).onclick = () => start(sc); $('.rp-other', endBox).onclick = () => { root.scrollIntoView({ behavior: 'smooth', block: 'start' }); };
+      $('.rp-report', endBox).onclick = async () => { const mine = turns.filter(t => t.role === 'user').map(t => t.content).join(' '); if (mine.split(/\s+/).length < 8) { ctx.toast('Hablaste muy poco para un informe'); return; } const b = $('.rp-report', endBox); b.disabled = true; const fb = $('.rp-rep', endBox); fb.className = 'fb show good'; fb.textContent = 'Preparando tu informe…'; await evaluate({ prompt: 'Role-play: ' + sc.t, transcript: mine, seconds: null, root: fb, ctx, source: 'roleplay' }); };
+      endBox.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    $('#rpMood', root).onclick = e => { const c = e.target.closest('.chip'); if (!c) return; mood = c.dataset.m; $$('#rpMood .chip', root).forEach(x => x.classList.toggle('sel', x === c)); };
+    $('#rpScenes', root).onclick = e => { const c = e.target.closest('.chip'); if (!c) return; if (c.id === 'rpMore') { $$('#rpScenes .chip.more', root).forEach(x => x.hidden = false); c.remove(); return; } start(all[+c.dataset.i]); };
+    $('#rpUseCustom', root).onclick = () => { const v = $('#rpCustom', root).value.trim(); if (v.length < 8) { ctx.toast('Describe un poco más la situación'); return; } start({ t: v.length > 60 ? v.slice(0, 57) + '…' : v, you: 'Tú', partner: 'La otra persona', role: '', goal: v, custom: true }); };
+    $('#rpAuto', root).onchange = e => { speakOn = e.target.checked; save(LS.auto, speakOn); };
+    const mic = $('.r-mic', root);
+    mic.onclick = () => {
+      if (rec) { rec.stop(); return; } if (window.speechSynthesis) speechSynthesis.cancel();
+      secs = 0; $('#rpSecs', root).textContent = '0 s'; tmr = setInterval(() => { secs++; $('#rpSecs', root).textContent = secs + ' s'; }, 1000);
+      mic.textContent = '⏹ Detener'; mic.classList.add('rec');
+      const reset = () => { rec = null; clearInterval(tmr); $('#rpSecs', root).textContent = ''; mic.textContent = '🎤 Hablar'; mic.classList.remove('rec'); };
+      rec = listen({ onText: t => { input.value = t; }, onEnd: () => { reset(); if (input.value.trim()) send(); }, onError: () => { reset(); ctx.toast('No se pudo usar el micrófono'); } });
+    };
+    $('#rpSend', root).onclick = () => send();
+    $('#rpStop', root).onclick = () => ctl?.abort();
+    $('#rpHintBtn', root).onclick = () => { const h = $('#rpHint', root); h.className = 'fb show meh'; h.innerHTML = hint ? '💡 ' + esc(hint) : '💡 Todavía no hay pista: espera a que hable el otro personaje.'; };
+    $('#rpQuit', root).onclick = () => { if (!sc || over) return; finish(n ? 'meh' : 'fail', n ? 'Cortaste la escena antes del final. Puedes pedir el informe con lo que dijiste.' : 'No llegaste a hablar.'); };
+    input.onkeydown = e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send(); } };
+
+    // llegada desde una escena con ramas ("Improvisarla con la IA")
+    let hand = null; try { hand = JSON.parse(sessionStorage.getItem('et-rp-free') || 'null'); sessionStorage.removeItem('et-rp-free'); } catch (e) { }
+    if (hand && hand.goal) { const same = all.find(s => s.t === strip(hand.t)); start(same || { t: strip(hand.t), you: strip(hand.you), partner: strip(hand.partner), role: strip(hand.role), goal: strip(hand.goal) }); }
+  }
+
   /* ================= 2. EVALUAR ================= */
   async function evaluate({ prompt, transcript, seconds, root, ctx, source }) {
     const m = analyze(transcript, seconds), band = bandFor(m);
@@ -347,7 +499,7 @@ Include up to 6 errors, most important first. Be honest but kind.`;
       ${sess.length ? `<div class="scroll-x"><table class="table"><thead><tr><th>Fecha</th><th>Consigna</th><th>Nivel</th><th>Palabras</th><th>ppm</th><th>Fluidez</th><th>Precisión</th><th>Vocab.</th></tr></thead><tbody>${sess.map(s => `<tr><td>${new Date(s.date).toLocaleDateString('es-PE')}</td><td>${esc(s.prompt)}</td><td><b>${esc(s.cefr || '—')}</b></td><td>${s.words}</td><td>${s.wpm ?? '—'}</td><td>${s.scores ? s.scores.fluency : '—'}</td><td>${s.scores ? s.scores.accuracy : '—'}</td><td>${s.scores ? s.scores.vocabulary : '—'}</td></tr>`).join('')}</tbody></table></div>` : '<p class="muted small">Aún no hay evaluaciones. Haz una en la pestaña <b>Evaluar</b> o termina una conversación.</p>'}
     </div>
     <div class="card"><div class="eyebrow">Cuaderno de errores</div><h2>Tus errores reales</h2><p class="muted small intro">Todo lo que la IA (o el análisis local) te ha corregido. Practícalos: escribe la versión correcta y compara. Los que aciertes tres veces desaparecen.</p>
-      <div id="errList">${h.errors.length ? h.errors.slice(0, 30).map((e, i) => `<div class="item" data-i="${i}"><p><span class="diff"><span class="del">${esc(e.you)}</span></span> <span class="small muted">· ${e.source === 'chat' ? 'conversación' : e.source === 'eval' ? 'evaluación' : 'local'} · ${'●'.repeat(e.done)}${'○'.repeat(3 - e.done)}</span></p><input type="text" placeholder="Escribe la versión correcta…" autocomplete="off"><div class="row" style="margin-top:6px"><button class="btn ghost chk">Comprobar</button><button class="lnk show">ver solución</button></div><div class="fb"></div></div>`).join('') : '<p class="muted small">Todavía no hay errores guardados.</p>'}</div>
+      <div id="errList">${h.errors.length ? h.errors.slice(0, 30).map((e, i) => `<div class="item" data-i="${i}"><p><span class="diff"><span class="del">${esc(e.you)}</span></span> <span class="small muted">· ${e.source === 'chat' ? 'conversación' : e.source === 'roleplay' ? 'role-play' : e.source === 'eval' ? 'evaluación' : 'local'} · ${'●'.repeat(e.done)}${'○'.repeat(3 - e.done)}</span></p><input type="text" placeholder="Escribe la versión correcta…" autocomplete="off"><div class="row" style="margin-top:6px"><button class="btn ghost chk">Comprobar</button><button class="lnk show">ver solución</button></div><div class="fb"></div></div>`).join('') : '<p class="muted small">Todavía no hay errores guardados.</p>'}</div>
       ${h.errors.length ? '<div class="row" style="margin-top:12px"><button class="btn ghost" id="clearErr">Vaciar cuaderno</button></div>' : ''}
     </div>`;
     $$('#errList .item', root).forEach(it => {
@@ -377,7 +529,7 @@ Include up to 6 errors, most important first. Be honest but kind.`;
   }
 
   /* ================= montaje ================= */
-  const TABS = [['chat', 'Conversar', renderChat], ['eval', 'Evaluar', renderEval], ['history', 'Progreso y errores', renderHistory], ['settings', 'Ajustes IA', renderSettings]];
+  const TABS = [['chat', 'Conversar', renderChat], ['roleplay', 'Role-play libre', renderRoleplay], ['eval', 'Evaluar', renderEval], ['history', 'Progreso y errores', renderHistory], ['settings', 'Ajustes IA', renderSettings]];
   function render(view, ctx, sub) {
     const active = TABS.find(t => t[0] === sub) || TABS[0];
     view.innerHTML = `<nav class="crumbs"><a href="#/">Hoy</a><span class="sep">›</span><span>Speaking Coach</span></nav>
@@ -386,5 +538,5 @@ Include up to 6 errors, most important first. Be honest but kind.`;
     $$('.sub button', view).forEach(b => b.onclick = () => { location.hash = '#/coach/' + b.dataset.t; });
     active[2]($('#coachBody', view), ctx);
   }
-  return { render, analyze, AI, hist, topics, listen };
+  return { render, analyze, AI, hist, topics, scenes, listen };
 })();

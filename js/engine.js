@@ -390,11 +390,12 @@ window.Engine = (() => {
     function finish() {
       const oc = node.outcome || 'win', T = { win: ['🎯', 'Objetivo conseguido'], meh: ['🙂', 'Conseguido, con algún tropiezo'], fail: ['💥', 'La conversación se torció'] }[oc];
       turn.innerHTML = `<div class="rp-end ${oc}"><div class="eyebrow">${T[0]} ${T[1]}</div>${node.note ? `<p>${node.note}</p>` : ''}<p class="small"><b>${hits} de ${total}</b> réplicas con la opción más natural.${oc === 'fail' ? ' Vuelve a empezar y elige otra rama.' : ''}</p>
-        <div class="row" style="margin-top:10px"><button class="btn ghost rp-replay">🔊 Escuchar la conversación</button><button class="btn rp-again">Otra vez (otra rama)</button>${act.scenes.length > 1 ? '<button class="btn ghost rp-other">Otra escena →</button>' : ''}${window.Coach ? '<a class="btn ghost" href="#/coach">Seguir con el Coach</a>' : ''}</div></div>`;
+        <div class="row" style="margin-top:10px"><button class="btn ghost rp-replay">🔊 Escuchar la conversación</button><button class="btn rp-again">Otra vez (otra rama)</button>${act.scenes.length > 1 ? '<button class="btn ghost rp-other">Otra escena →</button>' : ''}${window.Coach ? '<button class="btn ghost rp-free">✨ Improvisarla con la IA</button>' : ''}</div></div>`;
       ctx.score(oc !== 'fail', oc === 'win' ? 15 : oc === 'meh' ? 5 : 0);
       $('.rp-replay', turn).onclick = () => ctx.sayLines(lines.filter(l => l[1]));
       $('.rp-again', turn).onclick = () => start(si);
       const ot = $('.rp-other', turn); if (ot) ot.onclick = () => start((si + 1) % act.scenes.length);
+      const fr = $('.rp-free', turn); if (fr) fr.onclick = () => { try { sessionStorage.setItem('et-rp-free', JSON.stringify({ t: scene.t, you: scene.you, partner: scene.partner, role: scene.role || '', goal: scene.goal })); } catch (e) { } location.hash = '#/coach/roleplay'; };
     }
     $$('.rp-scenes .chip', root).forEach(c => c.onclick = () => start(+c.dataset.i));
     start(0);

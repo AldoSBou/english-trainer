@@ -60,7 +60,7 @@ Para un tipo nuevo: `Engine.register('miTipo', (root, act, ctx) => { ... })`.
 
 ## Speaking Coach (`js/coach.js`)
 
-Ruta `#/coach`. Cuatro pestañas: **Conversar** (chat por voz con correcciones por turno), **Evaluar** (test de 60-120 s → nivel CEFR estimado, puntuaciones, correcciones, versión mejorada, próximos pasos), **Progreso y errores** (historial + cuaderno de errores practicable) y **Ajustes IA**.
+Ruta `#/coach`. Cinco pestañas: **Conversar** (chat por voz con correcciones por turno), **Role-play libre** (improvisa una situación real con la IA haciendo de la otra persona, con humor amable, normal o difícil: cada réplica tuya recibe un veredicto, la versión que diría un nativo para escucharla y decirla, correcciones y una pista si te atascas; la escena termina en objetivo conseguido, a medias o torcido, y desde ahí pides el informe completo), **Evaluar** (test de 60-120 s → nivel CEFR estimado, puntuaciones, correcciones, versión mejorada, próximos pasos), **Progreso y errores** (historial + cuaderno de errores practicable) y **Ajustes IA**.
 
 Proveedores de IA, por orden: (1) `claude` — la página abierta dentro de claude.ai usa la capacidad `sample`; (2) `key` — API key de Anthropic guardada en `localStorage` (`et-anthropic-key`, `et-anthropic-model`) y enviada directamente a `api.anthropic.com`; (3) `local` — sin IA: métricas (ppm, muletillas, variedad léxica), estimación orientativa y detector de errores típicos de hispanohablantes (`RULES`). Historial en `et-coach`.
 
@@ -76,7 +76,7 @@ En Reading de cada unidad (pestaña **Lectura cronometrada**) y en Práctica ›
 
 ## Role-play con ramas
 
-En Social English de cada unidad de Inglés 3 y 4 (pestaña **Role-play**, 18 escenas) y en Práctica › Role-play (`#/method/roleplay`, con las escenas de todas las unidades). Una situación real con el lenguaje funcional de la unidad: la otra persona habla con la voz alternativa; eliges tu réplica entre tres (la más natural, una correcta pero mejorable y un error típico), ves el porqué, dices la frase buena en voz alta con reconocimiento de voz y la conversación sigue por la rama de lo que elegiste. Hay finales buenos, regulares y malos: repetir la escena por otra rama es parte del ejercicio. Los fallos entran al cuaderno de errores.
+En Social English de cada unidad de Inglés 3 y 4 (pestaña **Role-play**, 18 escenas) y en Práctica › Role-play (`#/method/roleplay`, con las escenas de todas las unidades). Una situación real con el lenguaje funcional de la unidad: la otra persona habla con la voz alternativa; eliges tu réplica entre tres (la más natural, una correcta pero mejorable y un error típico), ves el porqué, dices la frase buena en voz alta con reconocimiento de voz y la conversación sigue por la rama de lo que elegiste. Hay finales buenos, regulares y malos: repetir la escena por otra rama es parte del ejercicio. Los fallos entran al cuaderno de errores. Al terminar, **Improvisarla con la IA** abre la misma situación en el role-play libre del Coach (`#/coach/roleplay`), donde ya no hay opciones: dices lo que tú dirías y la IA reacciona, corrige y decide cómo acaba. Ahí también hay ocho situaciones propias (banco por teléfono, videollamada con mala conexión, small talk, pedir un aumento, explicar un problema técnico, negociar una fecha, devolver un coche de alquiler, defender la tesis) y puedes describir la tuya.
 
 ## Inglés práctico (`courses/practico/`)
 
