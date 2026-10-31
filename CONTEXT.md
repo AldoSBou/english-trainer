@@ -28,6 +28,9 @@ english-trainer/
 ├── courses/ingles3/unit1..10.js  window.UNIT_DATA['ingles3/unitN'] = {...}
 ├── courses/ingles4/unit1.js    window.UNIT_DATA['ingles4/unit1'] = {source, description, map, weak, weakLink, sections}
 ├── manifest.webmanifest, sw.js, icons/   PWA: instalable en el móvil y offline (stale-while-revalidate; no hay que listar unidades)
+├── tools/                      validate-unit.js (una unidad), validate-all.js (todas), test-all.js (recorrido de rutas con Playwright)
+├── package.json                solo scripts: npm run validate · npm test (devDependency playwright)
+├── CLAUDE.md                   guía corta para Claude Code (comandos, contrato, procedimiento, convenciones)
 ├── README.md                   cómo añadir ciclos/unidades, tabla de tipos y cómo instalar en el móvil
 └── CONTEXT.md                  este archivo
 ```
@@ -101,7 +104,7 @@ Nuevo tipo: `Engine.register('tipo', (root, act, ctx) => {...})` con `ctx.score(
    - Repaso espaciado: en cada unidad nueva, incluir en algún `mcq`/`dictation` 3-4 ítems de unidades anteriores.
 3. `courses/registry.js`: poner `available:true`, `title`, `subtitle`, `xpGoal` en esa unidad.
 4. `index.html`: añadir `<script src="courses/<cicloId>/unitN.js"></script>` tras la anterior.
-5. Probar las rutas (`#/<cicloId>/unitN/...`) sin errores de consola; entregar zip actualizado y republicar el artifact con la URL existente.
+5. `node tools/validate-unit.js courses/<cicloId>/unitN.js` y `npm test` (recorre todas las rutas en Chromium headless; debe acabar con `errors: 0`); subir `CACHE` en `sw.js`; actualizar §2 y §5 de este archivo; commit + push (o republicar el artifact con la URL existente si se trabaja desde Claude).
 
 ## 5. Contenido cubierto hasta ahora (para el repaso espaciado)
 

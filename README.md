@@ -73,6 +73,18 @@ El botón 🔊 de la barra superior abre el selector de voz. La app puntúa las 
 
 Para mejor calidad: Windows → Microsoft Edge; Android → voces de Google instaladas; iPhone/Mac → descargar una voz mejorada en Ajustes › Accesibilidad › Contenido hablado › Voces.
 
+## Desarrollo y pruebas
+
+No hay build. Para validar contenido y recorrer el sitio automáticamente:
+
+```bash
+npm run validate      # estructura de todas las unidades (node puro)
+npm i -D playwright && npx playwright install chromium   # una vez
+npm test              # abre todas las rutas en Chromium headless; falla si hay errores de página
+```
+
+`CLAUDE.md` resume lo necesario para trabajar en el repo con Claude Code; `CONTEXT.md` tiene el detalle completo.
+
 ## Progreso
 
 Se guarda en `localStorage` (`et-progress`): XP total, aciertos/errores y XP por unidad (clave `"ciclo/unidad"`). Borrar los datos del sitio en el navegador lo reinicia.
