@@ -428,6 +428,48 @@
           { h: '"Is there any way you can work from home on Mondays?"', a: "I guess I could ask my manager. She might say yes." },
           { h: '"It wouldn\'t hurt to take a week off in December."', a: "I guess I could take some time off after the release." },
         ] },
+        { label: 'Role-play', type: 'roleplay', eyebrow: 'Role-play con ramas', title: 'Tu amigo quiere renunciar mañana', intro: 'Marco está quemado y quiere dejar su trabajo mañana, sin ahorros ni plan. Piensa opciones con él, anímalo a probar cosas y adviértele con la fuerza justa. Si lo animas a saltar sin red, la escena acaba mal.', scenes: [
+          { t: 'Tu amigo quiere renunciar', you: 'Aldo, el amigo sensato', partner: 'Marco', role: 'tu amigo, agotado y harto de su jefe', goal: 'Frena la decisión impulsiva, propón opciones, anímalo y responde a su petición final con la fórmula adecuada.', start: 'a', nodes: {
+            a: { say: "I'm done. I'm quitting tomorrow. No savings, no plan, I don't care.", opts: [
+              { t: "Wait. You don't want to do that! At least not tomorrow.", ok: 2, why: "Advertencia fuerte (<b>You don't want to do that!</b>), justificada entre amigos y ante una decisión impulsiva. El <i>at least not tomorrow</i> la suaviza.", next: 'b' },
+              { t: "I'd avoid quitting tomorrow if I were you. Let's think about it.", ok: 1, why: "Correcta: <b>I'd avoid that if I were you</b> es la advertencia clara. Funciona bien.", next: 'b' },
+              { t: "Great idea! Go for it.", ok: 0, why: "Animar algo peligroso (sin ahorros ni plan) no es apoyo. La unidad te da grados de advertencia justo para esto.", next: 'a2' },
+            ] },
+            a2: { say: "Really? You think I should just quit?", opts: [
+              { t: "Sorry, no. I wouldn't do that if I were you, not without savings.", ok: 2, why: "Rectificas con la advertencia clara de la unidad: <b>I wouldn't do that if I were you</b>.", next: 'b' },
+              { t: "Actually, no. You might not want to do that without a plan.", ok: 1, why: "Correcta: <b>You might not want to…</b> es la versión suave. Quizá demasiado suave para alguien a punto de saltar.", next: 'b' },
+              { t: "Yes. Life is short.", ok: 0, why: "Lo empujas al precipicio. Marco te hace caso… y es un mal final.", next: 'fail' },
+            ] },
+            b: { say: "But I can't stand my boss anymore. What else can I do?", opts: [
+              { t: "Have you tried talking to HR about changing teams?", ok: 2, why: "<b>Have you tried + -ing?</b> abre opciones sin imponer. Y sin <i>the</i>: <b>talking to HR</b>.", next: 'c' },
+              { t: "Maybe you could ask for a transfer to another team.", ok: 1, why: "Correcta: <b>Maybe you could…</b> sugiere con suavidad.", next: 'c' },
+              { t: "Have you tried to talk with the HR?", ok: 0, why: "Después de <b>Have you tried</b> va <b>-ing</b> (<i>talking</i>). Y <i>HR</i> no lleva artículo.", next: 'c' },
+            ] },
+            c: { say: "Changing teams… I don't know. They'd say no.", opts: [
+              { t: "It can't hurt. You've got nothing to lose.", ok: 2, why: "Las dos frases de ánimo de la unidad, que casi siempre van juntas: <b>It can't hurt. You've got nothing to lose.</b>", next: 'd' },
+              { t: "It wouldn't hurt to ask. The worst case is a no.", ok: 1, why: "Correcta: <b>It wouldn't hurt to + verbo</b>. Buen argumento.", next: 'd' },
+              { t: "You're right, forget it.", ok: 0, why: "Te rindes a la primera duda. El papel del amigo aquí es animar: <i>It can't hurt</i>.", next: 'c2' },
+            ] },
+            c2: { say: "So I quit tomorrow, then?", opts: [
+              { t: "No. If I were in your shoes, I'd ask HR first and start looking for another job quietly.", ok: 2, why: "<b>If I were in your shoes, I'd…</b>: pasado + <i>would</i>, con un plan en dos pasos. Es el consejo modelo de la unidad.", next: 'd' },
+              { t: "No. Maybe you could look for another job while you're still being paid.", ok: 1, why: "Correcta y sensata. <b>Maybe you could…</b> funciona.", next: 'd' },
+              { t: "If I would be you, I quit.", ok: 0, why: "Error clásico: <b>If I were you, I'd…</b>. Nunca <i>if I would</i>, y el resultado lleva <i>would</i>. Además, mal consejo.", next: 'fail' },
+            ] },
+            d: { say: "OK… And in the meantime? I'm exhausted.", opts: [
+              { t: "You might want to take a few days off before you decide anything.", ok: 2, why: "<b>You might want to…</b> sugiere con tacto. <i>Take a few days off</i> = tomarte unos días libres.", next: 'e' },
+              { t: "Is there any way you can take some time off this month?", ok: 1, why: "Correcta: <b>Is there any way you can…?</b> pregunta por la posibilidad sin presionar.", next: 'e' },
+              { t: "You must take vacations now.", ok: 0, why: "<i>Must</i> es una orden, no un consejo; y en inglés americano se dice <b>take a vacation</b> o <b>take some days off</b>.", next: 'e' },
+            ] },
+            e: { say: "Hmm. I have some days left… I guess I could take Friday off. Would you come with me to talk to HR?", opts: [
+              { t: "I wish I could, but I'm in Madrid that week. I can help you prepare, though.", ok: 2, why: "<b>I wish I could, but…</b> es la fórmula para declinar algo que te gustaría hacer, y ofreces una alternativa. Fíjate en el <i>I guess I could</i> de Marco: está considerando tu sugerencia.", next: 'win' },
+              { t: "I guess I could, if it's after six.", ok: 1, why: "Correcta: respondes con el <b>I guess I could</b> de la unidad (lo estás pensando). Natural.", next: 'win' },
+              { t: "I wish I can, but I am in Madrid.", ok: 0, why: "Después de <b>wish</b>, pasado: <b>I wish I could</b>. Y la contracción natural: <i>I'm in Madrid</i>.", next: 'meh' },
+            ] },
+            win: { say: "Thanks, man. OK: HR first, days off, and no quitting tomorrow.", end: true, outcome: 'win', note: 'Advertiste con la fuerza justa (<b>You don\'t want to do that!</b> / <b>I wouldn\'t do that if I were you</b>), propusiste opciones (<b>Have you tried…?</b>, <b>Maybe you could…</b>), animaste (<b>It can\'t hurt. You\'ve got nothing to lose</b>) y cerraste con <b>I wish I could, but…</b>' },
+            meh: { say: "Madrid! OK. Thanks anyway. HR first, no quitting tomorrow.", end: true, outcome: 'meh', note: 'Buen consejo de principio a fin, pero la última frase falló: después de <b>wish</b> va pasado (<b>I wish I could</b>). Marco lo pasó por alto; un nativo lo nota.' },
+            fail: { say: "You know what? You're right. I'm sending the email right now.", end: true, outcome: 'fail', note: 'Animar a renunciar sin plan es el consejo fácil. La unidad te da tres grados de advertencia: <b>You might not want to…</b> (suave) → <b>I wouldn\'t do that if I were you</b> (claro) → <b>You don\'t want to do that!</b> (fuerte). Y para el consejo: <b>If I were you, I\'d…</b>, nunca <i>if I would</i>.' },
+          } },
+        ] },
       ] },
     ],
   };

@@ -337,6 +337,43 @@
           { q: 'Alguien dice que los logos no importan. Lo niegas con énfasis.', opts: ["That's not true at all.", "That's true, but…", 'As I see it.'], a: "That's not true at all.", why: '<b>not … at all</b> refuerza la negación: en absoluto.' },
           { q: 'Estás de acuerdo en parte, pero añades una objeción.', opts: ["That's true, but it costs millions.", "That's not true at all, but it costs millions.", "I couldn't disagree more, but it costs millions."], a: "That's true, but it costs millions.", why: '<b>That\'s true, but</b> = acuerdo parcial + objeción. Las otras dos se contradicen.' },
         ] },
+        { label: 'Role-play', type: 'roleplay', eyebrow: 'Role-play con ramas', title: 'Debate con una amiga sobre influencers', intro: 'Rocío adora a los influencers; tú desconfías. Discrepa con educación, concede algo antes de discutir, matiza y guarda el énfasis para una sola idea. Si disparas las frases fuertes seguidas, la conversación se rompe.', scenes: [
+          { t: 'Debate sobre influencers', you: 'Aldo, escéptico', partner: 'Rocío', role: 'tu amiga, sigue a decenas de influencers', goal: 'Discrepa tres veces sin pelear: concede, matiza y usa una sola frase enfática en el momento justo.', start: 'a', nodes: {
+            a: { say: "Honestly, I think influencers are the best way to learn about new products. As I see it, they're like a friend's recommendation.", opts: [
+              { t: "That's a good point, but most of them are paid to say that.", ok: 2, why: "<b>That's a good point, but…</b> concede algo antes de discrepar: educado y eficaz para abrir un debate.", next: 'b' },
+              { t: "I find it hard to trust them, to be honest. They get paid for it.", ok: 1, why: "Correcta: <b>I find it…</b> da tu opinión con suavidad. Falta conceder algo primero, que es lo que relaja la conversación.", next: 'b' },
+              { t: "You have it all wrong. They're liars.", ok: 0, why: "<b>You have it all wrong</b> es una de las tres frases enfáticas: demasiado fuerte para la primera réplica, y <i>liars</i> es un ataque.", next: 'a2' },
+            ] },
+            a2: { say: "Wow, OK. Liars? That's a bit much, don't you think?", opts: [
+              { t: "Sorry, that was too strong. It's not so much that they lie, it's just that they're paid to recommend things.", ok: 2, why: "Te retractas y matizas con la estructura de la unidad: <b>It's not so much that A, it's just that B</b>.", next: 'b' },
+              { t: "You're right, I exaggerated. But the thing is, they're paid for it.", ok: 1, why: "Bien: reconoces el exceso y usas <b>But the thing is…</b> para ir al problema real.", next: 'b' },
+              { t: "No. I couldn't disagree more with you. They're liars.", ok: 0, why: "Segunda frase enfática seguida (<b>I couldn't disagree more</b>) y repites el insulto. Así termina un debate.", next: 'fail' },
+            ] },
+            b: { say: "That's true, but a lot of them say when a post is an ad. Isn't that honest?", opts: [
+              { t: "It's not so much that they hide it, it's just that people don't read the small print.", ok: 2, why: "La estructura <b>It's not so much that…, it's just that…</b> matiza tu razón sin negar la suya. Es la frase estrella de la unidad.", next: 'c' },
+              { t: "I guess. But the thing is, the ad label is tiny.", ok: 1, why: "Correcta: concedes (<i>I guess</i>) y vas al problema con <b>But the thing is…</b>", next: 'c' },
+              { t: "That's not true at all. Nobody says is an ad.", ok: 0, why: "<b>That's not true at all</b> es enfática y además lo que dices es falso. Y falta el sujeto: <b>nobody says it's an ad</b>.", next: 'c2' },
+            ] },
+            c2: { say: "Nobody? Now, just a second. I follow three who always do.", opts: [
+              { t: "OK, that's a good point. Some do. I meant that many don't.", ok: 2, why: "Concedes (<b>That's a good point</b>) y corriges tu exageración. Recuperas la credibilidad.", next: 'c' },
+              { t: "Fair enough, some do.", ok: 1, why: "Correcta y breve. <b>Fair enough</b> = vale, tienes razón en eso.", next: 'c' },
+              { t: "Three is nobody.", ok: 0, why: "Despreciar su ejemplo en vez de conceder. La conversación se rompe.", next: 'fail' },
+            ] },
+            c: { say: "Now, just a second: do you ever buy something because of a review? That's the same thing!", opts: [
+              { t: "That's true, but a review on a store page isn't a video with a sponsor. I really think there's a difference.", ok: 2, why: "<b>That's true, but…</b> concede y después marcas la diferencia con <b>I really think…</b>: firme sin ser agresivo.", next: 'd' },
+              { t: "I see your point, but reviews are from normal people, not from someone paid by the brand.", ok: 1, why: "Correcta: <b>I see your point, but…</b> funciona igual que <i>That's true, but…</i>", next: 'd' },
+              { t: "Is not the same. You don't understand.", ok: 0, why: "Falta el sujeto (<b>It's</b> not the same) y <i>You don't understand</i> suena a ataque personal.", next: 'd' },
+            ] },
+            d: { say: "OK, last one. Some people say influencers don't have a real job. What do you think?", opts: [
+              { t: "I couldn't disagree more. Making videos every day is a lot of work, even if I don't trust the ads.", ok: 2, why: "Aquí sí: una frase enfática (<b>I couldn't disagree more</b>) bien colocada, con argumento, y además defendiendo a la otra parte. Así se usa el énfasis.", next: 'win' },
+              { t: "I don't agree with that. It's a real job, and a hard one.", ok: 1, why: "Correcta y razonable. La unidad te invitaba a usar aquí la versión enfática: <i>I couldn't disagree more</i>.", next: 'win' },
+              { t: "I agree. It's not a real work.", ok: 0, why: "<b>Work</b> es incontable: <b>a real job</b>. Y estar de acuerdo con eso contradice todo lo que defendiste (el esfuerzo que hay detrás).", next: 'meh' },
+            ] },
+            win: { say: "See? We can agree on something! Coffee?", end: true, outcome: 'win', note: 'Concediste (<b>That\'s a good point, but…</b>), matizaste (<b>It\'s not so much that…, it\'s just that…</b>) y guardaste el énfasis (<b>I couldn\'t disagree more</b>) para una sola idea. Así discute un nativo con un amigo.' },
+            meh: { say: "Hmm, I think you're being unfair, but OK. Coffee?", end: true, outcome: 'meh', note: 'Terminaste bien el debate, pero la última respuesta se contradecía y tenía un error: <b>a real job</b> (<i>work</i> es incontable). Era el momento ideal para <b>I couldn\'t disagree more</b>.' },
+            fail: { say: "You know what? Let's change the subject.", end: true, outcome: 'fail', note: 'Las frases enfáticas (<b>You have it all wrong</b>, <b>I couldn\'t disagree more</b>, <b>That\'s not true at all</b>) dichas seguidas suenan a pelea. Usa una, con argumento, y antes concede algo: <b>That\'s a good point, but…</b>' },
+          } },
+        ] },
       ] },
     ],
   };

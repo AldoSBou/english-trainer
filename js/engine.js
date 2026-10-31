@@ -338,6 +338,68 @@ window.Engine = (() => {
     draw();
   };
 
+  /* roleplay: conversación con ramas
+     scenes:[{ t, you, partner, role, goal, start, nodes:{ id:{ who?, say, opts:[{t, ok:0|1|2, why, next}] } | { who?, say, end:true, outcome:'win'|'meh'|'fail', note } } }]
+     La otra persona habla (voz alternativa); eliges tu réplica entre tres (2 = la más natural, 1 = correcta pero mejorable, 0 = error),
+     ves por qué, la dices en voz alta (Dilo) y la conversación sigue por la rama de lo que elegiste. Los fallos entran al cuaderno como mcq. */
+  R.roleplay = (root, act, ctx) => {
+    const SP = window.Speech, canRec = !!(SP && SP.supported);
+    let si = 0, scene, node, hits, total, lines, r = null;
+    root.innerHTML = `<div class="card">${head(act)}
+      ${act.scenes.length > 1 ? `<div class="chips rp-scenes">${act.scenes.map((s, i) => `<button class="chip" data-i="${i}">${esc(s.t)}</button>`).join('')}</div>` : ''}
+      <div class="rp-head"></div><div class="chat rp-log" hidden></div><div class="rp-turn"></div></div>`;
+    const log = $('.rp-log', root), turn = $('.rp-turn', root);
+    const who = n => n.who || scene.partner, me = () => (scene.you || 'Tú').split(/[,(·]/)[0].trim();
+    const bubble = (role, name, text) => {
+      const d = el('div', 'msg ' + role, `<b>${esc(name)}:</b> ${esc(text)}${role === 'tutor' ? ' <button class="lnk rp-say" title="Escuchar">🔊</button>' : ''}`);
+      if (role === 'tutor') $('.rp-say', d).onclick = () => ctx.say(text, 1, 1);
+      log.appendChild(d); log.scrollTop = log.scrollHeight; return d;
+    };
+    function start(i) {
+      si = i; scene = act.scenes[i]; node = scene.nodes[scene.start]; hits = 0; total = 0; lines = []; log.innerHTML = ''; log.hidden = false; if (r) { try { r.stop(); } catch (e) { } r = null; }
+      $$('.rp-scenes .chip', root).forEach(c => c.classList.toggle('sel', +c.dataset.i === i));
+      $('.rp-head', root).innerHTML = `<div class="rp-goal"><div class="eyebrow">${esc(scene.t)}</div><p class="small" style="margin:4px 0"><b>Tú:</b> ${esc(scene.you)} · <b>${esc(scene.partner)}:</b> ${esc(scene.role || '')}</p><p class="small" style="margin:0"><b>Objetivo:</b> ${scene.goal}</p></div>`;
+      partner();
+    }
+    function partner() {
+      bubble('tutor', who(node), node.say); lines.push([1, node.say]); ctx.say(node.say, 1, 1);
+      if (node.end || !node.opts) return finish();
+      turn.innerHTML = `<div class="eyebrow" style="margin-top:12px">Tu turno · ${esc(me())}</div><div class="opts rp-opts">${shuffle(node.opts).map(o => `<button class="opt" data-i="${node.opts.indexOf(o)}">${esc(o.t)}</button>`).join('')}</div><div class="fb rp-fb"></div><div class="rp-after" hidden></div>`;
+      $$('.opt', turn).forEach(b => b.onclick = () => choose(node.opts[+b.dataset.i], b));
+    }
+    function choose(o, b) {
+      const box = $('.rp-opts', turn); if (box.dataset.done) return; box.dataset.done = 1;
+      const best = node.opts.find(x => x.ok === 2) || o, good = o.ok > 0; total++; if (o.ok === 2) hits++;
+      b.classList.add(o.ok === 2 ? 'ok' : o.ok === 1 ? 'meh' : 'bad');
+      if (o.ok < 2) { const c = $$('.opt', box).find(x => +x.dataset.i === node.opts.indexOf(best)); if (c) c.classList.add('ok'); }
+      const fb = $('.rp-fb', turn); fb.className = 'fb rp-fb show ' + (o.ok === 2 ? 'good' : o.ok === 1 ? 'meh' : 'wrong');
+      fb.innerHTML = (o.ok === 2 ? '✔ ' : o.ok === 1 ? '≈ ' : '✘ ') + (o.why || '') + (o.ok < 2 ? `<p class="small" style="margin:6px 0 0"><b>Más natural:</b> <i>${esc(best.t)}</i></p>` : '');
+      ctx.score(good, o.ok === 2 ? 10 : o.ok === 1 ? 5 : 0);
+      if (ctx.answer) ctx.answer({ kind: 'mcq', good, item: { q: `${esc(who(node))}: “${esc(node.say)}”`, opts: node.opts.map(x => x.t), a: best.t, why: best.why || '', ctx: scene.t }, chosen: o.t });
+      const line = best.t, after = $('.rp-after', turn); after.hidden = false;
+      after.innerHTML = `<div class="prompt-box" style="margin-top:12px"><div class="eyebrow">Ahora dilo en voz alta</div><p class="big-sent">${esc(line)}</p>
+        <div class="row" style="margin-top:8px"><button class="btn ghost sm rp-play">▶ Escuchar</button>${canRec ? '<button class="btn warm sm rp-rec">🎤 Dilo</button>' : ''}<button class="btn sm rp-go" style="margin-left:auto">Seguir →</button></div><div class="fb rp-said"></div></div>`;
+      $('.rp-play', after).onclick = () => ctx.say(line, 1);
+      const rb = $('.rp-rec', after); if (rb) rb.onclick = () => {
+        if (r) { r.stop(); return; } if (window.speechSynthesis) speechSynthesis.cancel();
+        rb.textContent = '⏹ Detener'; rb.classList.add('rec'); const sf = $('.rp-said', after); sf.className = 'fb rp-said show good'; sf.textContent = 'Escuchando… di la frase.';
+        r = SP.listen({ continuous: false, onText: t => { sf.textContent = t; }, onEnd: said => { r = null; rb.textContent = '🎤 Dilo'; rb.classList.remove('rec'); if (!said) { sf.className = 'fb rp-said show wrong'; sf.textContent = 'No se oyó nada. Inténtalo otra vez.'; return; } const p = matchScore(said, line); sf.className = 'fb rp-said show ' + (p >= 80 ? 'good' : 'wrong'); sf.innerHTML = `<b>${p}%</b> · <span class="diff">${diffWords(said, line)}</span>`; if (p >= 80) ctx.score(true, 5); }, onError: () => { r = null; rb.textContent = '🎤 Dilo'; rb.classList.remove('rec'); ctx.toast('No se pudo usar el micrófono'); } });
+      };
+      $('.rp-go', after).onclick = () => { if (r) { try { r.stop(); } catch (e) { } r = null; } bubble('me', me(), o.t); lines.push([0, o.t]); node = scene.nodes[o.next]; if (!node) { node = { end: true, outcome: 'win', say: '' }; return finish(); } partner(); };
+    }
+    function finish() {
+      const oc = node.outcome || 'win', T = { win: ['🎯', 'Objetivo conseguido'], meh: ['🙂', 'Conseguido, con algún tropiezo'], fail: ['💥', 'La conversación se torció'] }[oc];
+      turn.innerHTML = `<div class="rp-end ${oc}"><div class="eyebrow">${T[0]} ${T[1]}</div>${node.note ? `<p>${node.note}</p>` : ''}<p class="small"><b>${hits} de ${total}</b> réplicas con la opción más natural.${oc === 'fail' ? ' Vuelve a empezar y elige otra rama.' : ''}</p>
+        <div class="row" style="margin-top:10px"><button class="btn ghost rp-replay">🔊 Escuchar la conversación</button><button class="btn rp-again">Otra vez (otra rama)</button>${act.scenes.length > 1 ? '<button class="btn ghost rp-other">Otra escena →</button>' : ''}${window.Coach ? '<a class="btn ghost" href="#/coach">Seguir con el Coach</a>' : ''}</div></div>`;
+      ctx.score(oc !== 'fail', oc === 'win' ? 15 : oc === 'meh' ? 5 : 0);
+      $('.rp-replay', turn).onclick = () => ctx.sayLines(lines.filter(l => l[1]));
+      $('.rp-again', turn).onclick = () => start(si);
+      const ot = $('.rp-other', turn); if (ot) ot.onclick = () => start((si + 1) % act.scenes.length);
+    }
+    $$('.rp-scenes .chip', root).forEach(c => c.onclick = () => start(+c.dataset.i));
+    start(0);
+  };
+
   /* timed: lectura cronometrada · ppm + comprensión (main/infer del reading) + historial por texto (et-reading) */
   const RD_KEY = 'et-reading';
   const rdLoad = () => { try { return JSON.parse(localStorage.getItem(RD_KEY)) || {}; } catch (e) { return {}; } };

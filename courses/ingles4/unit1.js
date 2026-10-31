@@ -247,6 +247,47 @@
           { q: '"Have you met Lucía?" — Os presentaron esta mañana.', opts: ['Yes, we met this morning! Nice to see you again.', 'Yes, we know this morning.', 'No, nice to meet you.'], a: 'Yes, we met this morning! Nice to see you again.', why: '<b>met</b> (simple past, evento concreto) y <b>see you again</b> porque ya no es la primera vez.' },
           { q: 'Es el primer día de un compañero nuevo y no conoce a nadie. ¿Qué le dices?', opts: ['Let me introduce you to some people.', 'Do you know me?', 'We go way back.'], a: 'Let me introduce you to some people.', why: 'Frase para presentar a alguien a un grupo.' },
         ] },
+        { label: 'Role-play', type: 'roleplay', eyebrow: 'Role-play con ramas', title: 'Primer día en la nueva empresa', intro: 'Es tu primer día. Una compañera te aborda en la cocina de la oficina. Elige qué dices en cada turno, dilo en voz alta y mira adónde te lleva. Cuidado con <i>meet</i> (primera vez) y <i>know</i> (relación que continúa).', scenes: [
+          { t: 'Primer día en la nueva empresa', you: 'Aldo, desarrollador nuevo', partner: 'Lucía', role: 'diseñadora, lleva tres años en la empresa', goal: 'Preséntate, responde bien a dos presentaciones y acaba conociendo a tres personas.', start: 'a', nodes: {
+            a: { say: "Hi! I don't think we've met before. You're new here, right?", opts: [
+              { t: "Yes, it's my first day. Hi, I'm Aldo.", ok: 2, why: "A <b>You're new here, right?</b> se responde confirmando y presentándote: <b>Yes, it's my first day. Hi, I'm…</b>", next: 'b' },
+              { t: "Yes. I'm Aldo, the new developer. Nice to meet you.", ok: 1, why: "Correcta y amable. La respuesta más típica a <i>You're new here, right?</i> empieza por <b>Yes, it's my first day</b>.", next: 'b' },
+              { t: "Yes, I know you. I'm Aldo.", ok: 0, why: "<b>know</b> es una relación que continúa; a alguien que acabas de ver por primera vez no lo <i>conoces</i>. Para una primera vez: <b>meet</b>.", next: 'a2' },
+            ] },
+            a2: { say: "You know me? Hmm, I don't think so… Anyway, I'm Lucía, from the design team.", opts: [
+              { t: "Sorry, I'm not sure. Hi, I'm Aldo, the new developer.", ok: 2, why: "<b>I'm not sure, but hi, I'm…</b> es la fórmula para cuando no estás seguro de si os conocíais. Salva la situación con naturalidad.", next: 'b' },
+              { t: "Nice to meet you, Lucía. I'm Aldo.", ok: 1, why: "Bien: <b>Nice to meet you</b> es lo correcto en una primera vez. Podías añadir una disculpa breve por la confusión.", next: 'b' },
+              { t: "Yes, we go way back!", ok: 0, why: "<b>We go way back</b> = nos conocemos desde hace muchísimo. Es tu primer día: suena a broma rara.", next: 'b' },
+            ] },
+            b: { say: "Welcome, Aldo! So, do you know anyone here yet?", opts: [
+              { t: "Not really. Only my manager, Carla.", ok: 2, why: "<b>Not really</b> suaviza el <i>no</i> y añades la excepción. Natural y breve.", next: 'c' },
+              { t: "No, I don't. You're the first person I've talked to.", ok: 1, why: "Correcta (<i>No, I don't</i> responde a <i>Do you know…?</i>). Un poco más larga de lo habitual, pero suena bien.", next: 'c' },
+              { t: "No, I don't meet anybody.", ok: 0, why: "Confusión doble: la pregunta es con <b>know</b>, y si hablas de <i>meet</i> sería <b>I haven't met anyone yet</b> (present perfect, no presente simple).", next: 'c' },
+            ] },
+            c: { say: "Let me introduce you to some people, then. Pedro! Have you met Aldo? He's our new developer.", opts: [
+              { t: "No, I haven't. Hi, Pedro. Nice to meet you.", ok: 2, why: "A <b>Have you met…?</b> se responde <b>No, I haven't. Hi, I'm…</b> (o <i>Nice to meet you</i>). Perfecto.", next: 'd' },
+              { t: "Hi, Pedro. I don't think we've met. I'm Aldo.", ok: 1, why: "Correcta. <b>I don't think we've met</b> suele decirlo quien inicia; como respuesta a <i>Have you met…?</i> es más directo <b>No, I haven't</b>.", next: 'd' },
+              { t: "Yes, we met this morning! Nice to see you again.", ok: 0, why: "Esa es la respuesta para cuando <i>sí</i> os habíais visto ya. En esta historia es la primera vez que ves a Pedro.", next: 'd2' },
+            ] },
+            d2: { who: 'Pedro', say: "This morning? I was at the dentist all morning… but OK, nice to meet you too!", opts: [
+              { t: "Oh, sorry, I'm mixing people up. Nice to meet you, Pedro.", ok: 2, why: "Reconoces el error con humor (<b>I'm mixing people up</b>) y vuelves a la fórmula correcta: <b>Nice to meet you</b>.", next: 'd' },
+              { t: "Sorry! Too many new faces today.", ok: 1, why: "Bien, es una salida simpática. Añade <i>Nice to meet you</i> para cerrar la presentación.", next: 'd' },
+              { t: "No, I'm sure. We go way back.", ok: 0, why: "Insistir en algo falso, y encima con <b>we go way back</b> (nos conocemos desde hace años), deja a Pedro descolocado.", next: 'd' },
+            ] },
+            d: { who: 'Pedro', say: "So, Aldo, what do you do? Tell me a bit about yourself.", opts: [
+              { t: "I'm a developer. I've worked in banking for about six years, mostly on payment systems.", ok: 2, why: "Artículo (<b>a</b> developer) y <b>present perfect + for</b> para una experiencia que continúa. Breve y concreto: así se contesta <i>Tell me about yourself</i>.", next: 'e' },
+              { t: "I'm a senior developer. Before this I worked at a bank.", ok: 1, why: "Correcta. Como dejaste el banco, <i>worked</i> (pasado) está bien. Un dato más (cuánto tiempo, en qué) la haría más interesante.", next: 'e' },
+              { t: "I'm developer. I work in a bank since six years.", ok: 0, why: "Dos errores típicos: falta el artículo (<b>I'm a developer</b>) y <i>since + duración</i> no existe: <b>I've worked… for six years</b>.", next: 'e' },
+            ] },
+            e: { who: 'Pedro', say: "Nice! We need someone like that. Oh, do you two know each other? This is Marta, our project manager.", opts: [
+              { t: "I'm not sure, but hi, I'm Aldo.", ok: 2, why: "La fórmula exacta de la unidad para <b>Do you two know each other?</b> cuando no estás seguro: <b>I'm not sure, but hi, I'm…</b>", next: 'win' },
+              { t: "No, we don't. Hi, Marta. I'm Aldo.", ok: 1, why: "Correcta: <b>No, we don't</b> responde a <i>Do you know…?</i>. La versión de la unidad es <i>I'm not sure, but hi, I'm…</i>", next: 'win' },
+              { t: "Yes, I know her since today.", ok: 0, why: "<i>Know since today</i> no funciona: o <b>we met this morning</b> (primera vez, pasado) o <b>I've known her for years</b>. Y aquí, además, no la conocías.", next: 'meh' },
+            ] },
+            win: { who: 'Marta', say: "Nice to meet you, Aldo. Welcome to the team. Come and find me if you need anything.", end: true, outcome: 'win', note: 'Te presentaste, respondiste a dos presentaciones y acabaste conociendo a Lucía, Pedro y Marta. Lo que fija esta escena: <b>meet</b> para la primera vez (<i>Nice to meet you</i>, <i>Have you met…?</i>) y <b>know</b> para la relación que continúa (<i>Do you two know each other?</i>).' },
+            meh: { who: 'Marta', say: "Since today? Ha! Well, nice to meet you, Aldo.", end: true, outcome: 'meh', note: 'Llegaste al final, pero la última frase confundió a Marta. Recuerda: <b>I\'m not sure, but hi, I\'m…</b> cuando no sabes si os conocíais, y nunca <i>know since today</i>.' },
+          } },
+        ] },
       ] },
     ],
   };

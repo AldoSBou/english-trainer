@@ -227,12 +227,31 @@ window.Method = (() => {
       ${w.length ? `<div class="card"><div class="eyebrow">Tus puntos débiles · detectados en el curso</div><h2>Errores propios por unidad</h2>${w.map(x => `<h3 style="margin-top:10px">${esc(x.label)}</h3><ul class="small" style="padding-left:18px">${x.weak.map(e => `<li>${e}</li>`).join('')}</ul><a class="lnk" href="#/${x.key}/write">Practicarlos en Writing →</a>`).join('')}</div>` : ''}`;
   }
 
+  /* ================= ROLE-PLAY CON RAMAS ================= */
+  function roleplays() { const out = []; for (const [k, d] of Object.entries(window.UNIT_DATA || {})) d.sections.forEach(s => s.activities.forEach(a => { if (a.type === 'roleplay') (a.scenes || []).forEach(sc => out.push({ unit: k, sec: s.id, act: a, scene: sc })); })); return out; }
+  function renderRoleplay(root, ctx) {
+    const all = roleplays();
+    const unitShort = k => { const [c, u] = k.split('/'); const co = (window.COURSES || []).find(x => x.id === c), un = co?.units.find(x => x.id === u); return co && un ? `${co.title.replace('Inglés ', 'I')} · U${un.number}` : k; };
+    root.innerHTML = `<div class="card"><div class="eyebrow" style="color:var(--coral)">Role-play · conversación con ramas</div><h2>Elige qué decir y vive las consecuencias</h2>
+      <p class="muted small intro">Situaciones reales con el lenguaje funcional de cada unidad. La otra persona habla; tú eliges tu réplica entre tres, ves por qué una suena más natural, la dices en voz alta y la conversación sigue por la rama que elegiste. Repite la escena por otra rama: no todas acaban bien.</p>
+      ${why('Thornbury 2005; Nation & Newton 2009', 'Elegir la fórmula adecuada para una situación social concreta (pragmática) y decirla en voz alta transfiere las frases de la clase al uso real mucho mejor que memorizarlas en lista. Ver las consecuencias de una réplica torpe fija el matiz (suave / claro / fuerte).')}
+      ${all.length ? `<div class="chips rp-pick">${all.map((x, i) => `<button class="chip" data-i="${i}"><b>${esc(unitShort(x.unit))}</b>${esc(x.scene.t)}</button>`).join('')}</div><div id="rpBox" style="margin-top:14px"></div>` : '<p class="small muted">Ninguna unidad define role-plays todavía.</p>'}</div>`;
+    const show = i => {
+      const x = all[i]; $$('.rp-pick .chip', root).forEach((c, j) => c.classList.toggle('sel', j === i));
+      const id = Mastery.idFor(x.unit, x.sec, x.act);
+      const rctx = { ...ctx, score: (g, p) => { ctx.score(g, p); Mastery.record(id, g); }, answer: info => { if (!info.good) Mastery.miss({ ...info, unit: x.unit, sec: x.sec, label: x.act.label || 'Role-play' }); } };
+      Engine.renderers.roleplay($('#rpBox', root), { ...x.act, eyebrow: '', title: '', intro: '', scenes: [x.scene] }, rctx);
+    };
+    $$('.rp-pick .chip', root).forEach(c => c.onclick = () => show(+c.dataset.i));
+    if (all.length) show(0);
+  }
+
   /* ================= montaje ================= */
-  const TABS = [['plan', 'Principios y plan', renderPlan], ['srs', 'Repaso inteligente', renderSRS], ['errors', 'Cuaderno de errores', (r, c) => Mastery.renderErrors(r, c)], ['pron', 'Pronunciación', (r, c) => Pron.render(r, c)], ['reading', 'Lectura', renderReading],['shadow', 'Shadowing', renderShadow], ['mix', 'Quiz mezclado', renderMix], ['fluency', '4-3-2', renderFluency], ['dictogloss', 'Dictogloss', renderDictogloss], ['retell', 'Leer y recontar', renderRetell]];
+  const TABS = [['plan', 'Principios y plan', renderPlan], ['srs', 'Repaso inteligente', renderSRS], ['errors', 'Cuaderno de errores', (r, c) => Mastery.renderErrors(r, c)], ['pron', 'Pronunciación', (r, c) => Pron.render(r, c)], ['reading', 'Lectura', renderReading],['shadow', 'Shadowing', renderShadow], ['mix', 'Quiz mezclado', renderMix], ['roleplay', 'Role-play', renderRoleplay], ['fluency', '4-3-2', renderFluency], ['dictogloss', 'Dictogloss', renderDictogloss], ['retell', 'Leer y recontar', renderRetell]];
   function render(view, ctx, sub) {
     const active = TABS.find(t => t[0] === sub) || TABS[0];
     view.innerHTML = `<nav class="crumbs"><a href="#/">Hoy</a><span class="sep">›</span><span>Práctica</span></nav>
-      <div class="unit-head compact"><div class="eyebrow">Práctica · técnicas con evidencia</div><h1>Práctica</h1><p class="muted small">Repaso espaciado, shadowing, quiz mezclado, fluidez, dictogloss y recontar: ejercicios transversales con el contenido de todas tus unidades.</p></div>
+      <div class="unit-head compact"><div class="eyebrow">Práctica · técnicas con evidencia</div><h1>Práctica</h1><p class="muted small">Repaso espaciado, shadowing, quiz mezclado, role-play, fluidez, dictogloss y recontar: ejercicios transversales con el contenido de todas tus unidades.</p></div>
       <div class="sub">${TABS.map(t => `<button class="${t === active ? 'on' : ''}" data-t="${t[0]}">${t[1]}</button>`).join('')}</div><div class="act on" id="methodBody"></div>`;
     $$('.sub button', view).forEach(b => b.onclick = () => { location.hash = '#/method/' + b.dataset.t; });
     active[2]($('#methodBody', view), ctx);

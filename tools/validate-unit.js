@@ -8,7 +8,7 @@ const path = process.argv[2];
 if (!path) { console.error('Uso: node tools/validate-unit.js courses/<ciclo>/unitN.js [clave]'); process.exit(2); }
 const m = path.replace(/\\/g, '/').match(/courses\/([^/]+)\/([^/]+)\.js$/);
 const KEY = process.argv[3] || (m ? m[1] + '/' + m[2] : null);
-const KNOWN = ['notes', 'flashcards', 'match', 'mcq', 'dictation', 'dialog', 'speaking', 'stress', 'reading', 'fix', 'soft', 'comment', 'order'];
+const KNOWN = ['notes', 'flashcards', 'match', 'mcq', 'dictation', 'dialog', 'speaking', 'stress', 'reading', 'fix', 'soft', 'comment', 'order', 'roleplay'];
 const SECTIONS = ['home', 'vocab', 'grammar', 'listen', 'speak', 'read', 'write', 'social'];
 
 const window = { UNIT_DATA: {} };
@@ -121,6 +121,27 @@ U.sections.forEach(sec => {
         a.checks.forEach((c, i) => { if (!isStr(c.label)) err(w + ' check #' + (i + 1) + ' sin label'); if (!isRe(c.re) && !Array.isArray(c.words)) err(w + ' check #' + (i + 1) + ' sin re/words'); });
         if (a.need && a.need > a.checks.length) err(w + ': need > checks');
         if (a.min && a.max && a.min >= a.max) err(w + ': min >= max');
+        break;
+      case 'roleplay':
+        if (!Array.isArray(a.scenes) || !a.scenes.length) { err(w + ': sin scenes'); break; }
+        a.scenes.forEach((sc, si) => {
+          const ws = w + ' scene #' + (si + 1); const N = sc.nodes || {};
+          ['t', 'you', 'partner', 'goal', 'start'].forEach(k => { if (!isStr(sc[k])) err(ws + ': falta ' + k); });
+          if (!N[sc.start]) err(ws + ': start "' + sc.start + '" no existe');
+          const seen = new Set(); const walk = id => { if (seen.has(id)) return; seen.add(id); (N[id] && N[id].opts || []).forEach(o => walk(o.next)); }; walk(sc.start);
+          const ends = Object.values(N).filter(n => n.end).length; if (!ends) err(ws + ': ningún nodo final (end:true)');
+          Object.entries(N).forEach(([id, n]) => {
+            const wn = ws + ' nodo "' + id + '"';
+            if (!isStr(n.say)) err(wn + ': falta say');
+            if (/<[^>]+>/.test(n.say || '')) err(wn + ': say con HTML');
+            if (!seen.has(id)) warn(wn + ': no se alcanza desde start');
+            if (n.end) { if (!['win', 'meh', 'fail'].includes(n.outcome)) err(wn + ': outcome debe ser win | meh | fail'); if (!isStr(n.note)) warn(wn + ': sin note'); return; }
+            if (!Array.isArray(n.opts) || n.opts.length < 2) { err(wn + ': menos de 2 opts'); return; }
+            if (n.opts.filter(o => o.ok === 2).length !== 1) err(wn + ': debe haber exactamente una opción ok:2');
+            if (new Set(n.opts.map(o => o.t)).size !== n.opts.length) err(wn + ': opts repetidas');
+            n.opts.forEach((o, oi) => { const wo = wn + ' opt #' + (oi + 1); if (!isStr(o.t)) err(wo + ': falta t'); if (/<[^>]+>/.test(o.t || '')) err(wo + ': t con HTML'); if (/&/.test(o.t || '')) err(wo + ': evita & en t (rompe la comparación del cuaderno)'); if (![0, 1, 2].includes(o.ok)) err(wo + ': ok debe ser 0, 1 o 2'); if (!isStr(o.why)) err(wo + ': falta why'); if (!N[o.next]) err(wo + ': next "' + o.next + '" no existe'); });
+          });
+        });
         break;
       case 'order':
         if (!Array.isArray(a.dialogs) || !a.dialogs.length) err(w + ': sin dialogs');

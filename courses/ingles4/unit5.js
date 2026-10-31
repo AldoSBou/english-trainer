@@ -330,6 +330,47 @@
           { q: 'Le dices al cliente que vas a revisar otra vez después de "Would you mind taking another look?"', opts: ['Not at all. Let me check again.', 'Yes, I would.', "That's life."], a: 'Not at all. Let me check again.', why: 'A <i>would you mind…?</i> se responde <b>Not at all</b> para decir que sí lo harás.' },
           { q: 'Tu vuelo se retrasó por el clima; nadie tiene la culpa y no hay remedio.', opts: ["Well, that's life.", 'There must be some kind of mistake.', "I'd like to speak to the manager, please."], a: "Well, that's life.", why: 'Cosas sin remedio → <b>that\'s life</b> / <b>it is what it is</b>.' },
         ] },
+        { label: 'Role-play', type: 'roleplay', eyebrow: 'Role-play con ramas', title: 'La reserva perdida en el restaurante', intro: 'Llegas con tu familia a un restaurante y tu reserva no aparece. Reacciona, pide una solución y acepta lo que te ofrezcan, siempre con calma y con <i>please</i>. Perder los modales (o rendirte) te deja sin mesa.', scenes: [
+          { t: 'La reserva perdida', you: 'Aldo, con una reserva para cuatro', partner: 'Recepcionista', role: 'el host del restaurante; luego aparece el gerente', goal: 'Resuelve el problema en el orden natural: reacciona → pide una solución → acepta. Sin acusar ni amenazar.', start: 'a', nodes: {
+            a: { say: "Good evening. Do you have a reservation?", opts: [
+              { t: "Yes. Suárez, party of four, for eight o'clock.", ok: 2, why: "La fórmula exacta de las reservas: apellido + <b>party of four</b> + hora. <i>Party</i> aquí es grupo, no fiesta.", next: 'b' },
+              { t: "Yes, under Suárez. A table for four at eight.", ok: 1, why: "Correcta y clara. <b>Under + apellido</b> es muy natural; <i>party of four</i> es lo que oirías en EE. UU.", next: 'b' },
+              { t: "Yes. Suárez. We are a party of four persons.", ok: 0, why: "<b>Party of four</b> ya incluye a las personas; <i>persons</i> sobra y suena a formulario. <i>We are</i> tampoco hace falta.", next: 'b' },
+            ] },
+            b: { say: "Suárez… I'm sorry, sir, but I don't see a reservation in that name.", opts: [
+              { t: "There must be some kind of mistake. Can you check again, please? I booked it online on Monday.", ok: 2, why: "Reacción modelo de la unidad: <b>There must be some kind of mistake</b> + <b>Can you check again, please?</b> + un dato útil.", next: 'c' },
+              { t: "I don't understand. Would you mind taking another look?", ok: 1, why: "Correcta: <b>Would you mind taking another look?</b> es muy educada. Añadir cuándo reservaste ayudaría.", next: 'c' },
+              { t: "That's impossible. You lost it. Check now.", ok: 0, why: "Acusas (<i>you lost it</i>) y das una orden sin <i>please</i>. El recepcionista se cierra.", next: 'b2' },
+            ] },
+            b2: { say: "Sir, I am checking. … No, there's nothing under Suárez.", opts: [
+              { t: "Sorry, I didn't mean to be rude. Is there someone else I could speak to about this, please?", ok: 2, why: "Te disculpas por el tono y pides una solución con la fórmula de la unidad: <b>Is there someone else I could speak to about this, please?</b>", next: 'c' },
+              { t: "Could I speak to the manager, please?", ok: 1, why: "Correcta y educada. Una disculpa breve por el tono anterior habría ayudado más.", next: 'c' },
+              { t: "This is a disaster. I want to speak with the manager now!", ok: 0, why: "Dramatizas y exiges. <b>I'd like to speak to the manager, please</b> consigue lo mismo sin enfrentamiento.", next: 'cc' },
+            ] },
+            c: { say: "I've checked twice. I'm afraid we're fully booked tonight.", opts: [
+              { t: "I'd like to speak to the manager, please. There must be something you can do.", ok: 2, why: "Pides una solución con las dos fórmulas de la unidad: <b>I'd like to speak to the manager, please</b> y <b>There must be something you can do</b>.", next: 'd' },
+              { t: "Is there someone else I could speak to about this, please?", ok: 1, why: "Correcta y muy educada; algo más indirecta que pedir al gerente directamente.", next: 'd' },
+              { t: "OK, then we go.", ok: 0, why: "Te rindes antes de pedir una solución. Y en inglés sería <i>we'll go</i> o <i>we'll leave</i>.", next: 'fail' },
+            ] },
+            cc: { who: 'Gerente', say: "Good evening, I'm the manager. I understand there's a problem.", opts: [
+              { t: "Good evening. Sorry about my tone earlier. I booked a table for four and it isn't in the system.", ok: 2, why: "Bajas el tono, te disculpas y expones el problema en una frase. El gerente ahora quiere ayudarte.", next: 'd' },
+              { t: "Yes. There must be some kind of mistake with my booking.", ok: 1, why: "Correcta: la fórmula de reacción de la unidad. Faltó suavizar el tono anterior.", next: 'd' },
+              { t: "Yes, your employee lost my reservation.", ok: 0, why: "Culpar al empleado delante de su jefe no te consigue una mesa; te consigue una conversación tensa.", next: 'd' },
+            ] },
+            d: { who: 'Gerente', say: "I'm very sorry about that. I can give you a table on the terrace in about twenty minutes, and the drinks are on the house.", opts: [
+              { t: "That'll work. Thank you, I'm glad that's settled.", ok: 2, why: "Aceptas la solución con las dos fórmulas de la unidad: <b>That'll work</b> y <b>I'm glad that's settled</b>. <i>On the house</i> = invita la casa.", next: 'win' },
+              { t: "OK, that's fine. Thanks for sorting it out.", ok: 1, why: "Correcta y agradecida. <i>Sort it out</i> = resolverlo.", next: 'win' },
+              { t: "Twenty minutes? No. Give me a table now.", ok: 0, why: "La oferta es razonable (mesa, bebidas gratis). Rechazarla con un imperativo te deja sin opciones.", next: 'd2' },
+            ] },
+            d2: { who: 'Gerente', say: "I'm afraid there's nothing available right now, sir. The terrace is the best I can do.", opts: [
+              { t: "That's not what I was hoping to hear, but what can you do? We'll take the terrace.", ok: 2, why: "Aceptas la mala noticia con la fórmula de la unidad: <b>That's not what I was hoping to hear, but what can you do?</b>", next: 'win' },
+              { t: "Well, it is what it is. The terrace, then. Thank you.", ok: 1, why: "Correcta: <b>It is what it is</b> = qué le vamos a hacer. Un poco resignada, pero educada.", next: 'win' },
+              { t: "Fine. But I'll write a terrible review.", ok: 0, why: "Amenazar después de que te ofrecen una solución te deja mal a ti, no al restaurante.", next: 'fail' },
+            ] },
+            win: { who: 'Gerente', say: "Thank you for your patience. Please follow me to the bar while you wait.", end: true, outcome: 'win', note: 'Seguiste el orden natural de una queja: reacciona (<b>There must be some kind of mistake</b>) → pide una solución (<b>I\'d like to speak to the manager, please</b>) → acepta (<b>That\'ll work. I\'m glad that\'s settled</b>). Todo con <i>please</i> y sin acusar.' },
+            fail: { say: "Have a good evening, sir.", end: true, outcome: 'fail', note: 'Sin pedir una solución, o con órdenes y amenazas, la queja no sirve. Calma + <i>please</i> + <b>There must be something you can do</b> abren puertas; <b>Give me a table now</b> las cierra.' },
+          } },
+        ] },
       ] },
     ],
   };

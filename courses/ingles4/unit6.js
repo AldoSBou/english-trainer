@@ -330,6 +330,53 @@
           { q: 'Un amigo insiste en pagar tu café. Le dices que no hace falta (informal).', opts: ["You don't have to do that.", 'I insist.', "That's very kind of you."], a: "You don't have to do that.", why: '<b>You don\'t have to do that</b> = no hace falta: rechazo amable.' },
           { q: 'Un camarero termina de servirte y pregunta si necesitas algo más.', opts: ['Can I help you with anything else?', 'Let me give you a hand.', 'I can manage.'], a: 'Can I help you with anything else?', why: 'Frase del curso: <b>Can I help you with anything else?</b> Ojo: <i>help <b>with</b></i>, no <s>in</s>.' },
         ] },
+        { label: 'Role-play', type: 'roleplay', eyebrow: 'Role-play con ramas', title: 'En el bus: ayudar y pedir un favor', intro: 'Vas en un bus lleno. Una señora sube cargada de bolsas y, más tarde, necesitas que alguien te deje pasar. Ofrece ayuda, insiste una vez con educación y pide el favor sin sonar grosero. La primera negativa suele ser cortesía.', scenes: [
+          { t: 'En el bus', you: 'Aldo, sentado junto al pasillo', partner: 'Señora', role: 'pasajera con dos bolsas pesadas; después, un chico con mochila', goal: 'Ofrece tu asiento, insiste una vez, acepta el agradecimiento y pide paso con las fórmulas de la unidad.', start: 'a', nodes: {
+            a: { say: "Oof… these bags are so heavy. And not a single seat.", opts: [
+              { t: "Let me give you a hand with that. Would you like to sit down?", ok: 2, why: "Dos ofertas de la unidad seguidas: <b>Let me give you a hand with that</b> y <b>Would you like to sit down?</b> Amable y concreto.", next: 'b' },
+              { t: "Can I help you with your bags?", ok: 1, why: "Correcta (<b>Can I help you with…?</b>). Ofrecer también el asiento sería lo natural en un bus lleno.", next: 'b' },
+              { t: "You need help. Give me.", ok: 0, why: "Afirmar que necesita ayuda y ordenar <i>give me</i> suena brusco. Ofrece con <b>Let me…</b> o <b>Would you like…?</b>", next: 'a2' },
+            ] },
+            a2: { say: "Excuse me? No, thank you.", opts: [
+              { t: "Sorry, that came out wrong. Would you like to sit down? I'm getting off soon anyway.", ok: 2, why: "Reparas el tono (<b>that came out wrong</b>) y ofreces de nuevo con la fórmula correcta más un motivo.", next: 'b' },
+              { t: "Sorry. Let me help you with those bags, please.", ok: 1, why: "Bien: te disculpas y ofreces con <b>Let me help you with…</b>. El <i>please</i> al final no hace falta en una oferta.", next: 'b' },
+              { t: "OK. As you want.", ok: 0, why: "Suena ofendido y además es un calco: en inglés sería <i>As you wish</i> o <i>Suit yourself</i>, y ambas suenan secas aquí.", next: 'fail' },
+            ] },
+            b: { say: "Oh no, I'm OK. Thanks anyway.", opts: [
+              { t: "Please, I insist. I'm getting off at the next stop anyway.", ok: 2, why: "La primera negativa (<b>I'm OK. Thanks anyway</b>) es cortesía. <b>Please, I insist</b> + un motivo es exactamente el Insider English de la unidad.", next: 'c' },
+              { t: "Are you sure? It's no trouble at all.", ok: 1, why: "Correcta y natural para insistir con suavidad. <i>I insist</i> es algo más decidido.", next: 'c' },
+              { t: "OK, then.", ok: 0, why: "Aceptar la primera negativa cuando la persona claramente lo necesita deja la ayuda a medias. Insiste una vez.", next: 'b2' },
+            ] },
+            b2: { say: "…Well, actually, if you're getting off soon…", opts: [
+              { t: "Of course. Here, take my seat. I insist.", ok: 2, why: "Recuperas la oferta con decisión: <b>Here, take my seat. I insist.</b>", next: 'c' },
+              { t: "Yes, please sit down.", ok: 1, why: "Correcta y clara.", next: 'c' },
+              { t: "I'm not getting off, but sit.", ok: 0, why: "Contradices lo que ella supuso y <i>sit</i> a secas suena a orden a un perro. <b>Please, sit down</b>.", next: 'c' },
+            ] },
+            c: { say: "OK then, thanks. That's very kind of you.", opts: [
+              { t: "You're welcome. Let me put the bags up here for you.", ok: 2, why: "Respondes al agradecimiento (<b>You're welcome</b>) y ofreces más ayuda con <b>Let me…</b>. Natural.", next: 'd' },
+              { t: "No problem at all.", ok: 1, why: "Correcta e informal. Funciona perfectamente.", next: 'd' },
+              { t: "Nothing.", ok: 0, why: "Calco de “de nada”. En inglés: <b>You're welcome</b>, <b>No problem</b> o <b>Don't mention it</b>.", next: 'd' },
+            ] },
+            d: { who: 'Chico', say: "Sorry, it's packed in here, isn't it?", opts: [
+              { t: "It is! I don't mean to be rude, but would you mind moving your backpack? This is my stop.", ok: 2, why: "La fórmula de la unidad para pedir algo molesto: <b>I don't mean to be rude, but would you mind + -ing?</b> Con motivo y sin agresividad.", next: 'e' },
+              { t: "I'm sorry to have to ask, but is it OK if I get past you? I'm getting off here.", ok: 1, why: "Correcta: <b>I'm sorry to have to ask, but is it OK if…?</b> es la otra fórmula de la unidad. Igual de válida.", next: 'e' },
+              { t: "Move your backpack. I get off.", ok: 0, why: "Imperativo seco y sin <i>please</i>. Además, <b>I'm getting off</b> (acción inminente), no <i>I get off</i>.", next: 'd2' },
+            ] },
+            d2: { who: 'Chico', say: "Hey, a “please” wouldn't hurt.", opts: [
+              { t: "You're right, sorry. Would you mind moving it, please? This is my stop.", ok: 2, why: "Reconoces el fallo y reformulas con <b>Would you mind + -ing, please?</b>", next: 'e' },
+              { t: "Sorry. Could you move it, please?", ok: 1, why: "Correcta y breve. <i>Could you…, please?</i> es suficiente aquí.", next: 'e' },
+              { t: "Just move it.", ok: 0, why: "Insistir en el tono brusco después de un aviso es la forma segura de perder la discusión (y la parada).", next: 'fail' },
+            ] },
+            e: { who: 'Chico', say: "No, not at all. There you go.", opts: [
+              { t: "Thank you, I really appreciate it. Have a good one!", ok: 2, why: "<b>No, not at all</b> a un <i>would you mind…?</i> significa “adelante”. Agradeces con la fórmula de la unidad: <b>Thank you, I really appreciate it</b>.", next: 'win' },
+              { t: "Thanks a lot. Bye!", ok: 1, why: "Correcta e informal.", next: 'win' },
+              { t: "Yes, you mind? OK, sorry.", ok: 0, why: "Confundiste la respuesta: a <i>Would you mind…?</i>, <b>No, not at all</b> = no me importa, pasa. <b>Yes, I do mind</b> sería el rechazo.", next: 'meh' },
+            ] },
+            win: { say: "Bye, young man! And thank you again.", end: true, outcome: 'win', note: 'Ofreciste (<b>Let me give you a hand</b>), insististe una vez (<b>Please, I insist</b>), respondiste al agradecimiento y pediste un favor con <b>I don\'t mean to be rude, but would you mind…?</b> Recuerda: a <i>would you mind…?</i> se responde <b>No, not at all</b> (= adelante).' },
+            meh: { who: 'Chico', say: "No, I said I don't mind. Go ahead!", end: true, outcome: 'meh', note: 'Todo bien hasta el final: <b>No, not at all</b> era un sí. La lógica de <i>would you mind…?</i> es “¿te molestaría?”: <i>no</i> = pasa; <i>yes, I do mind</i> = no quiero.' },
+            fail: { who: 'Chico', say: "Wow. Rude.", end: true, outcome: 'fail', note: 'Ordenar sin <i>please</i> y no corregir el tono cierra cualquier puerta. Para imponerte sin ofender: <b>I don\'t mean to be rude, but would you mind…?</b> o <b>I\'m sorry to have to ask, but is it OK if…?</b>' },
+          } },
+        ] },
       ] },
     ],
   };

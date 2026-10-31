@@ -429,6 +429,42 @@
           { q: 'Vas a explicar paso a paso lo que ocurrió.', opts: ['What happened was, I sent the email to the wrong client.', 'I lost my train of thought! I sent the email.', 'The funny thing was, I sent the email.'], a: 'What happened was, I sent the email to the wrong client.', why: '<b>What happened was,…</b> introduce la explicación de los hechos.' },
           { q: 'Te preguntan "What was I saying?" después de una interrupción. ¿Qué respondes?', opts: ['You were telling me about the client meeting.', "You'll never believe what happened.", 'Apparently, you were saying.'], a: 'You were telling me about the client meeting.', why: 'Ayudas a retomar el hilo recordando el tema: <i>You were telling me about…</i>' },
         ] },
+        { label: 'Role-play', type: 'roleplay', eyebrow: 'Role-play con ramas', title: 'Café con un amigo: cuéntale el chisme', intro: 'Diego se perdió una boda. Cuéntaselo a Nico con la estructura de un buen chisme: gancho → fuente → qué pasó → reacciones → giro → cierre. Te van a interrumpir: retoma el hilo sin perderte.', scenes: [
+          { t: 'Cuéntale el chisme', you: 'Aldo, el que tiene la historia', partner: 'Nico', role: 'tu amigo, curioso y con el teléfono en la mano', goal: 'Cuenta la historia de Diego usando las frases de la unidad y retoma el hilo cuando Nico te interrumpa.', start: 'a', nodes: {
+            a: { say: "So, what's new? You look like you have a story.", opts: [
+              { t: "You'll never believe what happened to Diego at the wedding on Saturday.", ok: 2, why: "El gancho de la unidad: <b>You'll never believe what happened…</b> Fíjate en <b>happened to Diego</b>.", next: 'b' },
+              { t: "Did you hear about Diego and the wedding?", ok: 1, why: "Correcta: <b>Did you hear about…?</b> también engancha. Un poco menos dramática.", next: 'b' },
+              { t: "You never will believe what happened Diego.", ok: 0, why: "Orden del auxiliar (<b>You'll never believe</b>) y falta la preposición: <b>happened to Diego</b>.", next: 'b' },
+            ] },
+            b: { say: "Diego? No! What happened?", opts: [
+              { t: "Apparently, he overslept and missed the whole ceremony.", ok: 2, why: "<b>Apparently,</b> al principio y con coma marca la fuente (lo oíste, no lo viste). <i>Missed</i> = se perdió (un evento).", next: 'c' },
+              { t: "Someone told me that he missed the ceremony.", ok: 1, why: "Correcta: <b>Someone told me that…</b> es la otra forma de citar la fuente.", next: 'c' },
+              { t: "Apparently he says me that he lost the ceremony.", ok: 0, why: "<b>Told me</b> (pasado, y <i>say</i> no lleva persona). Y perderse un evento es <b>miss</b>, no <i>lose</i>.", next: 'c' },
+            ] },
+            c: { say: "He missed it? Wait, sorry, one second, my phone… OK, go on.", opts: [
+              { t: "Where was I? Oh yeah, the ceremony. What happened was, his phone died, so no alarm.", ok: 2, why: "Retomas el hilo con <b>Where was I? Oh yeah,…</b> y sigues con <b>What happened was,…</b>. Dos frases de la unidad en una réplica.", next: 'd' },
+              { t: "As I was saying, he missed the ceremony because his phone died.", ok: 1, why: "Correcta: <b>As I was saying,…</b> es la otra forma de retomar.", next: 'd' },
+              { t: "I lost my train. Eh… what I said?", ok: 0, why: "La expresión completa es <b>I lost my train of thought</b>; <i>my train</i> solo es el tren. Y la pregunta es <b>What was I saying?</b>", next: 'c2' },
+            ] },
+            c2: { say: "Your train? Ha! You lost your train of thought. The ceremony, Diego, his alarm…", opts: [
+              { t: "Right! What happened was, his phone died overnight, so the alarm never went off.", ok: 2, why: "Recuperas con <b>What happened was,…</b> y un detalle que hace la historia creíble (<i>the alarm never went off</i>).", next: 'd' },
+              { t: "Oh yeah. His phone died, so there was no alarm.", ok: 1, why: "Correcta y clara, aunque sin las frases de la unidad.", next: 'd' },
+              { t: "Yes. The phone dead, the alarm no sound.", ok: 0, why: "Sin verbos: <b>his phone died</b>, <b>the alarm didn't go off</b>.", next: 'd' },
+            ] },
+            d: { say: "No way. So he just didn't show up?", opts: [
+              { t: "Well, turns out, he got there for the party. And he was like, “Did I miss anything?”", ok: 2, why: "El giro con <b>Well, turns out,…</b> y la reacción citada con <b>he was like,…</b>: el Insider English de la unidad.", next: 'e' },
+              { t: "He arrived for the party. He said, “Did I miss anything?”", ok: 1, why: "Correcta. <i>He said</i> es neutro; entre amigos sonaría más vivo <b>he was like</b>.", next: 'e' },
+              { t: "He was like, “Did I missed something?”", ok: 0, why: "Buen uso de <i>he was like</i>, pero la pregunta es <b>Did I miss…?</b> (con <i>did</i>, el verbo va en base).", next: 'e' },
+            ] },
+            e: { say: "Ha! And what did the bride say?", opts: [
+              { t: "The funny thing was, she didn't even notice. In the end, they all laughed about it.", ok: 2, why: "Comentario (<b>The funny thing was,…</b>) y cierre (<b>In the end,…</b>). La estructura completa del chisme.", next: 'win' },
+              { t: "She didn't notice at all. In the end it was fine.", ok: 1, why: "Correcta, con el cierre <b>In the end</b>. Le falta el comentario que da sabor.", next: 'win' },
+              { t: "The funny thing is she didn't noticed. In the end they laugh.", ok: 0, why: "Historia en pasado: <b>didn't notice</b> (tras <i>didn't</i>, base) y <b>they laughed</b>.", next: 'meh' },
+            ] },
+            win: { say: "Classic Diego. OK, my turn: you'll never guess who I ran into yesterday.", end: true, outcome: 'win', note: 'Contaste la historia completa: gancho (<b>You\'ll never believe…</b>) → fuente (<b>Apparently,…</b>) → qué pasó (<b>What happened was,…</b>) → reacción (<b>he was like,…</b>) → giro (<b>turns out,…</b>) → comentario y cierre (<b>The funny thing was… In the end,…</b>). Y retomaste el hilo con <b>Where was I?</b>' },
+            meh: { say: "Classic Diego! Though… “didn't noticed”? Come on, Aldo.", end: true, outcome: 'meh', note: 'La historia llegó entera, pero el cierre tropezó con los pasados: <b>didn\'t notice</b>, <b>they laughed</b>. En un chisme todo va en pasado salvo las fórmulas (<i>turns out</i>, <i>the funny thing was</i>).' },
+          } },
+        ] },
       ] },
     ],
   };

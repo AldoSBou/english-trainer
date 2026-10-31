@@ -297,6 +297,47 @@
           { q: 'Un cliente te pide más café y vas a traerlo.', opts: ['Coming right up!', "I'd better not.", "That'd be wonderful."], a: 'Coming right up!', why: '¡Marchando! Respuesta típica de camarero.' },
           { q: 'Quieres pedir más café de forma educada.', opts: ['Can I have some more coffee, too?', 'Give me coffee.', 'Coffee, coming right up!'], a: 'Can I have some more coffee, too?', why: '<i>Can I have some more…?</i> es la fórmula educada. La otra es una orden.' },
         ] },
+        { label: 'Role-play', type: 'roleplay', eyebrow: 'Role-play con ramas', title: 'Cena en casa de tu jefa', intro: 'Tu jefa te ha invitado a cenar. Acepta y rechaza comida con educación, reacciona a lo que pruebas y pide más café como un nativo. Cada réplica cambia la conversación.', scenes: [
+          { t: 'Cena en casa de tu jefa', you: 'Aldo, invitado', partner: 'Diana', role: 'tu jefa y anfitriona, orgullosa de su ceviche', goal: 'Acepta, rechaza y pide comida con las fórmulas de la unidad sin sonar seco ni exagerado.', start: 'a', nodes: {
+            a: { say: "Here you go, Aldo. Help yourself to the ceviche. There's plenty.", opts: [
+              { t: "Thank you, it looks delicious. I'd love some.", ok: 2, why: "<b>I'd love some</b> es la forma más cálida de aceptar. Un cumplido antes (<i>it looks delicious</i>) es lo que hace un buen invitado.", next: 'b' },
+              { t: "Thanks! Just a little, please.", ok: 1, why: "Correcta: <b>Yes, please. Just a little</b> es otra fórmula de la unidad. Un poco más tímida para un primer plato que te ofrecen con orgullo.", next: 'b' },
+              { t: "Thank you. I will eat much.", ok: 0, why: "Traducción literal de “comeré mucho”. En inglés aceptas con <b>I'd love some</b> o <b>Yes, please</b>; <i>eat much</i> no se dice así.", next: 'b' },
+            ] },
+            b: { say: "So? What do you think?", opts: [
+              { t: "It's amazing. The lime and the ají are perfect.", ok: 2, why: "Un cumplido concreto (qué te gusta exactamente) vale más que uno general. Sujeto <b>It's</b> siempre presente.", next: 'c' },
+              { t: "Really good! Did you make it yourself?", ok: 1, why: "Bien: cumplido más pregunta de interés. Natural y amable.", next: 'c' },
+              { t: "Is good. Very rich.", ok: 0, why: "Dos errores de hispanohablante: falta el sujeto (<b>It's</b> good) y <b>rich</b> no significa <i>rico</i> en comida (es <i>pesado, con mucha grasa o crema</i>). Di <b>tasty</b> o <b>delicious</b>.", next: 'c2' },
+            ] },
+            c2: { say: "Rich? Oh, you mean tasty! Rich means heavy, like a cream sauce. Anyway, would you like some more?", opts: [
+              { t: "Ha, yes, tasty! Yes, please. Just a little.", ok: 2, why: "Aceptas la corrección con humor y usas la fórmula exacta: <b>Yes, please. Just a little.</b>", next: 'd' },
+              { t: "Exactly, tasty. I'd love some more.", ok: 1, why: "Correcta y cálida. <b>I'd love some more</b> funciona perfectamente.", next: 'd' },
+              { t: "No. I don't want.", ok: 0, why: "Seco y, además, <i>want</i> necesita objeto. Para rechazar: <b>No, thanks. I'm full.</b>", next: 'd' },
+            ] },
+            c: { say: "I'm glad you like it! Can I offer you another helping? There's just a little left.", opts: [
+              { t: "I'd better not. I've already had seconds!", ok: 2, why: "<b>I'd better not</b> = “mejor no”, el rechazo suave de la unidad, con la excusa típica: <b>I've already had seconds</b> (ya repetí).", next: 'd' },
+              { t: "Are you sure? OK then, just a little.", ok: 1, why: "Aceptar también está bien: <b>OK then</b> + <b>just a little</b>. Pero <i>Are you sure?</i> lo dice quien ofrece, no quien recibe.", next: 'd' },
+              { t: "No. I am complete.", ok: 0, why: "“Estoy completo” no existe en inglés: <b>I'm full</b>. Y el <i>No</i> solo suena seco: <b>No, thanks</b>.", next: 'd' },
+            ] },
+            d: { say: "OK! Now, dessert. I made a lúcuma pie. Would you like a slice?", opts: [
+              { t: "Yes, please. I couldn't say no to lúcuma.", ok: 2, why: "<b>Yes, please</b> + un motivo simpático. <i>I couldn't say no to…</i> es muy natural para aceptar algo que te encanta.", next: 'e' },
+              { t: "That'd be wonderful, thank you.", ok: 1, why: "Fórmula de la unidad (<b>OK, then. That'd be wonderful</b>). Correcta; quizá un punto formal para un postre.", next: 'e' },
+              { t: "I couldn't eat another bite… but give me one.", ok: 0, why: "<b>I couldn't eat another bite</b> es un <i>no</i> definitivo; seguido de <i>give me one</i> es contradictorio y <i>give me</i> suena a orden.", next: 'e2' },
+            ] },
+            e2: { say: "Ha! So is that a yes or a no?", opts: [
+              { t: "Sorry, that's a yes! Just a small slice, please.", ok: 2, why: "Aclaras con humor y pides con <b>please</b> y <b>just a small slice</b>. Nadie se ofende.", next: 'e' },
+              { t: "A yes, please. Just a little.", ok: 1, why: "Correcta y breve.", next: 'e' },
+              { t: "Yes, I want.", ok: 0, why: "<i>I want</i> solo, sin <i>please</i>, suena a niño pequeño. <b>Yes, please.</b>", next: 'e' },
+            ] },
+            e: { say: "Here you go. Enjoy! Can I get you anything else? Coffee?", opts: [
+              { t: "Could I have some more coffee, please? That'd be great.", ok: 2, why: "<b>Can / Could I have some more coffee?</b> Con <b>some more</b>, nunca <i>more of</i>. <i>That'd be great</i> cierra con calidez.", next: 'win' },
+              { t: "Yes, please. A coffee would be lovely.", ok: 1, why: "Correcta y amable. <i>Lovely</i> es más británico; en EE. UU. dirían <i>would be great</i>.", next: 'win' },
+              { t: "Can I have more of coffee?", ok: 0, why: "El error exacto que marca la unidad: <b>some more coffee</b>, no <i>more of coffee</i>. Y añade <b>please</b>.", next: 'meh' },
+            ] },
+            win: { say: "You got it! I'll be right back with that.", end: true, outcome: 'win', note: 'Aceptaste (<b>I\'d love some</b>), rechazaste con suavidad (<b>I\'d better not, I\'ve already had seconds</b>), hiciste un cumplido concreto y pediste más con <b>some more</b>. Diana responde como anfitriona: <b>You got it!</b> = ¡hecho!' },
+            meh: { say: "More of coffee? Sure, coming right up.", end: true, outcome: 'meh', note: 'Diana te entendió, pero <i>more of coffee</i> chirría. Pide siempre <b>some more coffee</b>, y recuerda que <b>rich</b> no es <i>rico</i>: para comida, <b>tasty</b> o <b>delicious</b>.' },
+          } },
+        ] },
       ] },
     ],
   };

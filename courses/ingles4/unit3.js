@@ -309,6 +309,52 @@
           { q: 'Explicas que dejaste la bici sin candado.', opts: ["I can't believe I didn't lock it!", "I can't tell I didn't lock it!", "I can't tell you I didn't lock it!"], a: "I can't believe I didn't lock it!", why: '<b>I can\'t believe</b> + lo que pasó. Tu error del curso fue usar <i>tell</i> aquí.' },
           { q: 'Alguien perdió tu libro prestado y está muy agobiado. La pérdida no es grave.', opts: ["It's not the end of the world.", "It's the end of the world.", "That's a big deal."], a: "It's not the end of the world.", why: '<b>not the end of the world</b> = no es bueno, pero tampoco horrible.' },
         ] },
+        { label: 'Role-play', type: 'roleplay', eyebrow: 'Role-play con ramas', title: 'Perdiste la llave del coche prestado', intro: 'Tu amigo Javier te prestó su coche para el fin de semana y perdiste la llave en la playa. Discúlpate, explica qué pasó y acepta su reacción sin empeorar las cosas. Una mala réplica puede estropear la amistad.', scenes: [
+          { t: 'Perdiste la llave del coche prestado', you: 'Aldo, que pidió el coche prestado', partner: 'Javier', role: 'tu amigo, dueño del coche', goal: 'Discúlpate bien, explica lo que pasó, asume la responsabilidad y acepta la respuesta de Javier.', start: 'a', nodes: {
+            a: { say: "Hey! How was the trip? Everything OK with the car?", opts: [
+              { t: "The trip was great… but you'll never guess what I did.", ok: 2, why: "<b>You'll never guess what I did</b> es la frase de la unidad para anunciar que la pifiaste. Prepara al otro para la noticia.", next: 'b' },
+              { t: "Fine, thanks. Listen, I have to tell you something.", ok: 1, why: "Correcta y clara. Menos idiomática que <i>You'll never guess what I did</i>, pero funciona.", next: 'b' },
+              { t: "Yes, OK. But I did the most dumb thing.", ok: 0, why: "Superlativo de un adjetivo corto: <b>the dumbest thing</b>, no <i>the most dumb</i>.", next: 'b' },
+            ] },
+            b: { say: "Uh-oh. What happened?", opts: [
+              { t: "I just did the dumbest thing. I lost the car key at the beach.", ok: 2, why: "<b>I just did the dumbest thing</b> + el hecho en pasado simple. Directo y honesto.", next: 'c' },
+              { t: "I can't believe I did this: I lost the key at the beach.", ok: 1, why: "Correcta: <b>I can't believe I + pasado</b> va con lo que hiciste. Suena bien.", next: 'c' },
+              { t: "I can't believe I'm lost the key.", ok: 0, why: "<i>I'm lost</i> = estoy perdido. Lo que quieres es <b>I lost</b> (pasado) o <b>I've lost</b> the key.", next: 'c' },
+            ] },
+            c: { say: "The key? Seriously, Aldo?", opts: [
+              { t: "I'm so, so sorry. I can't tell you how sorry I am.", ok: 2, why: "Las dos fórmulas fuertes de disculpa de la unidad. Fíjate en el orden: <b>how sorry I am</b> (how + adjetivo + sujeto + verbo).", next: 'd' },
+              { t: "I'm really sorry, Javier. I feel terrible.", ok: 1, why: "Correcta y sincera. <i>I'm really sorry</i> es un poco más suave que <i>I can't tell you how sorry I am</i>.", next: 'd' },
+              { t: "I can't tell you how I am sorry.", ok: 0, why: "Tu error del curso: después de <i>how</i> va el adjetivo y luego sujeto y verbo: <b>how sorry I am</b>.", next: 'c2' },
+            ] },
+            c2: { say: "You can't tell me how…? OK, OK. Just tell me exactly what happened.", opts: [
+              { t: "Sorry, I mean: I can't tell you how sorry I am. It fell out of my pocket in the sand.", ok: 2, why: "Te corriges con la fórmula bien ordenada y explicas qué pasó con un pasado simple claro.", next: 'd' },
+              { t: "It fell out of my pocket while we were playing volleyball.", ok: 1, why: "Buena explicación (pasado simple + pasado continuo). Faltó repetir la disculpa bien dicha.", next: 'd' },
+              { t: "I don't know. Is not my fault, the sand.", ok: 0, why: "Echar la culpa a la arena, y sin sujeto (<b>It's</b> not my fault). Asume la responsabilidad: es tu disculpa.", next: 'd2' },
+            ] },
+            d2: { say: "Not your fault? Come on. Well, I have a spare key, but that one had the remote.", opts: [
+              { t: "You're right, it was my fault. I'll pay for a new one, of course.", ok: 2, why: "Rectificas, asumes y ofreces una solución. Es lo que repara la situación.", next: 'e' },
+              { t: "Sorry, I didn't mean that. I'll pay for the replacement.", ok: 1, why: "Bien: te desdices y ofreces pagar. Un poco menos claro que admitir <i>it was my fault</i>.", next: 'e' },
+              { t: "OK, so no problem then.", ok: 0, why: "Minimizas un daño que causaste tú. <b>No big deal</b> o <b>no problem</b> lo dice quien perdona, no quien perdió la llave.", next: 'fail' },
+            ] },
+            d: { say: "OK… Well, it's not the end of the world. I have a spare one.", opts: [
+              { t: "Thanks for being so cool about it. I'll pay for a new key, of course.", ok: 2, why: "Agradeces la reacción y ofreces una solución concreta. Así se cierra bien una disculpa.", next: 'e' },
+              { t: "Thank you. Still, I'll pay for a replacement.", ok: 1, why: "Correcta. <b>Still</b> (aun así) introduce bien la oferta de pagar.", next: 'e' },
+              { t: "Yes, it's no big deal.", ok: 0, why: "<b>It's no big deal</b> es la respuesta de quien perdona (Javier). Dicha por ti suena a que le restas importancia a su llave.", next: 'd3' },
+            ] },
+            d3: { say: "No big deal? It's a 300-dollar key with a remote, Aldo.", opts: [
+              { t: "You're right, sorry. I'll pay for it, of course.", ok: 2, why: "Reconoces el error de tono enseguida y ofreces pagar. La conversación se recupera.", next: 'e' },
+              { t: "Sorry, that came out wrong. I'll cover the cost.", ok: 1, why: "Bien: <b>that came out wrong</b> = no quise decir eso. <i>Cover the cost</i> es correcto.", next: 'e' },
+              { t: "300 dollars? For a key? That's too much.", ok: 0, why: "Discutir el precio de lo que perdiste tú rompe la disculpa por completo.", next: 'fail' },
+            ] },
+            e: { say: "Deal. Don't beat yourself up about it. It happens. Did you at least have fun?", opts: [
+              { t: "Thanks, man. Yes, it was a great weekend, apart from the key!", ok: 2, why: "Aceptas el consuelo (<b>Don't beat yourself up</b> = no te castigues) y cambias de tema con humor. Perfecto.", next: 'win' },
+              { t: "I did. And next time I'll keep the key in the car bag.", ok: 1, why: "Correcta; además propones una medida. Un <i>thanks</i> al principio la haría más cálida.", next: 'win' },
+              { t: "I don't beat myself. Yes, was fun.", ok: 0, why: "<b>Beat yourself up</b> es la expresión completa (culparte demasiado); <i>beat myself</i> suena a golpearte. Y <b>it was fun</b>: el sujeto no se omite.", next: 'win' },
+            ] },
+            win: { say: "Good. Next time, keep it in the bag. See you Friday?", end: true, outcome: 'win', note: 'Anunciaste la noticia (<b>You\'ll never guess what I did</b>), te disculpaste con el orden correcto (<b>I can\'t tell you how sorry I am</b>), asumiste la responsabilidad y aceptaste el consuelo. Recuerda: <i>no big deal</i> y <i>don\'t beat yourself up</i> los dice quien perdona.' },
+            fail: { say: "Wow. OK. Let's talk about this another day.", end: true, outcome: 'fail', note: 'Discutir el costo o decir que no es grave cuando el daño es tuyo rompe la disculpa. La secuencia que funciona: disculpa fuerte → qué pasó → <b>it was my fault</b> → una solución concreta.' },
+          } },
+        ] },
       ] },
     ],
   };

@@ -744,3 +744,16 @@ select{padding:7px 10px}
 .hist-item span{font-size:.8rem;color:var(--muted)}
 .hist-item:hover b{color:var(--accent)}
 @media (max-width:640px){.tr-text{font-size:1.25rem}}
+
+/* ---------- role-play con ramas ---------- */
+.rp-goal{background:var(--surface2);border:1px solid var(--line);border-radius:14px;padding:12px 16px;margin-top:12px}
+.rp-log.chat{max-height:38vh}
+.opts.rp-opts{grid-template-columns:1fr}
+.opt.meh{border-color:var(--amber);background:color-mix(in srgb, var(--amber) 14%, var(--surface));box-shadow:0 2px 0 var(--amber)}
+.fb.meh{background:color-mix(in srgb, var(--amber) 14%, var(--surface));border-color:var(--amber);color:var(--ink)}
+.rp-end{border-radius:14px;padding:14px 16px;margin-top:12px;border:1px solid var(--line);background:var(--surface2)}
+.rp-end.win{border-color:var(--ok);background:var(--ok-soft)}
+.rp-end.meh{border-color:var(--amber);background:color-mix(in srgb, var(--amber) 14%, var(--surface))}
+.rp-end.fail{border-color:var(--bad);background:var(--bad-soft)}
+.rp-end .eyebrow{color:inherit}
+.rp-pick .chip b{margin-right:6px;opacity:.7}

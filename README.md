@@ -53,6 +53,7 @@ Crea la carpeta `courses/<cicloId>/` con sus unidades. Nada más: menú, portada
 | `soft` | `items:[{h,a}], pattern, missing` | Reescritura que debe cumplir un patrón (regex). |
 | `comment` | `checks:[{label, re | words}], min, max, need` | Texto libre con checklist automática. |
 | `order` | `dialogs:[[líneas]]` | Ordenar líneas de un diálogo. |
+| `roleplay` | `scenes:[{t, you, partner, role, goal, start, nodes}]` | Conversación con ramas: la otra persona habla, eliges tu réplica entre tres, la dices en voz alta y la historia sigue por la rama elegida (finales `win` / `meh` / `fail`). |
 
 Para un tipo nuevo: `Engine.register('miTipo', (root, act, ctx) => { ... })`.
 `ctx` ofrece `score(good, pts)`, `say(text, rate)`, `sayLines([[voz, texto]])`, `toast(msg)`.
@@ -72,6 +73,10 @@ Además, cada unidad recibe automáticamente cuatro ejercicios de producción ge
 ## Lectura cronometrada
 
 En Reading de cada unidad (pestaña **Lectura cronometrada**) y en Práctica › Lectura (`#/method/reading`, con los textos de todas las unidades). El texto se destapa al pulsar "Empezar a leer"; al terminar ves tus palabras por minuto con una banda orientativa y respondes las preguntas de comprensión del texto sin mirarlo. Lo que cuenta es el producto: ppm × comprensión. Cada texto guarda tu historial (`et-reading`) y te anima a releerlo dos o tres veces seguidas, que es la técnica con más evidencia para ganar fluidez lectora.
+
+## Role-play con ramas
+
+En Social English de cada unidad de Inglés 4 (pestaña **Role-play**) y en Práctica › Role-play (`#/method/roleplay`, con las escenas de todas las unidades). Una situación real con el lenguaje funcional de la unidad: la otra persona habla con la voz alternativa; eliges tu réplica entre tres (la más natural, una correcta pero mejorable y un error típico), ves el porqué, dices la frase buena en voz alta con reconocimiento de voz y la conversación sigue por la rama de lo que elegiste. Hay finales buenos, regulares y malos: repetir la escena por otra rama es parte del ejercicio. Los fallos entran al cuaderno de errores.
 
 ## Pronunciación (`js/pron.js`)
 
