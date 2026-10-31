@@ -43,4 +43,16 @@ window.COURSES = [
     ],
   },
   { id: 'ingles5', number: 5, title: 'Inglés 5', subtitle: 'Intermedio alto', available: false, units: [] },
+  {
+    id: 'practico', number: 'P', title: 'Inglés práctico', subtitle: 'Viajes, restaurante, trabajo y salud', available: true, practical: true,
+    units: [
+      { id: 'aeropuerto', number: 1, title: 'Aeropuerto y vuelo', subtitle: 'Check-in, seguridad, migración, conexiones y equipaje', available: true, xpGoal: 500 },
+      { id: 'hotel', number: 2, title: 'Hotel y transporte', subtitle: 'Reserva, problemas en la habitación, taxi y direcciones', available: true, xpGoal: 500 },
+      { id: 'restaurante', number: 3, title: 'Restaurante y comida', subtitle: 'Pedir, alergias, la cuenta; y atender a un cliente extranjero', available: true, xpGoal: 500 },
+      { id: 'reuniones', number: 4, title: 'Reuniones y stand-ups', subtitle: 'Reportar, pedir aclaraciones, discrepar y cerrar acuerdos', available: true, xpGoal: 500 },
+      { id: 'entrevistas', number: 5, title: 'Entrevistas y networking', subtitle: 'Tell me about yourself, STAR, salario y contactos', available: true, xpGoal: 500 },
+      { id: 'escrito', number: 6, title: 'Inglés escrito de trabajo', subtitle: 'Correos, Slack, revisiones de PR e incidentes', available: true, xpGoal: 500 },
+      { id: 'salud', number: 7, title: 'Compras, farmacia y salud', subtitle: 'Devoluciones, síntomas, dosis y urgencias', available: true, xpGoal: 500 },
+    ],
+  },
 ];

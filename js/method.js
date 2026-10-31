@@ -231,7 +231,7 @@ window.Method = (() => {
   function roleplays() { const out = []; for (const [k, d] of Object.entries(window.UNIT_DATA || {})) d.sections.forEach(s => s.activities.forEach(a => { if (a.type === 'roleplay') (a.scenes || []).forEach(sc => out.push({ unit: k, sec: s.id, act: a, scene: sc })); })); return out; }
   function renderRoleplay(root, ctx) {
     const all = roleplays();
-    const unitShort = k => { const [c, u] = k.split('/'); const co = (window.COURSES || []).find(x => x.id === c), un = co?.units.find(x => x.id === u); return co && un ? `${co.title.replace('Inglés ', 'I')} · U${un.number}` : k; };
+    const unitShort = k => { const [c, u] = k.split('/'); const co = (window.COURSES || []).find(x => x.id === c), un = co?.units.find(x => x.id === u); return co && un ? `${co.practical ? 'Práctico' : co.title.replace('Inglés ', 'I')} · ${co.practical ? '' : 'U'}${un.number}` : k; };
     root.innerHTML = `<div class="card"><div class="eyebrow" style="color:var(--coral)">Role-play · conversación con ramas</div><h2>Elige qué decir y vive las consecuencias</h2>
       <p class="muted small intro">Situaciones reales con el lenguaje funcional de cada unidad. La otra persona habla; tú eliges tu réplica entre tres, ves por qué una suena más natural, la dices en voz alta y la conversación sigue por la rama que elegiste. Repite la escena por otra rama: no todas acaban bien.</p>
       ${why('Thornbury 2005; Nation & Newton 2009', 'Elegir la fórmula adecuada para una situación social concreta (pragmática) y decirla en voz alta transfiere las frases de la clase al uso real mucho mejor que memorizarlas en lista. Ver las consecuencias de una réplica torpe fija el matiz (suave / claro / fuerte).')}

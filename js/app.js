@@ -416,7 +416,7 @@
     const c = course(cId); if (!c || !c.available) { location.hash = '#/curso'; return; }
     setPage('home', cId);
     view.innerHTML = `${crumbs([['Hoy', '#/'], ['Curso', '#/curso'], [c.title, '']])}
-      <div class="unit-head" data-n="${c.number}"><div class="eyebrow">Ciclo ${c.number} · ${esc(c.subtitle || '')}</div><h1>${esc(c.title)}</h1><p class="small">${availableUnits(c).length} unidades listas · ${coursePct(c)}% completado. Las que aún no has visto en clase aparecen como "Próximamente".</p></div>
+      <div class="unit-head" data-n="${c.number}"><div class="eyebrow">${c.practical ? 'Situaciones reales' : 'Ciclo ' + c.number} · ${esc(c.subtitle || '')}</div><h1>${esc(c.title)}</h1><p class="small">${c.practical ? `${availableUnits(c).length} situaciones listas · ${coursePct(c)}% completado. Cada una es una unidad completa: frases, gramática mínima, audio, role-plays con ramas y escritura.` : `${availableUnits(c).length} unidades listas · ${coursePct(c)}% completado. Las que aún no has visto en clase aparecen como "Próximamente".`}</p></div>
       <div class="unit-cards">${c.units.map(u => u.available
         ? `<a class="unit-card" data-n="${u.number % 6}" href="#/${c.id}/${u.id}"><span class="big">${String(u.number).padStart(2, '0')}</span><h3>${esc(u.title)}</h3><p class="small muted">${esc(u.subtitle || '')}</p><span class="small">${(dataOf(c.id, u.id)?.sections.length || 1) - 1} secciones · ${unitPct(c.id, u)}%</span><div class="bar"><i style="width:${unitPct(c.id, u)}%"></i></div></a>`
         : `<div class="unit-card locked" data-n="${u.number % 6}"><span class="big">${String(u.number).padStart(2, '0')}</span><h3>Unit ${u.number}</h3><p class="small muted">Próximamente</p></div>`).join('')}</div>`;

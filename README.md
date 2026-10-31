@@ -78,6 +78,10 @@ En Reading de cada unidad (pestaña **Lectura cronometrada**) y en Práctica ›
 
 En Social English de cada unidad de Inglés 3 y 4 (pestaña **Role-play**, 18 escenas) y en Práctica › Role-play (`#/method/roleplay`, con las escenas de todas las unidades). Una situación real con el lenguaje funcional de la unidad: la otra persona habla con la voz alternativa; eliges tu réplica entre tres (la más natural, una correcta pero mejorable y un error típico), ves el porqué, dices la frase buena en voz alta con reconocimiento de voz y la conversación sigue por la rama de lo que elegiste. Hay finales buenos, regulares y malos: repetir la escena por otra rama es parte del ejercicio. Los fallos entran al cuaderno de errores.
 
+## Inglés práctico (`courses/practico/`)
+
+Un ciclo aparte, fuera de la numeración del instituto, con situaciones reales: aeropuerto y vuelo, hotel y transporte, restaurante y comida (también desde el lado de quien atiende), reuniones y stand-ups de un equipo de software, entrevistas y networking, inglés escrito de trabajo (correos, Slack, revisiones de PR, incidentes) y compras, farmacia y salud. Cada situación es una unidad completa: frasebook con audio, la gramática mínima que la situación exige, errores típicos de hispanohablante, dictado y diálogo, retos de speaking, una lectura realista, una escritura útil y tres role-plays con ramas. Todo entra al repaso SRS, al quiz mezclado y a Práctica › Role-play.
+
 ## Pronunciación (`js/pron.js`)
 
 Ruta `#/method/pron`. Laboratorio pensado para hispanohablantes: **pares mínimos** (sheep/ship, berry/very, jet/yet, ship/chip, cat/cut, they/day, bad/bat, eyes/ice, hear/ear, pool/pull: oyes una palabra, eliges cuál fue y luego la dices), **terminación -ed** (/t/, /d/ o /ɪd/), **sílaba tónica** (toca la sílaba fuerte) y **enlaces y contracciones** (habla conectada con Dilo).

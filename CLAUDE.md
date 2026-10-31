@@ -8,7 +8,7 @@ Lee esto primero. Para el detalle completo (historial, contrato de datos, conten
 
 Jerarquía de contenido: **ciclo** (Inglés 0-5) → **unidad** → **sección** (`home, vocab, grammar, listen, speak, read, write, social`) → **actividades** tipadas. Instrucciones en **español**, práctica en **inglés**.
 
-Estado: Inglés 3 (WeTalk Level 3) completo, 10 unidades. Inglés 4 (Evolve Digital Level 4) en curso, Units 1-8 hechas; el ciclo actual es `ingles4` (`current:true`). Inglés 0/1/2/5 aparecen como "Pronto".
+Estado: Inglés 3 (WeTalk Level 3) completo, 10 unidades. Inglés 4 (Evolve Digital Level 4) en curso, Units 1-8 hechas; el ciclo actual es `ingles4` (`current:true`). Inglés 0/1/2/5 aparecen como "Pronto". Además existe el ciclo **Inglés práctico** (`practico`, `number:'P'`, `practical:true`, fuera de la numeración): siete situaciones reales escritas sin material de clase, en `courses/practico/<id>.js` (aeropuerto, hotel, restaurante, reuniones, entrevistas, escrito, salud), con el mismo contrato de unidad pero gramática mínima y un `roleplay` de tres escenas cada una.
 
 ## Mapa del código
 
@@ -23,7 +23,8 @@ js/method.js            Práctica (#/method): Leitner SRS, cuaderno de errores, 
 js/pron.js              Laboratorio de pronunciación para hispanohablantes (#/method/pron): pares mínimos (10 contrastes), terminación -ed, sílaba tónica, enlaces y contracciones (usa el tipo `say`). Datos propios dentro del archivo
 js/translate.js         Traductor con voz (#/translate): glosario de las unidades → IA del Coach → MyMemory
 courses/registry.js     window.COURSES: ciclos y unidades (available / current / title / subtitle / xpGoal)
-courses/<ciclo>/unitN.js  window.UNIT_DATA['<ciclo>/unitN'] = {source, description, map, weak?, weakLink?, sections}
+courses/<ciclo>/unitN.js  window.UNIT_DATA['<ciclo>/unitN'] = {source, description, map, cando?, weak?, weakLink?, sections}
+courses/practico/<id>.js  unidades del ciclo práctico (misma estructura; la clave es 'practico/<id>')
 manifest.webmanifest, sw.js, icons/   PWA. sw.js: stale-while-revalidate; CACHE = 'et-vN'
 tools/validate-unit.js  validador estructural de una unidad   → node tools/validate-unit.js courses/ingles4/unit8.js
 tools/validate-all.js   todas las unidades                     → npm run validate

@@ -49,7 +49,7 @@ body[data-sec="social"] {--accent:#A3467C;--accent-2:#C979A6;--accent-soft:#F8E6
 
 /* color por ciclo (0-5) para tarjetas y menú */
 [data-n="0"]{--c:#A3467C}[data-n="1"]{--c:#DC5540}[data-n="2"]{--c:#C77D0F}
-[data-n="3"]{--c:#3B8A3F}[data-n="4"]{--c:#0E7C6B}[data-n="5"]{--c:#2563EB}
+[data-n="3"]{--c:#3B8A3F}[data-n="4"]{--c:#0E7C6B}[data-n="5"]{--c:#2563EB}[data-n="P"]{--c:#D98E12}
 
 /* ---------- Tokens: tema oscuro (azul noche) ---------- */
 @media (prefers-color-scheme: dark){
