@@ -10,14 +10,18 @@ english-trainer/
 ├── index.html              # esqueleto + carga de scripts
 ├── css/style.css           # tokens de color (claro/oscuro), layout, componentes
 ├── js/engine.js            # renderizadores de actividades (flashcards, mcq, dictation…)
-├── js/app.js               # menú, rutas #/ciclo/unidad/sección, XP y progreso
+├── js/app.js               # navegación, pantalla Hoy (sesión diaria), portada de unidad, perfil, XP y progreso
 └── courses/
     ├── registry.js         # ciclos y sus unidades (available: true/false)
     └── ingles4/
         └── unit1.js        # datos de Inglés 4 · Unit 1
 ```
 
-Rutas: `#/` (ciclos) → `#/ingles4` (unidades) → `#/ingles4/unit1` → `#/ingles4/unit1/grammar`.
+Rutas: `#/` (Hoy) · `#/curso` (ciclos) → `#/ingles4` (unidades) → `#/ingles4/unit1` → `#/ingles4/unit1/grammar` · `#/perfil`.
+
+## Hoy: la sesión diaria
+
+La portada es **Hoy**: una sesión de unos 13 minutos en cinco pasos cortos, armada sola con la unidad en foco (la última que visitaste del ciclo actual): repaso espaciado de las palabras que tocan, seis preguntas de gramática mezclando la unidad actual con otras anteriores, tres frases al dictado, un reto de speaking con modelo y seis palabras nuevas que entran al repaso. Completar los cinco pasos cuenta como sesión del día: alimenta la racha, el calendario de práctica y el objetivo semanal que eliges en **Perfil**. Las unidades siguen siendo la biblioteca para estudiar al ritmo de la clase; lo que practicas en ellas también suma al progreso y al calendario.
 
 ## Añadir una unidad nueva
 
@@ -59,7 +63,7 @@ Ruta `#/coach`. Cuatro pestañas: **Conversar** (chat por voz con correcciones p
 
 Proveedores de IA, por orden: (1) `claude` — la página abierta dentro de claude.ai usa la capacidad `sample`; (2) `key` — API key de Anthropic guardada en `localStorage` (`et-anthropic-key`, `et-anthropic-model`) y enviada directamente a `api.anthropic.com`; (3) `local` — sin IA: métricas (ppm, muletillas, variedad léxica), estimación orientativa y detector de errores típicos de hispanohablantes (`RULES`). Historial en `et-coach`.
 
-## Método (`js/method.js`)
+## Práctica (`js/method.js`)
 
 Ruta `#/method`. Técnicas con evidencia y su ejercicio: repaso espaciado Leitner sobre todas las flashcards (`et-srs`), shadowing con las frases de los dictados, quiz mezclado (retrieval + interleaving) con todos los `mcq`, 4-3-2 de fluidez, dictogloss y leer-y-recontar con los párrafos de las lecturas, más principios y plan semanal. Todo se alimenta solo del contenido de las unidades cargadas.
 
@@ -87,7 +91,7 @@ npm test              # abre todas las rutas en Chromium headless; falla si hay 
 
 ## Progreso
 
-Se guarda en `localStorage` (`et-progress`): XP total, aciertos/errores y XP por unidad (clave `"ciclo/unidad"`). Borrar los datos del sitio en el navegador lo reinicia.
+Se guarda en `localStorage`: `et-progress` (XP total, aciertos/errores por unidad y por sección), `et-days` (actividad de cada día: aciertos, minutos activos, sesión completa), `et-today` (pasos de la sesión de hoy), `et-last` (último sitio visitado), `et-prefs` (objetivo semanal) y `et-cando` (checklist "Puedo…"). En **Perfil › Voz y datos** puedes borrarlo todo.
 
 ## Usarlo en el celular (app instalable)
 

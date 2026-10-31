@@ -36,31 +36,48 @@ window.Method = (() => {
 
   /* ================= 1. REPASO ESPACIADO ================= */
   const INTERVALS = [0, 1, 2, 4, 7, 15, 30]; // días por caja (1..6)
-  function renderSRS(root, ctx) {
-    const all = cards(), st = load('et-srs', {}), today = Math.floor(Date.now() / 864e5);
+  const srsToday = () => Math.floor(Date.now() / 864e5);
+  /* estado del mazo: tarjetas pendientes hoy, nuevas (nunca vistas) y reparto por cajas */
+  function srsStats() {
+    const all = cards(), st = load('et-srs', {}), today = srsToday();
     const state = id => st[id] || { box: 1, due: today };
-    const due = shuffle(all.filter(c => state(c.id).due <= today));
+    const due = all.filter(c => state(c.id).due <= today);
+    const fresh = all.filter(c => !st[c.id]);
     const counts = [1, 2, 3, 4, 5, 6].map(b => all.filter(c => state(c.id).box === b).length);
-    let i = 0, shown = false, ok = 0, ko = 0;
+    return { all, due, fresh, counts, total: all.length, seen: all.length - fresh.length };
+  }
+  /* bucle de tarjetas (lo usa el Repaso completo y la sesión de "Hoy") */
+  function srsLoop(box, ctx, opts = {}) {
+    const st = load('et-srs', {}), today = srsToday();
+    const state = id => st[id] || { box: 1, due: today };
+    let due = shuffle(srsStats().due); if (opts.limit) due = due.slice(0, opts.limit);
+    let i = 0, ok = 0, ko = 0;
+    function draw() {
+      if (i >= due.length) {
+        box.innerHTML = `<div class="hint">${due.length ? `¡Repaso terminado! ${ok} bien, ${ko} para reforzar.` : 'No hay nada pendiente ahora mismo. Mañana tendrás nuevas tarjetas.'}</div>`;
+        if (opts.onDone) opts.onDone({ ok, ko, n: due.length }); return;
+      }
+      const c = due[i], s = state(c.id);
+      box.innerHTML = `<div class="flash"><div class="inner"><div class="face front"><div class="eyebrow">${esc(c.unit)} · caja ${s.box}</div><div class="word">${esc(c.w)}</div><p class="muted small">¿Sabes qué significa y cómo se usa? Piénsalo antes de girar.</p></div>
+        <div class="face back"><p style="font-weight:700">${esc(c.def)}</p><p class="small">“${esc(c.ex || '')}”</p></div></div></div>
+        <div class="row" style="margin-top:12px"><button class="btn ghost s-show">Girar</button><button class="btn ghost s-say">🔊</button><span style="flex:1"></span><button class="btn bad s-no" hidden>✘ No lo sabía</button><button class="btn ok s-yes" hidden>✔ Lo sabía</button></div><p class="small muted" style="margin-top:6px">${i + 1} / ${due.length}</p>`;
+      const fl = $('.flash', box); const reveal = () => { fl.classList.add('flipped'); $('.s-no', box).hidden = $('.s-yes', box).hidden = false; };
+      fl.onclick = reveal; $('.s-show', box).onclick = reveal; $('.s-say', box).onclick = () => ctx.say((c.say || c.w.replace(' / ', ', ')) + '. ' + (c.ex || ''));
+      const grade = good => { const b = good ? Math.min(6, s.box + 1) : 1; st[c.id] = { box: b, due: today + INTERVALS[b] }; save('et-srs', st); good ? ok++ : ko++; ctx.score(good, good ? 6 : 0); if (opts.onGrade) opts.onGrade(ok, ko); i++; draw(); };
+      $('.s-yes', box).onclick = () => grade(true); $('.s-no', box).onclick = () => grade(false);
+    }
+    draw();
+    return due.length;
+  }
+  function renderSRS(root, ctx) {
+    const { due, counts, total } = srsStats();
     root.innerHTML = `<div class="card"><div class="eyebrow">Spaced repetition · sistema Leitner</div><h2>Repaso inteligente de vocabulario</h2>
       <p class="muted small intro">Cada palabra vive en una caja. Si la sabes, sube de caja y tarda más en volver (1 → 2 → 4 → 7 → 15 → 30 días). Si fallas, vuelve a la caja 1. Repasas justo antes de olvidar, que es cuando más se fija.</p>
       ${why('Cepeda et al. 2006; Ebbinghaus', 'Repasar espaciado en el tiempo produce el doble de retención a largo plazo que repasar lo mismo de golpe (efecto de espaciado). Recordar activamente antes de ver la respuesta refuerza más que releer (efecto de test).')}
       <div class="boxes">${counts.map((n, k) => `<div class="box b${k + 1}"><b>${n}</b><span>caja ${k + 1}<br><small>${INTERVALS[k + 1]} d</small></span></div>`).join('')}</div>
-      <div class="row between" style="margin:12px 0"><span><b id="srsDue">${due.length}</b> tarjetas para hoy · ${all.length} en total</span><span class="small muted" id="srsScore"></span></div>
+      <div class="row between" style="margin:12px 0"><span><b id="srsDue">${due.length}</b> tarjetas para hoy · ${total} en total</span><span class="small muted" id="srsScore"></span></div>
       <div id="srsCard"></div></div>`;
-    const box = $('#srsCard', root);
-    function draw() {
-      if (i >= due.length) { box.innerHTML = `<div class="hint">${due.length ? `¡Repaso de hoy terminado! ${ok} bien, ${ko} para reforzar. Vuelve mañana.` : 'No hay nada pendiente hoy. Mañana tendrás nuevas tarjetas para repasar.'}</div>`; return; }
-      const c = due[i], s = state(c.id); shown = false;
-      box.innerHTML = `<div class="flash"><div class="inner"><div class="face front"><div class="eyebrow">${esc(c.unit)} · caja ${s.box}</div><div class="word">${esc(c.w)}</div><p class="muted small">¿Sabes qué significa y cómo se usa? Piénsalo antes de girar.</p></div>
-        <div class="face back"><p style="font-weight:700">${esc(c.def)}</p><p class="small">“${esc(c.ex || '')}”</p></div></div></div>
-        <div class="row" style="margin-top:12px"><button class="btn ghost s-show">Girar</button><button class="btn ghost s-say">🔊</button><span style="flex:1"></span><button class="btn bad s-no" hidden>✘ No lo sabía</button><button class="btn ok s-yes" hidden>✔ Lo sabía</button></div><p class="small muted" style="margin-top:6px">${i + 1} / ${due.length}</p>`;
-      const fl = $('.flash', box); const reveal = () => { fl.classList.add('flipped'); shown = true; $('.s-no', box).hidden = $('.s-yes', box).hidden = false; };
-      fl.onclick = reveal; $('.s-show', box).onclick = reveal; $('.s-say', box).onclick = () => ctx.say((c.say || c.w.replace(' / ', ', ')) + '. ' + (c.ex || ''));
-      const grade = good => { const b = good ? Math.min(6, s.box + 1) : 1; st[c.id] = { box: b, due: today + INTERVALS[b] }; save('et-srs', st); good ? ok++ : ko++; ctx.score(good, good ? 6 : 0); $('#srsScore', root).textContent = `${ok} ✔ · ${ko} ✘`; i++; draw(); };
-      $('.s-yes', box).onclick = () => grade(true); $('.s-no', box).onclick = () => grade(false);
-    }
-    draw();
+    srsLoop($('#srsCard', root), ctx, { onGrade: (ok, ko) => { $('#srsScore', root).textContent = `${ok} ✔ · ${ko} ✘`; } });
   }
 
   /* ================= 2. SHADOWING ================= */
@@ -197,11 +214,11 @@ window.Method = (() => {
   const TABS = [['plan', 'Principios y plan', renderPlan], ['srs', 'Repaso inteligente', renderSRS], ['shadow', 'Shadowing', renderShadow], ['mix', 'Quiz mezclado', renderMix], ['fluency', '4-3-2', renderFluency], ['dictogloss', 'Dictogloss', renderDictogloss], ['retell', 'Leer y recontar', renderRetell]];
   function render(view, ctx, sub) {
     const active = TABS.find(t => t[0] === sub) || TABS[0];
-    view.innerHTML = `<nav class="crumbs"><a href="#/">Inicio</a><span class="sep">›</span><span>Método</span></nav>
-      <div class="unit-head compact"><div class="eyebrow">Herramienta · técnicas con evidencia</div><h1>Método de estudio</h1><p class="muted small">Ejercicios transversales que usan el contenido de todas tus unidades.</p></div>
+    view.innerHTML = `<nav class="crumbs"><a href="#/">Hoy</a><span class="sep">›</span><span>Práctica</span></nav>
+      <div class="unit-head compact"><div class="eyebrow">Práctica · técnicas con evidencia</div><h1>Práctica</h1><p class="muted small">Repaso espaciado, shadowing, quiz mezclado, fluidez, dictogloss y recontar: ejercicios transversales con el contenido de todas tus unidades.</p></div>
       <div class="sub">${TABS.map(t => `<button class="${t === active ? 'on' : ''}" data-t="${t[0]}">${t[1]}</button>`).join('')}</div><div class="act on" id="methodBody"></div>`;
     $$('.sub button', view).forEach(b => b.onclick = () => { location.hash = '#/method/' + b.dataset.t; });
     active[2]($('#methodBody', view), ctx);
   }
-  return { render };
+  return { render, srsStats, srsLoop, cards, sentences, quizItems };
 })();

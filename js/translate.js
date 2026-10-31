@@ -75,7 +75,7 @@ Reply with ONLY a JSON object:
   function render(view, ctx) {
     const hist = load(LS.hist, []), mine = load(LS.mine, []);
     let dir = 'auto', last = null, stepI = 0;
-    view.innerHTML = `<nav class="crumbs"><a href="#/">Inicio</a><span class="sep">›</span><span>Traductor</span></nav>
+    view.innerHTML = `<nav class="crumbs"><a href="#/">Hoy</a><span class="sep">›</span><span>Traductor</span></nav>
       <div class="unit-head compact"><div class="eyebrow">Herramienta · traduce y escucha</div><h1>Traductor con voz</h1><p class="muted small">Escribe en español o en inglés; te lo traduce y te lo lee con voz natural.</p></div>
       <div class="card"><div class="row between" style="margin-bottom:8px"><div class="sub" style="margin:0"><button class="on" data-d="auto">Auto</button><button data-d="es">ES → EN</button><button data-d="en">EN → ES</button></div><span class="small muted" id="trSrc"></span></div>
         <textarea id="trIn" placeholder="Escribe una palabra, una frase o un párrafo…&#10;Ej.: ¿Cómo se dice «estar a la altura de un reto»?" style="min-height:90px"></textarea>

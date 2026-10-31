@@ -11,7 +11,9 @@
 
 ## 2. Estado actual del proyecto
 
-Sitio estático sin build ni dependencias externas (solo Google Fonts: Outfit + Nunito). Es una PWA pensada también para el celular: en < 640 px las secciones van en una barra inferior con iconos (`.section-tabs`), la cabecera de unidad se compacta (`.unit-head.compact`) y las sub-actividades se deslizan en una fila.
+Sitio estático sin build ni dependencias externas (solo Google Fonts: Fraunces + Nunito Sans). Es una PWA pensada también para el celular: en < 640 px hay una barra inferior de app (`.appnav`: Hoy · Curso · Práctica · Coach · Perfil) y, dentro de una unidad, las secciones van en esa barra (`.section-tabs`); la cabecera de unidad se compacta (`.unit-head.compact`) y las sub-actividades se deslizan en una fila.
+
+**Rediseño "Aula luminosa" (octubre 2026)**: la portada pasó a ser **Hoy** (`#/`), una sesión diaria de cinco pasos (~13 min) armada sola con la unidad en foco: repaso SRS (máx. 12) → 6 mcq de gramática (4 de la unidad + 2 de otras) → dictado de 3 frases → 1 reto de speaking → 6 palabras nuevas que se califican y entran al mazo SRS. Completarla marca el día (`et-days[d].done`) y alimenta racha, calendario y objetivo semanal (`#/perfil`). Los ciclos viven en `#/curso`. La portada de cada unidad muestra anillo de progreso, "Continuar en…", tarjetas por sección con precisión, el mapa de la unidad en filas y, si la unidad define `cando`, un checklist "Puedo…". Siguientes fases previstas: motor de dominio por ítem (nuevo/visto/en práctica/dominado) y cuaderno de errores global; nuevos tipos de producción (recuperación escrita, constructor de frases, cloze con audio, "dilo", pares mínimos para hispanohablantes).
 
 Jerarquía: **ciclo (Inglés 0-5) → unidad → sección**. El curso presencial de Aldo se organiza en ciclos numerados; el material entregado hasta ahora pertenece a **Inglés 4**.
 
@@ -22,8 +24,8 @@ english-trainer/
 ├── js/engine.js                renderizadores de actividades por `type` (ver §3)
 ├── js/coach.js                 Speaking Coach (#/coach): chat por voz + evaluación CEFR + cuaderno de errores + panel 'Modelo y frases de apoyo' por tema (modelo de las unidades o generado por IA, frase a frase, shadowing, STARTERS). IA: sample (claude.ai) → API key propia → local (métricas + RULES de errores típicos). Expone window.Speech.listen
 ├── js/translate.js             Traductor con voz (#/translate): detect(), glosario de UNIT_DATA, IA del Coach → MyMemory; guarda 'et-custom-cards' que method.js suma al mazo SRS
-├── js/method.js                Método (#/method): Leitner SRS, shadowing, quiz mezclado, 4-3-2, dictogloss, read&retell, plan. Se alimenta solo de UNIT_DATA
-├── js/app.js                   menú, rutas hash, XP/progreso (localStorage 'et-progress'), voz: ranking de voces (voiceScore), selector #voicePanel, lectura por frases, prefs 'et-voice'/'et-rate'
+├── js/method.js                Práctica (#/method): Leitner SRS, shadowing, quiz mezclado, 4-3-2, dictogloss, read&retell, plan. Se alimenta solo de UNIT_DATA; expone srsStats()/srsLoop() para la sesión de Hoy
+├── js/app.js                   navegación (Hoy · Curso · Práctica · Coach · Perfil), rutas hash, pantalla Hoy, portada de unidad, perfil (racha, calendario, objetivo semanal), progreso ('et-progress', 'et-days', 'et-today', 'et-last', 'et-prefs', 'et-cando'), voz: ranking de voces (voiceScore), selector #voicePanel, lectura por frases, prefs 'et-voice'/'et-rate'
 ├── courses/registry.js         window.COURSES = [{id,number,title,subtitle,available,current,units:[{id,number,title,subtitle,available,xpGoal}]}]
 ├── courses/ingles3/unit1..10.js  window.UNIT_DATA['ingles3/unitN'] = {...}
 ├── courses/ingles4/unit1.js    window.UNIT_DATA['ingles4/unit1'] = {source, description, map, weak, weakLink, sections}
@@ -35,7 +37,7 @@ english-trainer/
 └── CONTEXT.md                  este archivo
 ```
 
-Rutas: `#/` (ciclos + herramientas) · `#/coach/<tab>` · `#/method/<tab>` · `#/translate` · `#/ingles4` (unidades del ciclo) · `#/ingles4/unit1` (portada) · `#/ingles4/unit1/grammar` (sección).
+Rutas: `#/` (Hoy) · `#/curso` (ciclos) · `#/perfil` · `#/coach/<tab>` · `#/method/<tab>` · `#/translate` · `#/ingles4` (unidades del ciclo) · `#/ingles4/unit1` (portada) · `#/ingles4/unit1/grammar` (sección).
 Progreso por unidad en `S.units["ingles4/unit1"]`.
 
 - **Ciclos**: `ingles0`…`ingles5`. Activos: **Inglés 3** (WeTalk Level 3, 10 unidades completas) e **Inglés 4** (`current:true`, Units 1-8 de Evolve). `ingles0/1/2/5` son "Próximamente" hasta que Aldo comparta su material.
@@ -52,8 +54,9 @@ Progreso por unidad en `S.units["ingles4/unit1"]`.
 ```js
 window.UNIT_DATA['<cicloId>/unitN'] = {
   source: 'Evolve · Unit N · <tema>',
-  description: '<una línea en español>',
+  description: '<una línea en español; solo <i>/<b> como HTML>',
   map:  [[ 'Área', 'Contenido del curso', 'Aquí practicas' ], ...],   // tabla de la portada
+  cando: [ '<html: Puedo …>', ... ],                                    // opcional: checklist "Puedo…" (CEFR can-do) en la portada
   weak: [ '<html: error propio detectado>', ... ],                      // opcional
   weakLink: 'Trabájalos en <b>Writing › …</b>',                         // opcional
   sections: [
@@ -131,6 +134,6 @@ Nuevo tipo: `Engine.register('tipo', (root, act, ctx) => {...})` con `ctx.score(
 
 ## 6. Decisiones de diseño (mantener)
 
-- Paleta viva: violeta `#6D28D9`, magenta `#FF2E88`, cian, lima, oro `#FFB020`; cada sección tiene su color (`body[data-sec]`: vocab magenta, grammar violeta, listen azul, speak naranja, read verde, write índigo, social turquesa) y cada ciclo el suyo (`data-n`). Modo oscuro violeta profundo. Fuentes: Outfit (títulos) + Nunito (texto).
+- Identidad "Aula luminosa": papel cálido `#FAF6EE`, tinta marino `#172238`, teal `#0E7C6B` (avance), coral `#DC5540` (acción y habla), ámbar `#D98E12` (racha y logros); cada destreza tiene su color (`body[data-sec]`: vocab ámbar, grammar teal, listen azul, speak coral, read verde, write índigo, social ciruela) y cada ciclo el suyo (`data-n`). Modo oscuro azul noche. Fuentes: Fraunces (títulos) + Nunito Sans (texto). Sombras suaves, bordes de 1 px, sin degradados saturados.
 - Nada de frameworks ni bundlers; todo vanilla JS, un archivo por unidad dentro de la carpeta de su ciclo. Progreso solo en `localStorage`.
 - No repetir literalmente los ejercicios del curso: crear variantes nuevas que refuercen el mismo punto.

@@ -380,7 +380,7 @@ Include up to 6 errors, most important first. Be honest but kind.`;
   const TABS = [['chat', 'Conversar', renderChat], ['eval', 'Evaluar', renderEval], ['history', 'Progreso y errores', renderHistory], ['settings', 'Ajustes IA', renderSettings]];
   function render(view, ctx, sub) {
     const active = TABS.find(t => t[0] === sub) || TABS[0];
-    view.innerHTML = `<nav class="crumbs"><a href="#/">Inicio</a><span class="sep">›</span><span>Speaking Coach</span></nav>
+    view.innerHTML = `<nav class="crumbs"><a href="#/">Hoy</a><span class="sep">›</span><span>Speaking Coach</span></nav>
       <div class="unit-head compact"><div class="eyebrow">Herramienta · práctica oral con feedback</div><h1>Speaking Coach</h1><p class="muted small">Habla sobre los temas del curso, recibe correcciones y mide tu progreso.</p></div>
       <div class="sub">${TABS.map(t => `<button class="${t === active ? 'on' : ''}" data-t="${t[0]}">${t[1]}</button>`).join('')}</div><div class="act on" id="coachBody"></div>`;
     $$('.sub button', view).forEach(b => b.onclick = () => { location.hash = '#/coach/' + b.dataset.t; });

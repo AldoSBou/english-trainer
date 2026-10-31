@@ -1,14 +1,14 @@
 {
   "name": "English Trainer",
   "short_name": "English",
-  "description": "Refuerzo de inglés por ciclos y unidades: vocabulario, gramática, listening, speaking, reading y writing.",
+  "description": "Tu aula de inglés: sesión diaria, unidades del curso y herramientas de práctica con voz.",
   "lang": "es",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#F3EEFF",
-  "theme_color": "#6D28D9",
+  "background_color": "#FAF6EE",
+  "theme_color": "#0E7C6B",
   "icons": [
     { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
     { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png" },

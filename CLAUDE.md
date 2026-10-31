@@ -14,11 +14,11 @@ Estado: Inglés 3 (WeTalk Level 3) completo, 10 unidades. Inglés 4 (Evolve Digi
 
 ```
 index.html              esqueleto + orden de <script>: registry → unidades → engine → coach → method → translate → app
-css/style.css           tokens claro/oscuro; acento por sección vía body[data-sec]; color por ciclo vía [data-n]; móvil <640px (tabs inferiores)
+css/style.css           sistema visual "Aula luminosa" (papel cálido + marino; teal avance, coral acción, ámbar racha); acento por sección vía body[data-sec]; color por ciclo vía [data-n]; móvil <640px (barra inferior)
 js/engine.js            window.Engine: renderizadores por `type` + util {shuffle,pick,esc,norm,blank,diffWords,$,$$}
-js/app.js               rutas hash, menú, XP/progreso (localStorage et-progress), voz (ranking de voces, selector, lectura por frases)
+js/app.js               rutas hash, navegación (Hoy · Curso · Práctica · Coach · Perfil), pantalla Hoy (sesión diaria de 5 pasos), portada de unidad, perfil (racha, calendario, objetivo semanal), XP/progreso, voz
 js/coach.js             Speaking Coach (#/coach): chat por voz, evaluación CEFR, cuaderno de errores, modelos por tema. IA: artifact `sample` → API key propia → reglas locales
-js/method.js            Método (#/method): Leitner SRS, shadowing, quiz mezclado, 4-3-2, dictogloss, read&retell, plan semanal
+js/method.js            Práctica (#/method): Leitner SRS, shadowing, quiz mezclado, 4-3-2, dictogloss, read&retell, plan semanal. Expone srsStats/srsLoop (los usa Hoy)
 js/translate.js         Traductor con voz (#/translate): glosario de las unidades → IA del Coach → MyMemory
 courses/registry.js     window.COURSES: ciclos y unidades (available / current / title / subtitle / xpGoal)
 courses/<ciclo>/unitN.js  window.UNIT_DATA['<ciclo>/unitN'] = {source, description, map, weak?, weakLink?, sections}
@@ -28,9 +28,11 @@ tools/validate-all.js   todas las unidades                     → npm run valid
 tools/test-all.js       recorre las 177+ rutas en Chromium headless y falla con cualquier error de página → npm test
 ```
 
-Rutas: `#/` · `#/<ciclo>` · `#/<ciclo>/<unidad>` · `#/<ciclo>/<unidad>/<sección>` · `#/coach/<chat|eval|history|settings>` · `#/method/<plan|srs|shadow|mix|fluency|dictogloss|retell>` · `#/translate`.
+Rutas: `#/` (Hoy: sesión diaria) · `#/curso` (ciclos) · `#/<ciclo>` · `#/<ciclo>/<unidad>` · `#/<ciclo>/<unidad>/<sección>` · `#/perfil` · `#/coach/<chat|eval|history|settings>` · `#/method/<plan|srs|shadow|mix|fluency|dictogloss|retell>` · `#/translate`.
 
-localStorage: `et-progress`, `et-voice`, `et-rate`, `et-coach`, `et-coach-autospeak`, `et-anthropic-key`, `et-anthropic-model`, `et-srs`, `et-custom-cards`, `et-tr-hist`; sessionStorage `et-shadow-text`. No renombrar claves (romperías el progreso guardado del usuario).
+Pantalla **Hoy** (portada): cinco pasos (~13 min) armados solos con la *unidad en foco* (la última visitada del ciclo actual): repaso SRS (máx. 12 tarjetas) → 6 mcq de gramática (4 de la unidad + 2 de otras, interleaving) → dictado de 3 frases → 1 reto de speaking → 6 palabras nuevas que entran al mazo SRS. Completar los cinco marca el día como sesión (racha, objetivo semanal). Las unidades siguen siendo la biblioteca de estudio alineada con la clase.
+
+localStorage: `et-progress` (XP, aciertos por unidad y por sección en `units[k].secs`), `et-days` (actividad por día: ok/bad/secs/done), `et-today` (pasos de la sesión de hoy), `et-last` (último sitio visitado), `et-prefs` (objetivo semanal), `et-cando` (checklist "Puedo…" por unidad), `et-voice`, `et-rate`, `et-coach`, `et-coach-autospeak`, `et-anthropic-key`, `et-anthropic-model`, `et-srs`, `et-custom-cards`, `et-tr-hist`; sessionStorage `et-shadow-text`. No renombrar claves (romperías el progreso guardado del usuario).
 
 ## Comandos
 
@@ -49,8 +51,9 @@ No hay bundler ni transpilación: lo que está en el repo es lo que se sirve. No
 ```js
 window.UNIT_DATA['ingles4/unitN'] = {
   source: 'Evolve · Unit N · <tema>',
-  description: '<una línea en español, texto plano: se renderiza con esc()>',
+  description: '<una línea en español, texto plano; solo se admiten <i> y <b>>',
   map: [['Área', 'Contenido del curso', 'Aquí practicas'], ...],   // tabla de la portada, 3 columnas
+  cando: ['Puedo contar un plan que salió mal con <i>was going to</i>', ...],  // opcional: checklist "Puedo…" (CEFR can-do) de la portada
   weak: ['<html: error propio detectado>'], weakLink: '…',         // solo si hay ejercicios resueltos del alumno
   sections: [
     { id:'home', label:'Inicio', render:'overview', activities:[] },   // siempre primero, sin actividades
@@ -83,11 +86,11 @@ Para un ciclo nuevo: carpeta `courses/<cicloId>/`, ciclo `available:true` en `re
 ## Convenciones y cuidados
 
 - Español neutro en instrucciones y explicaciones; inglés en todo lo que el alumno practica. Tono cercano, sin infantilizar.
-- Paleta viva y accesible (ver tokens en `style.css`); cada sección tiene su acento; modo oscuro automático. Mantener contraste AA.
+- Identidad "Aula luminosa" (tokens en `style.css`): papel cálido `#FAF6EE`, tinta marino `#172238`, teal `#0E7C6B` para avance, coral `#DC5540` para acción/habla, ámbar `#D98E12` para racha y logros; cada destreza tiene su color (vocab ámbar, grammar teal, listen azul, speak coral, read verde, write índigo, social ciruela); modo oscuro azul noche automático. Tipografía Fraunces (títulos) + Nunito Sans (texto). Mantener contraste AA; nada de sombras duras ni degradados saturados.
 - Móvil primero en lo nuevo: probar a <640 px (tabs inferiores, cabecera compacta).
 - Voz: usar `ctx.say`/`ctx.sayLines` del engine (respetan la voz y velocidad elegidas); no crear `SpeechSynthesisUtterance` sueltos.
 - Nunca pongas la API key de Anthropic ni datos personales en el repo; la key vive solo en `localStorage` del navegador del usuario.
-- HTML en los datos: permitido en `notes.html`, `reading.paragraphs`, `why`, `intro`, `weak`; **no** en `description`, `q` de mcq (salvo `<b>` en infer), `w/def/ex` de flashcards, líneas de `dialog`/`order`.
+- HTML en los datos: permitido en `notes.html`, `reading.paragraphs`, `why`, `intro`, `weak`, `cando`; en `description` solo `<i>`/`<b>`; **no** en `q` de mcq (salvo `<b>` en infer), `w/def/ex` de flashcards, líneas de `dialog`/`order`.
 - Al tocar `engine.js` o `app.js`, correr `npm test`: recorre todas las unidades y detecta roturas de renderizado.
 - Commits en español, un tema por commit (p. ej. `Inglés 4 · Unit 9 <tema>`).
 
