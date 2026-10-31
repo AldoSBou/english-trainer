@@ -211,7 +211,7 @@ window.Method = (() => {
   }
 
   /* ================= montaje ================= */
-  const TABS = [['plan', 'Principios y plan', renderPlan], ['srs', 'Repaso inteligente', renderSRS], ['shadow', 'Shadowing', renderShadow], ['mix', 'Quiz mezclado', renderMix], ['fluency', '4-3-2', renderFluency], ['dictogloss', 'Dictogloss', renderDictogloss], ['retell', 'Leer y recontar', renderRetell]];
+  const TABS = [['plan', 'Principios y plan', renderPlan], ['srs', 'Repaso inteligente', renderSRS], ['errors', 'Cuaderno de errores', (r, c) => Mastery.renderErrors(r, c)], ['shadow', 'Shadowing', renderShadow], ['mix', 'Quiz mezclado', renderMix], ['fluency', '4-3-2', renderFluency], ['dictogloss', 'Dictogloss', renderDictogloss], ['retell', 'Leer y recontar', renderRetell]];
   function render(view, ctx, sub) {
     const active = TABS.find(t => t[0] === sub) || TABS[0];
     view.innerHTML = `<nav class="crumbs"><a href="#/">Hoy</a><span class="sep">›</span><span>Práctica</span></nav>

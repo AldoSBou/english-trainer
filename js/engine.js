@@ -45,7 +45,7 @@ window.Engine = (() => {
           const good = o === it.a; b.classList.add(good ? 'ok' : 'bad');
           if (!good) { const c = $$('.opt', box).find(x => x.innerHTML === it.a); if (c) c.classList.add('ok'); }
           const fb = $('.fb', root); fb.className = 'fb show ' + (good ? 'good' : 'wrong'); fb.innerHTML = (good ? '✔ ' : '✘ ') + (it.why || '');
-          if (good) correct++; ctx.score(good, pts);
+          if (good) correct++; ctx.score(good, pts); if (ctx.answer) ctx.answer({ kind: 'mcq', good, item: { q: it.q, opts: it.opts, a: it.a, why: it.why || '', ctx: it.ctx || '' }, chosen: o });
           const nx = $('.nx', root); nx.hidden = false; nx.focus();
         };
         box.appendChild(b);
@@ -114,7 +114,7 @@ window.Engine = (() => {
     const inp = $('.d-in', root), fb = $('.fb', root);
     const draw = () => { $('.d-count', root).textContent = 'Frase ' + (di + 1) + ' de ' + q.length; inp.value = ''; fb.className = 'fb'; };
     $('.d-play', root).onclick = () => ctx.say(q[di], parseFloat($('.d-rate', root).value));
-    $('.d-check', root).onclick = () => { const t = inp.value; if (!t.trim()) return; const good = norm(t) === norm(q[di]); fb.className = 'fb show ' + (good ? 'good' : 'wrong'); fb.innerHTML = good ? '✔ Perfecto: <b>' + esc(q[di]) + '</b>' : '✘ Compara (rojo = lo tuyo, verde = correcto):<br><span class="diff">' + diffWords(t, q[di]) + '</span>'; ctx.score(good, 12); };
+    $('.d-check', root).onclick = () => { const t = inp.value; if (!t.trim()) return; const good = norm(t) === norm(q[di]); fb.className = 'fb show ' + (good ? 'good' : 'wrong'); fb.innerHTML = good ? '✔ Perfecto: <b>' + esc(q[di]) + '</b>' : '✘ Compara (rojo = lo tuyo, verde = correcto):<br><span class="diff">' + diffWords(t, q[di]) + '</span>'; ctx.score(good, 12); if (ctx.answer) ctx.answer({ kind: 'dictation', good, item: { s: q[di] }, typed: t }); };
     $('.d-next', root).onclick = () => { di = (di + 1) % q.length; if (!di) q = shuffle(act.sentences); draw(); };
     inp.addEventListener('keydown', e => { if (e.key === 'Enter') $('.d-check', root).click(); });
     draw();
@@ -178,7 +178,7 @@ window.Engine = (() => {
     $$('button[data-i]', root).forEach(b => b.onclick = () => {
       const f = act.items[+b.dataset.i], item = b.closest('.item'), v = $('input', item).value; if (!v.trim()) return;
       const good = norm(v) === norm(f.good); const fb = $('.fb', item); fb.className = 'fb show ' + (good ? 'good' : 'wrong');
-      fb.innerHTML = (good ? '✔ ¡Exacto! ' : 'Versión sugerida: <b>' + esc(f.good) + '</b><br><span class="diff">' + diffWords(v, f.good) + '</span><br>') + f.why; ctx.score(good, 15);
+      fb.innerHTML = (good ? '✔ ¡Exacto! ' : 'Versión sugerida: <b>' + esc(f.good) + '</b><br><span class="diff">' + diffWords(v, f.good) + '</span><br>') + f.why; ctx.score(good, 15); if (ctx.answer) ctx.answer({ kind: 'fix', good, item: { bad: f.bad, good: f.good, why: f.why || '' }, typed: v });
     });
   };
 
@@ -189,7 +189,7 @@ window.Engine = (() => {
     $$('button[data-i]', root).forEach(b => b.onclick = () => {
       const s = act.items[+b.dataset.i], item = b.closest('.item'), v = $('input', item).value.toLowerCase(); if (!v.trim()) return;
       const good = re.test(v); const fb = $('.fb', item); fb.className = 'fb show ' + (good ? 'good' : 'wrong');
-      fb.innerHTML = (good ? '✔ Mucho mejor. Ejemplo: <b>' : '✘ ' + (act.missing || 'Falta el patrón pedido') + '. Ejemplo: <b>') + esc(s.a) + '</b>'; ctx.score(good, 8);
+      fb.innerHTML = (good ? '✔ Mucho mejor. Ejemplo: <b>' : '✘ ' + (act.missing || 'Falta el patrón pedido') + '. Ejemplo: <b>') + esc(s.a) + '</b>'; ctx.score(good, 8); if (ctx.answer) ctx.answer({ kind: 'soft', good, item: { h: s.h, a: s.a, pattern: re.source, flags: re.flags, missing: act.missing || '', explain: act.explain || '' }, typed: v });
     });
   };
 
@@ -227,6 +227,84 @@ window.Engine = (() => {
       $('.o-reset', box).onclick = draw; $('.o-next', box).onclick = () => { oi = (oi + 1) % act.dialogs.length; draw(); };
     }
     draw();
+  };
+
+  /* ---------- Ejercicios de producción (se generan solos desde flashcards y dictados) ---------- */
+  const STOP = new Set('the a an and or but so because of to in on at for with from by about as into like through after over between out against during without before under around among is are was were be been being have has had do does did will would can could should may might must this that these those there here it its they them their he she his her we our you your i my me not no yes very really just also then than when while where which who what how if'.split(' '));
+  const variants = w => String(w).split(/\s*\/\s*/).map(x => x.replace(/\(.*?\)/g, '').trim()).filter(Boolean);
+  const reEsc = v => v.replace(/[.*+?^$(){}|[\]\\]/g, '\\$&').replace(/\s+/g, '\\s+');
+  const blankWord = (ex, w) => { for (const v of variants(w)) { const re = new RegExp('\\b' + reEsc(v) + '\\b', 'i'); if (re.test(ex)) return ex.replace(re, '___'); } return null; };
+
+  /* recall: recuperación escrita · definición (+ ejemplo con hueco) → escribe la palabra */
+  R.recall = (root, act, ctx) => {
+    const cards = act.cards.filter(c => c.w && c.def); let round = pick(cards, act.pool || 8), i = 0, ok = 0, hinted = false;
+    root.innerHTML = `<div class="card">${head(act)}<div class="rc"></div></div>`;
+    const box = $('.rc', root);
+    function draw() {
+      if (i >= round.length) { box.innerHTML = `<div class="hint"><b>Ronda terminada:</b> ${ok}/${round.length} recuperadas de memoria.</div><div class="row" style="margin-top:10px"><button class="btn">Otra ronda</button></div>`; $('.btn', box).onclick = () => { round = pick(cards, act.pool || 8); i = 0; ok = 0; draw(); }; return; }
+      const c = round[i], gap = c.ex ? blankWord(c.ex, c.w) : null; hinted = false; delete box.dataset.done;
+      box.innerHTML = `<p class="small muted">${i + 1} / ${round.length}${c.cat ? ' · ' + esc(c.cat) : ''}</p><div class="q">${esc(c.def)}</div>${gap ? `<p class="rc-ex">“${esc(gap).replace('___', '<span class="blank">…</span>')}”</p>` : ''}
+        <input type="text" class="rc-in" placeholder="Escribe la palabra o expresión en inglés…" autocomplete="off" autocapitalize="off" spellcheck="false">
+        <div class="row" style="margin-top:10px"><button class="btn rc-check">Comprobar</button><button class="btn ghost rc-hint">Pista</button><button class="lnk rc-show">No la sé</button><span class="small muted rc-h" style="margin-left:auto"></span></div><div class="fb"></div><div class="row" style="margin-top:10px"><button class="btn rc-next" hidden>Siguiente →</button></div>`;
+      const inp = $('.rc-in', box), fb = $('.fb', box), nx = $('.rc-next', box); inp.focus();
+      const vs = variants(c.w), main = vs[0] || c.w;
+      const finish = (good, typed) => { if (box.dataset.done) return; box.dataset.done = 1; fb.className = 'fb show ' + (good ? 'good' : 'wrong'); fb.innerHTML = (good ? '✔ <b>' + esc(main) + '</b>' + (hinted ? ' (con pista)' : '') : '✘ Era <b>' + esc(main) + '</b>' + (typed ? ': <span class="diff">' + diffWords(typed, main) + '</span>' : '')) + (c.ex ? '<br><span class="small">“' + esc(c.ex) + '”</span>' : ''); if (good) ok++; ctx.score(good, hinted ? 6 : 12); if (ctx.answer) ctx.answer({ kind: 'recall', good, item: { w: c.w, def: c.def, ex: c.ex || '', cat: c.cat || '' }, typed }); ctx.say(main + (c.ex ? '. ' + c.ex : '')); nx.hidden = false; nx.focus(); };
+      $('.rc-check', box).onclick = () => { const t = inp.value; if (!t.trim()) return; finish(vs.some(v => norm(v) === norm(t)), t); };
+      $('.rc-hint', box).onclick = () => { hinted = true; const h = $('.rc-h', box), n = (+h.dataset.n || 0) + 1; h.dataset.n = n; h.textContent = main.slice(0, Math.min(n, main.length - 1)) + '… (' + main.length + ' letras)'; };
+      $('.rc-show', box).onclick = () => finish(false, inp.value);
+      inp.addEventListener('keydown', e => { if (e.key === 'Enter') { if (box.dataset.done) nx.click(); else $('.rc-check', box).click(); } });
+      nx.onclick = () => { i++; draw(); };
+    }
+    draw();
+  };
+
+  /* cloze: escucha la frase y completa las palabras que faltan */
+  R.cloze = (root, act, ctx) => {
+    const bank = act.sentences.filter(s => s.split(' ').length >= 5); let q = shuffle(bank), i = 0;
+    root.innerHTML = `<div class="card">${head(act)}<div class="cz"></div></div>`;
+    const box = $('.cz', root);
+    function draw() {
+      const s = q[i % q.length], words = s.split(' '); delete box.dataset.done;
+      const cand = words.map((w, k) => ({ w, k, core: norm(w) })).filter(x => x.core.length >= 4 && !STOP.has(x.core) && !/\d/.test(x.core));
+      const src = cand.length ? cand : words.map((w, k) => ({ w, k }));
+      const gaps = new Set(pick(src, Math.min(act.gaps || 2, src.length)).map(x => x.k));
+      box.innerHTML = `<p class="small muted">Frase ${(i % q.length) + 1} de ${q.length}</p><div class="row" style="margin-bottom:12px"><button class="btn cz-play">▶ Escuchar</button><button class="btn ghost cz-slow">🐢 Lenta</button></div>
+        <p class="cz-text">${words.map((w, k) => gaps.has(k) ? `<input type="text" class="cz-in" data-k="${k}" autocomplete="off" autocapitalize="off" spellcheck="false" style="width:${Math.max(5, norm(w).length + 2)}ch" aria-label="hueco">` : esc(w)).join(' ')}</p>
+        <div class="row" style="margin-top:10px"><button class="btn cz-check">Comprobar</button><button class="btn ghost cz-next">Siguiente →</button></div><div class="fb"></div>`;
+      $('.cz-play', box).onclick = () => ctx.say(s, 1); $('.cz-slow', box).onclick = () => ctx.say(s, 0.75);
+      const first = $('.cz-in', box); if (first) first.focus();
+      $('.cz-check', box).onclick = () => {
+        if (box.dataset.done) return; const ins = $$('.cz-in', box); if (ins.some(x => !x.value.trim())) { ctx.toast('Completa todos los huecos'); return; } box.dataset.done = 1;
+        let allOk = true; ins.forEach(x => { const want = norm(words[+x.dataset.k]), got = norm(x.value), good = want === got; x.classList.add(good ? 'ok' : 'bad'); if (!good) { allOk = false; x.value = words[+x.dataset.k].replace(/[^A-Za-z0-9'’-]/g, ''); } });
+        const fb = $('.fb', box); fb.className = 'fb show ' + (allOk ? 'good' : 'wrong'); fb.innerHTML = (allOk ? '✔ Exacto. ' : '✘ Mira las palabras marcadas. ') + '<b>' + esc(s) + '</b>'; ctx.score(allOk, 10); if (ctx.answer) ctx.answer({ kind: 'dictation', good: allOk, item: { s }, typed: ins.map(x => x.value).join(' ') });
+      };
+      $('.cz-next', box).onclick = () => { i++; if (i % q.length === 0) q = shuffle(bank); draw(); };
+      $$('.cz-in', box).forEach(x => x.addEventListener('keydown', e => { if (e.key === 'Enter') $('.cz-check', box).click(); }));
+    }
+    if (bank.length) draw(); else box.innerHTML = '<p class="small muted">No hay frases suficientes.</p>';
+  };
+
+  /* build: constructor de frases · ordena las palabras */
+  R.build = (root, act, ctx) => {
+    const bank = act.sentences.filter(s => { const n = s.split(' ').length; return n >= 5 && n <= 14; }); let q = shuffle(bank), i = 0;
+    root.innerHTML = `<div class="card">${head(act)}<div class="bd"></div></div>`;
+    const box = $('.bd', root);
+    function draw() {
+      const s = q[i % q.length], words = s.split(' '); delete box.dataset.done;
+      box.innerHTML = `<p class="small muted">Frase ${(i % q.length) + 1} de ${q.length} · ${words.length} palabras</p><div class="seq"></div><p class="small muted" style="margin:8px 0 4px">Toca las palabras en orden (toca una de arriba para devolverla):</p><div class="pool"></div>
+        <div class="row" style="margin-top:10px"><button class="btn bd-check">Comprobar</button><button class="btn ghost bd-reset">Reiniciar</button><button class="btn ghost bd-say">🔊 Escuchar</button><button class="btn ghost bd-next">Siguiente →</button></div><div class="fb"></div>`;
+      const pool = $('.pool', box), seq = $('.seq', box);
+      // la primera palabra se muestra en minúscula (salvo I y nombres propios) para no regalar el orden
+      const show = k => { const w = words[k]; if (k !== 0 || w === 'I' || /^I['’]/.test(w)) return w; return w.charAt(0).toLowerCase() + w.slice(1); };
+      shuffle(words.map((w, k) => k)).forEach(k => { const b = el('button', 'tok'); b.textContent = show(k); b.dataset.k = k; b.onclick = () => (b.parentElement === pool ? seq : pool).appendChild(b); pool.appendChild(b); });
+      $('.bd-check', box).onclick = () => {
+        if (box.dataset.done) return; const got = $$('.tok', seq).map(b => +b.dataset.k); if (got.length < words.length) { ctx.toast('Faltan palabras'); return; } box.dataset.done = 1;
+        const good = got.every((k, idx) => k === idx), fb = $('.fb', box); fb.className = 'fb show ' + (good ? 'good' : 'wrong');
+        fb.innerHTML = (good ? '✔ Perfecto: ' : '✘ El orden correcto es: ') + '<b>' + esc(s) + '</b>'; ctx.score(good, 12); if (ctx.answer) ctx.answer({ kind: 'build', good, item: { s }, typed: got.map(k => words[k]).join(' ') }); ctx.say(s);
+      };
+      $('.bd-reset', box).onclick = draw; $('.bd-say', box).onclick = () => ctx.say(s); $('.bd-next', box).onclick = () => { i++; if (i % q.length === 0) q = shuffle(bank); draw(); };
+    }
+    if (bank.length) draw(); else box.innerHTML = '<p class="small muted">No hay frases suficientes.</p>';
   };
 
   return { renderers: R, register: (t, fn) => { R[t] = fn; }, util: { shuffle, pick, esc, norm, blank, diffWords, $, $$ } };

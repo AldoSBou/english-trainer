@@ -13,7 +13,7 @@
 
 Sitio estático sin build ni dependencias externas (solo Google Fonts: Fraunces + Nunito Sans). Es una PWA pensada también para el celular: en < 640 px hay una barra inferior de app (`.appnav`: Hoy · Curso · Práctica · Coach · Perfil) y, dentro de una unidad, las secciones van en esa barra (`.section-tabs`); la cabecera de unidad se compacta (`.unit-head.compact`) y las sub-actividades se deslizan en una fila.
 
-**Rediseño "Aula luminosa" (octubre 2026)**: la portada pasó a ser **Hoy** (`#/`), una sesión diaria de cinco pasos (~13 min) armada sola con la unidad en foco: repaso SRS (máx. 12) → 6 mcq de gramática (4 de la unidad + 2 de otras) → dictado de 3 frases → 1 reto de speaking → 6 palabras nuevas que se califican y entran al mazo SRS. Completarla marca el día (`et-days[d].done`) y alimenta racha, calendario y objetivo semanal (`#/perfil`). Los ciclos viven en `#/curso`. La portada de cada unidad muestra anillo de progreso, "Continuar en…", tarjetas por sección con precisión, el mapa de la unidad en filas y, si la unidad define `cando`, un checklist "Puedo…". Siguientes fases previstas: motor de dominio por ítem (nuevo/visto/en práctica/dominado) y cuaderno de errores global; nuevos tipos de producción (recuperación escrita, constructor de frases, cloze con audio, "dilo", pares mínimos para hispanohablantes).
+**Rediseño "Aula luminosa" (octubre 2026)**: la portada pasó a ser **Hoy** (`#/`), una sesión diaria de cinco pasos (~13 min) armada sola con la unidad en foco: repaso SRS (máx. 12) → 6 mcq de gramática (4 de la unidad + 2 de otras) → dictado de 3 frases → 1 reto de speaking → 6 palabras nuevas que se califican y entran al mazo SRS. Completarla marca el día (`et-days[d].done`) y alimenta racha, calendario y objetivo semanal (`#/perfil`). Los ciclos viven en `#/curso`. La portada de cada unidad muestra anillo de progreso, "Continuar en…", tarjetas por sección con precisión, el mapa de la unidad en filas y, si la unidad define `cando`, un checklist "Puedo…". **Fase 2 (misma semana)**: `js/mastery.js` con el **motor de dominio** (nivel por actividad: nuevo → visto → en práctica → dominado; el vocabulario toma el nivel de su caja SRS; se muestra en la portada de la unidad y en Perfil › Por destreza) y el **cuaderno de errores global** (cada fallo de mcq/dictado/fix/soft/recall/build se anota con su contexto; `#/method/errors` lo lista y permite volver a practicarlos con los mismos renderizadores; acertar borra; Hoy añade el paso "Caza tus errores" cuando hay ≥3). Tres **ejercicios de producción** nuevos en el engine, generados automáticamente para todas las unidades como actividades virtuales: `recall` (Escríbela), `cloze` (Completa lo que oyes) y `build` (Ordena la frase). Pendiente: "dilo" (comparar tu voz con el modelo frase a frase) y laboratorio de pronunciación con pares mínimos para hispanohablantes.
 
 Jerarquía: **ciclo (Inglés 0-5) → unidad → sección**. El curso presencial de Aldo se organiza en ciclos numerados; el material entregado hasta ahora pertenece a **Inglés 4**.
 
@@ -89,6 +89,11 @@ Tipos de actividad ya implementados en `engine.js` (campos comunes opcionales: `
 | `soft` | `items:[{h,a}], pattern:/regex/, explain, missing` | reescritura que debe cumplir un patrón |
 | `comment` | `checks:[{label, re \| words}], min, max, need, placeholder` | texto libre con checklist automática |
 | `order` | `dialogs:[[líneas "Nombre: texto"]]` | ordenar diálogo |
+| `recall` | `cards` (como flashcards), `pool` | recuperación escrita: definición (+ ejemplo con hueco) → escribe la palabra; pista cuesta la mitad |
+| `cloze` | `sentences`, `gaps` | escucha y completa 1-2 palabras de contenido |
+| `build` | `sentences` | constructor de frases: ordena las palabras |
+
+Los tres últimos se añaden solos a cada unidad (`enrich()` en app.js) desde las flashcards y el dictado; `js/mastery.js` registra dominio por actividad y el cuaderno de errores a través de `ctx.answer`.
 
 Nuevo tipo: `Engine.register('tipo', (root, act, ctx) => {...})` con `ctx.score(good,pts)`, `ctx.say(text,rate)`, `ctx.sayLines([[voz,texto]])`, `ctx.toast(msg)`.
 

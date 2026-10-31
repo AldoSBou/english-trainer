@@ -460,6 +460,51 @@ select{padding:7px 10px}
 .weak-list{margin:0;padding-left:18px}
 .weak-list li{margin:6px 0}
 
+/* dominio: barra segmentada y chips de nivel */
+.seg{display:flex;height:12px;border-radius:99px;overflow:hidden;background:var(--surface3);gap:2px}
+.seg i{display:block;height:100%;min-width:3px}
+.seg-legend{display:flex;flex-wrap:wrap;gap:4px 14px;margin-top:8px;font-size:.78rem;color:var(--muted);font-weight:700}
+.seg-legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+.lvls{display:flex;flex-wrap:wrap;gap:6px}
+.lvl{font-size:.8rem;font-weight:700;border-radius:999px;padding:5px 12px;border:1px solid var(--line);text-decoration:none;color:var(--ink-2);background:var(--surface2)}
+.lvl.l1{border-color:var(--amber-2);background:color-mix(in srgb, var(--amber-2) 22%, var(--surface))}
+.lvl.l2{border-color:var(--teal-2);background:color-mix(in srgb, var(--teal-2) 20%, var(--surface))}
+.lvl.l3{border-color:var(--ok);background:var(--ok-soft);color:var(--ok-ink)}
+.lvl.l3::before{content:"✓ ";font-weight:800}
+.skills{display:grid;gap:10px}
+.skill{display:grid;grid-template-columns:150px 1fr auto;gap:10px;align-items:center;font-size:.9rem}
+.skill .nm{font-weight:800;display:flex;align-items:center;gap:6px}
+.skill .nm .ti{width:16px;height:16px}
+.skill .bar{height:8px;background:var(--surface3);border-radius:99px;overflow:hidden}
+.skill .bar i{display:block;height:100%;border-radius:99px;background:var(--tc,var(--accent))}
+.skill .val{font-weight:800;font-variant-numeric:tabular-nums;white-space:nowrap}
+.skill .val small{color:var(--muted);font-weight:700}
+.skill[data-sec="vocab"]{--tc:#C77D0F}.skill[data-sec="grammar"]{--tc:#0E7C6B}.skill[data-sec="listen"]{--tc:#2563EB}.skill[data-sec="speak"]{--tc:#DC5540}
+.skill[data-sec="read"]{--tc:#3B8A3F}.skill[data-sec="write"]{--tc:#5457CF}.skill[data-sec="social"]{--tc:#A3467C}
+
+/* cuaderno de errores */
+.err-list{display:grid;gap:8px}
+.err{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:start;padding:10px 12px;border-radius:12px;background:var(--surface2);border:1px solid var(--line)}
+.err .txt{line-height:1.5;min-width:0;overflow-wrap:anywhere}
+.err .txt a{color:var(--muted);text-decoration:none}
+.err .txt a:hover{text-decoration:underline}
+.kind{display:inline-block;font-size:.66rem;letter-spacing:.08em;text-transform:uppercase;font-weight:800;padding:4px 8px;border-radius:7px;background:var(--surface3);color:var(--ink-2);white-space:nowrap;margin-top:2px}
+.kind[data-kind="mcq"]{background:#E3ECFD;color:#1D4ED8}.kind[data-kind="dictation"]{background:#E3ECFD;color:#1D4ED8}
+.kind[data-kind="fix"],.kind[data-kind="soft"]{background:#E7E8FB;color:#4338CA}
+.kind[data-kind="recall"]{background:#FBEFD6;color:#9A5B06}.kind[data-kind="build"]{background:#E0F2EE;color:#0E7C6B}
+:root[data-theme="dark"] .kind,:root:not([data-theme="light"]) .kind{filter:saturate(.8) brightness(.85)}
+.drill-part+.drill-part{margin-top:16px}
+.drill-t{margin-bottom:6px}
+.drill-part .card{box-shadow:none}
+
+/* ejercicios de producción */
+.rc-ex{font-size:1.05rem;margin:-6px 0 12px;color:var(--ink-2)}
+.rc-ex .blank{display:inline-block;min-width:70px;border-bottom:3px solid var(--accent);color:var(--accent);text-align:center}
+.cz-text{font-family:var(--font-head);font-size:1.3rem;line-height:2.1;font-weight:600}
+.cz-in{display:inline-block;width:auto;padding:4px 8px;border-radius:8px;border:1px solid var(--line-strong);border-bottom:3px solid var(--accent);background:var(--surface2);font:inherit;font-size:1.05rem;text-align:center;vertical-align:baseline;font-family:var(--font-body);font-weight:700}
+.cz-in.ok{border-color:var(--ok);background:var(--ok-soft);color:var(--ok-ink)}
+.cz-in.bad{border-color:var(--bad);background:var(--bad-soft);color:var(--bad-ink)}
+
 /* perfil */
 .heat{display:grid;grid-auto-flow:column;grid-template-rows:repeat(7,1fr);gap:4px;overflow-x:auto;padding-bottom:4px}
 .heat i{width:14px;height:14px;border-radius:4px;background:var(--surface3);display:block}

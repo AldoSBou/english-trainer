@@ -63,6 +63,12 @@ Ruta `#/coach`. Cuatro pestañas: **Conversar** (chat por voz con correcciones p
 
 Proveedores de IA, por orden: (1) `claude` — la página abierta dentro de claude.ai usa la capacidad `sample`; (2) `key` — API key de Anthropic guardada en `localStorage` (`et-anthropic-key`, `et-anthropic-model`) y enviada directamente a `api.anthropic.com`; (3) `local` — sin IA: métricas (ppm, muletillas, variedad léxica), estimación orientativa y detector de errores típicos de hispanohablantes (`RULES`). Historial en `et-coach`.
 
+## Dominio y cuaderno de errores (`js/mastery.js`)
+
+Cada actividad acumula intentos, aciertos y racha, y de ahí sale su nivel: nuevo, visto, en práctica o dominado (tres aciertos seguidos con buena precisión). El vocabulario toma el nivel de su caja en el repaso espaciado. Lo ves en la portada de cada unidad (barra de vocabulario y chips por punto de gramática) y en Perfil › Por destreza. Cada fallo concreto (una pregunta, una frase del dictado, una corrección, una palabra que no supiste escribir) entra al **cuaderno de errores** (`#/method/errors`), donde puedes volver a practicarlos con el mismo tipo de ejercicio; acertarlos los borra. Cuando hay tres o más, la sesión de Hoy añade el paso "Caza tus errores".
+
+Además, cada unidad recibe automáticamente tres ejercicios de producción generados de su propio contenido: **Escríbela** (lee el significado y escribe la palabra), **Completa lo que oyes** (cloze con audio) y **Ordena la frase** (constructor de frases).
+
 ## Práctica (`js/method.js`)
 
 Ruta `#/method`. Técnicas con evidencia y su ejercicio: repaso espaciado Leitner sobre todas las flashcards (`et-srs`), shadowing con las frases de los dictados, quiz mezclado (retrieval + interleaving) con todos los `mcq`, 4-3-2 de fluidez, dictogloss y leer-y-recontar con los párrafos de las lecturas, más principios y plan semanal. Todo se alimenta solo del contenido de las unidades cargadas.
@@ -91,7 +97,7 @@ npm test              # abre todas las rutas en Chromium headless; falla si hay 
 
 ## Progreso
 
-Se guarda en `localStorage`: `et-progress` (XP total, aciertos/errores por unidad y por sección), `et-days` (actividad de cada día: aciertos, minutos activos, sesión completa), `et-today` (pasos de la sesión de hoy), `et-last` (último sitio visitado), `et-prefs` (objetivo semanal) y `et-cando` (checklist "Puedo…"). En **Perfil › Voz y datos** puedes borrarlo todo.
+Se guarda en `localStorage`: `et-progress` (XP total, aciertos/errores por unidad y por sección), `et-days` (actividad de cada día: aciertos, minutos activos, sesión completa), `et-today` (pasos de la sesión de hoy), `et-last` (último sitio visitado), `et-prefs` (objetivo semanal), `et-cando` (checklist "Puedo…"), `et-mastery` (dominio por actividad) y `et-errors` (cuaderno de errores). En **Perfil › Voz y datos** puedes borrarlo todo.
 
 ## Usarlo en el celular (app instalable)
 

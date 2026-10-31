@@ -15,7 +15,8 @@ Estado: Inglés 3 (WeTalk Level 3) completo, 10 unidades. Inglés 4 (Evolve Digi
 ```
 index.html              esqueleto + orden de <script>: registry → unidades → engine → coach → method → translate → app
 css/style.css           sistema visual "Aula luminosa" (papel cálido + marino; teal avance, coral acción, ámbar racha); acento por sección vía body[data-sec]; color por ciclo vía [data-n]; móvil <640px (barra inferior)
-js/engine.js            window.Engine: renderizadores por `type` + util {shuffle,pick,esc,norm,blank,diffWords,$,$$}
+js/engine.js            window.Engine: renderizadores por `type` + util {shuffle,pick,esc,norm,blank,diffWords,$,$$}. Los renderizadores llaman a `ctx.score(good,pts)` y, si existe, a `ctx.answer({kind,good,item,typed})` (lo usa el cuaderno de errores)
+js/mastery.js           window.Mastery: dominio por actividad (et-mastery: nivel 0 nuevo · 1 visto · 2 en práctica · 3 dominado; el vocabulario toma el nivel de la caja SRS) y cuaderno de errores (et-errors) con drill que reusa los renderizadores; vista en #/method/errors
 js/app.js               rutas hash, navegación (Hoy · Curso · Práctica · Coach · Perfil), pantalla Hoy (sesión diaria de 5 pasos), portada de unidad, perfil (racha, calendario, objetivo semanal), XP/progreso, voz
 js/coach.js             Speaking Coach (#/coach): chat por voz, evaluación CEFR, cuaderno de errores, modelos por tema. IA: artifact `sample` → API key propia → reglas locales
 js/method.js            Práctica (#/method): Leitner SRS, shadowing, quiz mezclado, 4-3-2, dictogloss, read&retell, plan semanal. Expone srsStats/srsLoop (los usa Hoy)
@@ -30,9 +31,11 @@ tools/test-all.js       recorre las 177+ rutas en Chromium headless y falla con 
 
 Rutas: `#/` (Hoy: sesión diaria) · `#/curso` (ciclos) · `#/<ciclo>` · `#/<ciclo>/<unidad>` · `#/<ciclo>/<unidad>/<sección>` · `#/perfil` · `#/coach/<chat|eval|history|settings>` · `#/method/<plan|srs|shadow|mix|fluency|dictogloss|retell>` · `#/translate`.
 
-Pantalla **Hoy** (portada): cinco pasos (~13 min) armados solos con la *unidad en foco* (la última visitada del ciclo actual): repaso SRS (máx. 12 tarjetas) → 6 mcq de gramática (4 de la unidad + 2 de otras, interleaving) → dictado de 3 frases → 1 reto de speaking → 6 palabras nuevas que entran al mazo SRS. Completar los cinco marca el día como sesión (racha, objetivo semanal). Las unidades siguen siendo la biblioteca de estudio alineada con la clase.
+Pantalla **Hoy** (portada): cinco o seis pasos (~13-16 min) armados solos con la *unidad en foco* (la última visitada del ciclo actual): repaso SRS (máx. 12 tarjetas) → 6 mcq de gramática (4 de la unidad + 2 de otras, interleaving) → [caza tus errores: drill de 6 fallos del cuaderno, solo si hay ≥3] → dictado de 3 frases → 1 reto de speaking → 6 palabras nuevas que entran al mazo SRS. Completarlos todos marca el día como sesión (racha, objetivo semanal). Las unidades siguen siendo la biblioteca de estudio alineada con la clase.
 
-localStorage: `et-progress` (XP, aciertos por unidad y por sección en `units[k].secs`), `et-days` (actividad por día: ok/bad/secs/done), `et-today` (pasos de la sesión de hoy), `et-last` (último sitio visitado), `et-prefs` (objetivo semanal), `et-cando` (checklist "Puedo…" por unidad), `et-voice`, `et-rate`, `et-coach`, `et-coach-autospeak`, `et-anthropic-key`, `et-anthropic-model`, `et-srs`, `et-custom-cards`, `et-tr-hist`; sessionStorage `et-shadow-text`. No renombrar claves (romperías el progreso guardado del usuario).
+**Actividades virtuales** (`enrich()` en app.js, al arrancar): a cada unidad se le añaden ejercicios de producción generados del contenido tipado, sin tocar el archivo: `recall` "Escríbela" en vocab (desde las flashcards), `cloze` "Completa lo que oyes" en listen (desde el dictado) y `build` "Ordena la frase" en grammar (frases del dictado). Llevan `virtual:true`. Si una unidad ya define uno de esos tipos, no se duplica.
+
+localStorage: `et-progress` (XP, aciertos por unidad y por sección en `units[k].secs`), `et-mastery` (intentos/aciertos/racha por actividad), `et-errors` (cuaderno, máx. 150), `et-days` (actividad por día: ok/bad/secs/done), `et-today` (pasos de la sesión de hoy), `et-last` (último sitio visitado), `et-prefs` (objetivo semanal), `et-cando` (checklist "Puedo…" por unidad), `et-voice`, `et-rate`, `et-coach`, `et-coach-autospeak`, `et-anthropic-key`, `et-anthropic-model`, `et-srs`, `et-custom-cards`, `et-tr-hist`; sessionStorage `et-shadow-text`. No renombrar claves (romperías el progreso guardado del usuario).
 
 ## Comandos
 
@@ -62,7 +65,7 @@ window.UNIT_DATA['ingles4/unitN'] = {
 };
 ```
 
-Tipos de actividad (`type`): `notes` (html) · `flashcards` (cards:{cat,w,def,ex,ask,say?}) · `match` (pairs, round) · `mcq` (items:{q,opts,a,why,blank?} o `build(util)`, `pool`) · `dictation` (sentences) · `dialog` (lines:[[speaker,text]], questions) · `speaking` (challenges:{t,task,model,tags}) · `stress` (pairs:[[label,say]]) · `reading` (paragraphs, main, infer, think) · `fix` (items:{bad,good,why}) · `soft` (items:{h,a}, pattern RegExp, missing) · `comment` (checks:{label, re|words}, min, max, need) · `order` (dialogs:[["Nombre: texto"]]).
+Tipos de actividad (`type`): `notes` (html) · `flashcards` (cards:{cat,w,def,ex,ask,say?}) · `match` (pairs, round) · `mcq` (items:{q,opts,a,why,blank?} o `build(util)`, `pool`) · `dictation` (sentences) · `dialog` (lines:[[speaker,text]], questions) · `speaking` (challenges:{t,task,model,tags}) · `stress` (pairs:[[label,say]]) · `reading` (paragraphs, main, infer, think) · `fix` (items:{bad,good,why}) · `soft` (items:{h,a}, pattern RegExp, missing) · `comment` (checks:{label, re|words}, min, max, need) · `order` (dialogs:[["Nombre: texto"]]) · `recall` (cards como flashcards, pool) · `cloze` (sentences, gaps) · `build` (sentences). Los tres últimos se generan solos (actividades virtuales); solo decláralos a mano si quieres frases o tarjetas distintas.
 
 Reglas que el validador comprueba y que te ahorran bugs:
 - En `mcq`, **`a` es el string de la opción correcta**, no un índice; sin opciones repetidas; `blank:1` ⇔ la pregunta contiene `___` (solo se sustituye la primera).
@@ -96,7 +99,7 @@ Para un ciclo nuevo: carpeta `courses/<cicloId>/`, ciclo `available:true` en `re
 
 ## Herramientas y voz: notas técnicas
 
-- `Engine.register('tipo', (root, act, ctx) => {...})` para un tipo nuevo; `ctx` = `{score(good,pts), say(text,rate), sayLines([[voz,texto]]), toast(msg)}`.
+- `Engine.register('tipo', (root, act, ctx) => {...})` para un tipo nuevo; `ctx` = `{score(good,pts), say(text,rate), sayLines([[voz,texto]]), toast(msg), answer?(info)}`. Llama siempre a `score` y, si el ejercicio tiene una respuesta concreta, a `ctx.answer({kind, good, item, typed})` con un `item` serializable que un renderizador pueda volver a mostrar (así entra al cuaderno de errores).
 - Coach: proveedores en orden `claude` (capability `sample`, solo dentro de claude.ai) → `key` (fetch directo a `api.anthropic.com` con `anthropic-dangerous-direct-browser-access: true`, modelo por defecto `claude-sonnet-5`) → `local` (métricas + `RULES`, 33 regex de errores típicos). Los temas del Coach se derivan de los `speaking.challenges` de todas las unidades: cada challenge nuevo aparece ahí automáticamente.
 - Método: el SRS toma todas las `flashcards` + `et-custom-cards`; el quiz mezclado toma todos los `mcq`; dictogloss/retell usan `reading.paragraphs`; shadowing usa `dictation.sentences`. Es decir: **contenido bien tipado en la unidad = herramientas alimentadas gratis**.
 - En tests headless hay que simular `speechSynthesis` con `Object.defineProperty(window, 'speechSynthesis', {configurable:true, value:{…}})` (asignación directa no funciona); `tools/test-all.js` ya lo hace.

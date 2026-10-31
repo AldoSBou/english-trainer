@@ -153,6 +153,34 @@
     return { c, u, d: dataOf(c.id, u.id) };
   }
   const actsOf = (d, type, secId) => d.sections.filter(s => !secId || s.id === secId).flatMap(s => s.activities.filter(a => a.type === type));
+
+  /* ---------- actividades virtuales: ejercicios de producción generados del contenido tipado ----------
+     vocab → "Escríbela" (recall, desde las flashcards) · listen → "Completa lo que oyes" (cloze, desde el dictado)
+     grammar → "Ordena la frase" (build, con las frases del dictado). Se añaden una vez por unidad al arrancar. */
+  function enrich(d) {
+    if (d._enriched) return d; d._enriched = true;
+    const sec = id => d.sections.find(s => s.id === id);
+    const v = sec('vocab'), cards = v ? v.activities.filter(a => a.type === 'flashcards').flatMap(a => a.cards) : [];
+    if (v && cards.length >= 6 && !v.activities.some(a => a.type === 'recall')) {
+      const at = v.activities.findIndex(a => a.type === 'flashcards') + 1;
+      v.activities.splice(at || v.activities.length, 0, { virtual: true, label: 'Escríbela', type: 'recall', eyebrow: 'Recuperación escrita', title: 'Lee el significado y escribe la palabra', intro: 'Producir la palabra de memoria fija mucho más que reconocerla. Si te atascas, pide una pista (vale la mitad de XP) y escucha la pronunciación al final.', cards, pool: 8 });
+    }
+    const l = sec('listen'), sents = l ? l.activities.filter(a => a.type === 'dictation').flatMap(a => a.sentences) : [];
+    if (l && sents.length >= 5 && !l.activities.some(a => a.type === 'cloze')) {
+      const at = l.activities.findIndex(a => a.type === 'dictation') + 1;
+      l.activities.splice(at || l.activities.length, 0, { virtual: true, label: 'Completa lo que oyes', type: 'cloze', eyebrow: 'Listening · cloze', title: 'Escucha y completa las palabras que faltan', intro: 'Dos huecos por frase. Escúchala entera, fíjate en las palabras de contenido y escribe solo lo que falta.', sentences: sents, gaps: 2 });
+    }
+    const g = sec('grammar');
+    if (g && sents.length >= 5 && !g.activities.some(a => a.type === 'build')) {
+      const rev = g.activities.findIndex(a => /^repaso/i.test(a.label || ''));
+      g.activities.splice(rev >= 0 ? rev : g.activities.length, 0, { virtual: true, label: 'Ordena la frase', type: 'build', eyebrow: 'Constructor de frases', title: 'Arma la frase palabra por palabra', intro: 'El orden de las palabras es donde más se nota el español (adjetivo antes del nombre, sujeto siempre presente, auxiliares en su sitio). Toca las palabras en orden y escucha el resultado.', sentences: sents });
+    }
+    return d;
+  }
+  Object.values(window.UNIT_DATA || {}).forEach(enrich);
+
+  /* ctx por actividad: atribuye XP, registra dominio y anota los fallos en el cuaderno */
+  const actCtx = (unitKey, secId, a, where) => { const id = Mastery.idFor(unitKey, secId, a); return { ...ctx, score: (g, p) => { score(g, p, where); Mastery.record(id, g); }, answer: info => { if (!info.good) Mastery.miss({ ...info, unit: unitKey, sec: secId, label: a.label || a.type }); } }; };
   const mcqItems = a => { try { return typeof a.build === 'function' ? a.build({ shuffle, pick, esc, blank: Engine.util.blank }) : a.items.map(it => ({ ...it, q: it.blank ? Engine.util.blank(it.q) : it.q, blank: 0 })); } catch (e) { return []; } };
 
   /* ---------- iconos ---------- */
@@ -214,19 +242,23 @@
   const ring = (p, label, big) => `<div class="ring ${p >= 100 ? 'done' : ''}" style="--p:${Math.min(100, p)}"><div><b>${big}</b><span>${label}</span></div></div>`;
 
   /* ======================= HOY ======================= */
-  const STEPS = [
+  const BASE_STEPS = [
     { id: 'srs', t: 'Repaso espaciado', s: 'Las palabras que tocan hoy', mins: 3, ic: 'srs', sec: 'vocab' },
     { id: 'grammar', t: 'Gramática mezclada', s: 'Seis preguntas: la unidad actual y repaso', mins: 3, ic: 'grammar', sec: 'grammar' },
+    { id: 'errors', t: 'Caza tus errores', s: 'Lo que fallaste vuelve a salir', mins: 3, ic: 'write', sec: 'write' },
     { id: 'listen', t: 'Oído fino', s: 'Tres frases al dictado', mins: 3, ic: 'listen', sec: 'listen' },
     { id: 'speak', t: 'Habla un minuto', s: 'Un reto de speaking con modelo', mins: 2, ic: 'speak', sec: 'speak' },
     { id: 'words', t: 'Palabras nuevas', s: 'Seis tarjetas que entran al repaso', mins: 2, ic: 'vocab', sec: 'vocab' },
   ];
+  // el paso de errores solo aparece si hay al menos tres fallos anotados (o ya se hizo hoy)
+  const steps = () => BASE_STEPS.filter(s => s.id !== 'errors' || T.steps.errors || Mastery.errors().length >= 3);
+  let STEPS = steps();
   const SEC_COLOR = { vocab: '#C77D0F', grammar: '#0E7C6B', listen: '#2563EB', speak: '#DC5540', read: '#3B8A3F', write: '#5457CF', social: '#A3467C' };
   const greeting = () => { const h = new Date().getHours(); return h < 12 ? 'Buenos días' : h < 19 ? 'Buenas tardes' : 'Buenas noches'; };
   const fmtDate = () => new Date().toLocaleDateString('es-PE', { weekday: 'long', day: 'numeric', month: 'long' });
 
   function renderToday() {
-    setPage('home');
+    setPage('home'); STEPS = steps();
     const f = focusUnit(), st = streak(), doneN = STEPS.filter(s => T.steps[s.id]).length, srs = window.Method ? Method.srsStats() : null;
     const week = weekDays(), tn = today(), sess = sessionsThisWeek();
     view.innerHTML = `
@@ -236,7 +268,7 @@
       <div class="card"><div class="session">
         ${ring(doneN / STEPS.length * 100, 'pasos', `${doneN}/${STEPS.length}`)}
         <div><div class="eyebrow">Sesión de hoy · unos ${STEPS.reduce((a, s) => a + s.mins, 0)} minutos</div>
-          <h2>${doneN >= STEPS.length ? '¡Sesión completa! Hasta mañana.' : doneN ? 'Sigue, ya casi está.' : 'Cinco pasos cortos, en orden o como prefieras.'}</h2>
+          <h2>${doneN >= STEPS.length ? '¡Sesión completa! Hasta mañana.' : doneN ? 'Sigue, ya casi está.' : `${STEPS.length === 6 ? 'Seis' : 'Cinco'} pasos cortos, en orden o como prefieras.`}</h2>
           <p class="muted small" style="margin-top:4px">${f ? `Unidad en foco: <b>${esc(f.c.title)} · Unit ${f.u.number} · ${esc(f.u.title)}</b>. Cambia de unidad visitando otra desde <a href="#/curso">Curso</a>.` : 'Carga una unidad para armar tu sesión.'}</p>
           <div class="row" style="margin-top:10px;gap:6px">${week.map(d => `<span class="dot ${D[d]?.done ? 'full' : ''} ${d === tn ? 'today' : ''}" title="${D[d]?.done ? 'Sesión completa' : D[d] && active(d) ? 'Practicaste' : 'Sin práctica'}" style="${d === tn ? 'outline:2px solid var(--amber);outline-offset:1px' : ''}"><i style="height:${active(d) && !D[d]?.done ? 60 : 0}%"></i><span>${'LMXJVSD'[week.indexOf(d)]}</span></span>`).join('')}<span class="small muted" style="margin-left:6px">${sess} de ${P.goal} sesiones esta semana</span></div>
         </div></div>
@@ -266,6 +298,11 @@
   }
 
   function weakCard(f) {
+    const errs = Mastery.errors();
+    if (errs.length) {
+      const top = errs.slice().sort((a, b) => (b.n - a.n) || (b.day - a.day)).slice(0, 3);
+      return `<div class="card plain"><div class="eyebrow" style="color:var(--coral)">Cuaderno de errores</div><h3 style="margin:4px 0 8px">${errs.length} ${errs.length === 1 ? 'fallo pendiente' : 'fallos pendientes'} de volver a practicar</h3><ul class="weak-list small">${top.map(e => `<li><span class="kind" data-kind="${e.kind}">${Mastery.KIND[e.kind] || e.kind}</span> ${Mastery.errText(e)}${e.n > 1 ? ` <b style="color:var(--coral)">· ${e.n}×</b>` : ''}</li>`).join('')}</ul><a class="btn ghost sm" style="margin-top:10px" href="#/method/errors">Abrir el cuaderno</a></div>`;
+    }
     const list = []; const add = (d, c, u) => (d?.weak || []).forEach(w => list.push({ w, href: `#/${c.id}/${u.id}/write`, label: `U${u.number}` }));
     if (f) add(f.d, f.c, f.u);
     if (list.length < 3) for (const c of COURSES.filter(c => c.available)) for (const u of availableUnits(c)) { if (f && u === f.u) continue; add(dataOf(c.id, u.id), c, u); if (list.length >= 6) break; }
@@ -293,6 +330,10 @@
       const items = shuffle([...pick(mine, 4), ...pick(others, 2)]);
       body.innerHTML = `<div class="card"><div class="eyebrow">Gramática · interleaving</div><h2>Decide qué regla aplica</h2><p class="muted small intro">Cuatro preguntas de la Unit ${f.u.number} y dos de unidades anteriores, sin avisar cuál es cuál.</p><div class="g-box"></div></div>${foot}`;
       Engine.renderers.mcq($('.g-box', body), { items, pool: items.length }, sctx.counting(items.length, done));
+    } else if (id === 'errors') {
+      const n = Math.min(6, Mastery.errors().length);
+      body.innerHTML = `<div class="card"><div class="eyebrow" style="color:var(--coral)">Cuaderno de errores</div><h2>${n ? `${n} fallos recientes, otra vez` : 'Cuaderno vacío'}</h2><p class="muted small intro">${n ? 'Los más repetidos primero. Acertarlos los borra del cuaderno; fallarlos los deja para mañana.' : 'Nada pendiente. ¡Bien!'}</p><div class="e-box"></div></div>${foot}`;
+      if (n) Mastery.renderDrill($('.e-box', body), sctx, { limit: 6, onDone: done }); else done();
     } else if (id === 'listen') {
       const sents = pick(actsOf(f.d, 'dictation').flatMap(a => a.sentences), 3);
       body.innerHTML = `<div class="card"><div class="eyebrow">Listening · dictado</div><h2>Escucha y escribe exactamente lo que oyes</h2><p class="muted small intro">Tres frases de la Unit ${f.u.number}. Baja la velocidad si hace falta; fíjate en las contracciones.</p><div class="l-box"></div></div>${foot}`;
@@ -311,7 +352,7 @@
   /* ctx envuelto para la sesión: atribuye XP a la unidad en foco y cuenta respuestas para cerrar el paso */
   function stepCtx(id, f) {
     const where = f ? { course: f.c.id, unit: f.u.id, sec: STEPS.find(s => s.id === id)?.sec } : null;
-    const base = { ...ctx, score: (good, pts) => score(good, pts, where) };
+    const base = { ...ctx, score: (good, pts) => score(good, pts, where), answer: info => { if (!info.good && id !== 'errors') Mastery.miss({ ...info, unit: f ? key(f.c.id, f.u.id) : '', sec: where?.sec || '', label: 'Sesión de hoy' }); } };
     base.counting = (n, onDone) => { let k = 0; return { ...base, score: (good, pts) => { base.score(good, pts); if (++k >= n) onDone(); } }; };
     return base;
   }
@@ -387,8 +428,10 @@
       body.innerHTML = `<div class="sub">${acts.map((a, i) => `<button class="${i ? '' : 'on'}" data-a="${i}">${esc(a.label)}</button>`).join('')}</div>` + acts.map((a, i) => `<div class="act ${i ? '' : 'on'}" data-a="${i}"></div>`).join('');
       $('.sub', body).onclick = e => { const b = e.target.closest('button'); if (!b) return; $$('.sub button', body).forEach(x => x.classList.toggle('on', x === b)); $$('.act', body).forEach(x => x.classList.toggle('on', x.dataset.a === b.dataset.a)); b.scrollIntoView({ inline: 'center', block: 'nearest' }); };
     } else body.innerHTML = `<div class="act on" data-a="0"></div>`;
-    acts.forEach((a, i) => { const r = Engine.renderers[a.type], root = $(`.act[data-a="${i}"]`, body); if (r) r(root, a, ctx); else root.innerHTML = `<div class="card">Tipo de actividad desconocido: ${esc(a.type)}</div>`; });
+    acts.forEach((a, i) => { const r = Engine.renderers[a.type], root = $(`.act[data-a="${i}"]`, body); if (r) r(root, a, actCtx(key(cId, uId), sec.id, a, { course: cId, unit: uId, sec: sec.id })); else root.innerHTML = `<div class="card">Tipo de actividad desconocido: ${esc(a.type)}</div>`; });
   }
+  const LVL_COLOR = ['var(--surface3)', 'var(--amber-2)', 'var(--teal-2)', 'var(--ok)'];
+  const segBar = (counts, labels) => { const total = counts.reduce((a, b) => a + b, 0) || 1; return `<div class="seg">${counts.map((n, k) => n ? `<i style="width:${n / total * 100}%;background:${LVL_COLOR[k]}" title="${n} ${labels[k]}"></i>` : '').join('')}</div><div class="seg-legend">${counts.map((n, k) => `<span><i style="background:${LVL_COLOR[k]}"></i>${n} ${labels[k]}</span>`).join('')}</div>`; };
 
   function renderOverview(body, c, u, data) {
     const up = S.units[key(c.id, u.id)] || { xp: 0, ok: 0, bad: 0, secs: {} };
@@ -405,6 +448,10 @@
 
       <div><div class="eyebrow" style="margin-bottom:10px">Secciones</div>
       <div class="sec-grid">${secs.map(s => { const sp = up.secs?.[s.id] || { ok: 0, bad: 0 }, a = acc(sp.ok, sp.bad); return `<a class="sec-card" data-sec="${s.id}" href="#/${c.id}/${u.id}/${s.id}"><span class="ti-wrap">${icon(s.id)}</span>${a !== null ? `<span class="acc">${a}%</span>` : ''}<h3>${esc(s.label)}</h3><span class="s">${s.activities.length} ${s.activities.length === 1 ? 'actividad' : 'actividades'}${sp.ok + sp.bad ? ` · ${sp.ok} ✔` : ''}</span><div class="bar"><i style="width:${a ?? 0}%"></i></div></a>`; }).join('')}</div></div>
+
+      ${(() => { const ms = Mastery.unitSummary(key(c.id, u.id), data); return `<div class="card"><div class="eyebrow">Dominio</div><h2>Qué tienes ya y qué falta</h2><p class="muted small intro">El vocabulario sube de nivel con el repaso espaciado; los puntos de gramática, con tus respuestas en esta unidad (tres aciertos seguidos y buena precisión = dominado).</p>
+        <div class="grid2"><div><h3 style="margin-bottom:8px">Vocabulario · ${ms.vocabTotal} palabras</h3>${segBar(ms.vocab, ['nuevas', 'vistas', 'en práctica', 'dominadas'])}</div>
+        <div><h3 style="margin-bottom:8px">Gramática · ${ms.points.filter(p => p.level === 3).length} de ${ms.points.length} puntos dominados</h3><div class="lvls">${ms.points.map(p => `<a class="lvl l${p.level}" href="#/${c.id}/${u.id}/grammar" title="${p.n ? `${p.ok}/${p.n} aciertos` : 'sin intentos'} · ${Mastery.LEVELS[p.level]}">${esc(p.label)}</a>`).join('')}</div></div></div></div>`; })()}
 
       <div class="card"><div class="eyebrow">Mapa de la unidad</div><h2>Lo que estás aprendiendo</h2><p class="muted small intro">Todo sale directamente de tu material del curso. A la izquierda, lo que viste en clase; a la derecha, cómo lo practicas aquí.</p>
         <div class="map">${data.map.map(r => `<div class="map-row"><div class="area">${r[0]}</div><div><span class="lbl">En el curso</span>${r[1]}</div><div><span class="lbl">Aquí practicas</span>${r[2]}</div></div>`).join('')}</div></div>
@@ -437,10 +484,14 @@
       <div class="grid2">
         <div class="card"><div class="eyebrow">Últimas 16 semanas</div><h2>Tu calendario de práctica</h2><p class="muted small intro">Cada cuadro es un día. Cuanto más oscuro, más practicaste. El borde ámbar es hoy.</p>
           <div class="heat">${cells.join('')}</div><div class="heat-legend">menos <i></i><i class="l1"></i><i class="l2"></i><i class="l3"></i> más</div></div>
-        <div class="card"><div class="eyebrow">Objetivo semanal</div><h2>${sessionsThisWeek()} de ${P.goal} sesiones</h2><p class="muted small intro">Una sesión cuenta cuando completas los cinco pasos de "Hoy". Elige un objetivo que puedas cumplir incluso en una semana mala.</p>
+        <div class="card"><div class="eyebrow">Objetivo semanal</div><h2>${sessionsThisWeek()} de ${P.goal} sesiones</h2><p class="muted small intro">Una sesión cuenta cuando completas todos los pasos de "Hoy". Elige un objetivo que puedas cumplir incluso en una semana mala.</p>
           <div class="goal-pick">${[3, 4, 5, 6, 7].map(n => `<button class="${P.goal === n ? 'on' : ''}" data-g="${n}">${n} / semana</button>`).join('')}</div>
           ${srs ? `<div style="margin-top:18px"><div class="eyebrow">Repaso espaciado</div><p class="small" style="margin-top:4px"><b>${srs.due.length}</b> tarjetas pendientes hoy · <b>${srs.seen}</b> ya repasadas de <b>${srs.total}</b> · <b>${srs.counts[5]}</b> dominadas (caja 6)</p><div class="boxes">${srs.counts.map((n, k) => `<div class="box b${k + 1}"><b>${n}</b><span>caja ${k + 1}</span></div>`).join('')}</div><a class="btn ghost sm" style="margin-top:10px" href="#/method/srs">Ir al repaso</a></div>` : ''}</div>
       </div>
+      ${(() => { const sk = Mastery.skillTotals(), vt = Mastery.vocabTotals(), SECN = { vocab: 'Vocabulary', grammar: 'Grammar', listen: 'Listening', speak: 'Speaking', read: 'Reading', write: 'Writing', social: 'Social English' }; const errs = Mastery.errors().length; return `<div class="grid2" style="margin-top:18px">
+        <div class="card"><div class="eyebrow">Dominio</div><h2>Por destreza</h2><p class="muted small intro">Precisión acumulada en cada destreza y cuántas actividades tienes dominadas.</p><div class="skills">${Object.keys(SECN).map(s => { const o = sk[s] || { n: 0, ok: 0, items: 0, mastered: 0 }, acc = o.n ? Math.round(o.ok / o.n * 100) : 0; return `<div class="skill" data-sec="${s}"><span class="nm">${icon(s)} ${SECN[s]}</span><div class="bar"><i style="width:${acc}%"></i></div><span class="val">${o.n ? acc + '%' : '—'}<small> · ${o.mastered}/${o.items} dominadas</small></span></div>`; }).join('')}</div></div>
+        <div class="card"><div class="eyebrow">Vocabulario</div><h2>${vt[3]} palabras dominadas</h2><p class="muted small intro">De ${vt.reduce((a, b) => a + b, 0)} en todas las unidades. Una palabra está dominada cuando llega a la caja 4 del repaso.</p>${segBar(vt, ['nuevas', 'vistas', 'en práctica', 'dominadas'])}
+          <div style="margin-top:16px"><div class="eyebrow" style="color:var(--coral)">Cuaderno de errores</div><p class="small" style="margin:4px 0 8px"><b>${errs}</b> ${errs === 1 ? 'error pendiente' : 'errores pendientes'} de volver a practicar.</p><a class="btn ghost sm" href="#/method/errors">Abrir el cuaderno</a></div></div></div>`; })()}
       <div class="card" style="margin-top:18px"><div class="eyebrow">Por ciclo y unidad</div><h2>Progreso del curso</h2>
         ${COURSES.filter(c => c.available).map(c => `<h3 style="margin:16px 0 8px">${esc(c.title)} <span class="muted small" style="font-family:var(--font-body);font-weight:700">· ${coursePct(c)}%</span></h3><div class="prog" data-n="${c.number}">${availableUnits(c).map(u => { const p = S.units[key(c.id, u.id)] || { ok: 0, bad: 0 }; return `<div class="prog-row"><a href="#/${c.id}/${u.id}">U${u.number} · ${esc(u.title)}</a><span class="pct">${unitPct(c.id, u)}% · ${p.ok} ✔</span><div class="bar"><i style="width:${unitPct(c.id, u)}%"></i></div></div>`; }).join('')}</div>`).join('')}</div>
       <div class="card" style="margin-top:18px"><div class="eyebrow">Ajustes</div><h2>Voz y datos</h2>
@@ -448,7 +499,7 @@
         <p class="small muted" style="margin-top:10px">Todo se guarda solo en este navegador. Si cambias de dispositivo, el progreso empieza de cero.</p></div>`;
     $$('.goal-pick button', view).forEach(b => b.onclick = () => { P.goal = +b.dataset.g; store('et-prefs', P); renderProfile(); });
     $('#pfVoice').onclick = e => { e.stopPropagation(); toggleVoice(true); };
-    const rb = $('#pfReset'); rb.onclick = () => { if (rb.dataset.arm) { ['et-progress', 'et-days', 'et-today', 'et-last', 'et-srs', 'et-cando'].forEach(k => localStorage.removeItem(k)); location.reload(); } else { rb.dataset.arm = 1; rb.textContent = '¿Seguro? Pulsa otra vez para borrar'; setTimeout(() => { delete rb.dataset.arm; rb.textContent = 'Borrar todo el progreso'; }, 4000); } };
+    const rb = $('#pfReset'); rb.onclick = () => { if (rb.dataset.arm) { ['et-progress', 'et-days', 'et-today', 'et-last', 'et-srs', 'et-cando', 'et-mastery', 'et-errors'].forEach(k => localStorage.removeItem(k)); location.reload(); } else { rb.dataset.arm = 1; rb.textContent = '¿Seguro? Pulsa otra vez para borrar'; setTimeout(() => { delete rb.dataset.arm; rb.textContent = 'Borrar todo el progreso'; }, 4000); } };
   }
 
   /* ---------- router ---------- */
