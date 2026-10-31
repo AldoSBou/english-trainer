@@ -182,6 +182,23 @@ window.Method = (() => {
     $('.rt-check', root).onclick = () => { const mine = $('#rtSaid', root).value.trim(); if (mine.split(/\s+/).length < 8) { ctx.toast('Cuenta un poco más'); return; } const keys = [...new Set(content(cur.text))], said = new Set(content(mine)), hit = keys.filter(k => said.has(k)), p = Math.round(hit.length / keys.length * 100); const fb = $('#rtFb', root); fb.className = 'fb show ' + (p >= 40 ? 'good' : 'wrong'); fb.innerHTML = `<b>${p}%</b> de las ideas clave (${hit.length}/${keys.length}). ${p >= 40 ? '¡Bien! Recontar con tus palabras es más valioso que repetir literalmente.' : 'Vuelve a leer y fíjate en las ideas principales, no en las frases exactas.'}<p class="small muted" style="margin-top:6px">Ideas que no mencionaste: ${keys.filter(k => !said.has(k)).slice(0, 10).map(esc).join(', ') || 'ninguna'}.</p>${window.Coach && Coach.AI.provider !== 'local' ? '<p class="small">Para feedback de gramática sobre tu versión, pégala en <a href="#/coach/eval">Coach › Evaluar</a>.</p>' : ''}`; ctx.score(p >= 40, 15); };
   }
 
+  /* ================= 6b. LECTURA CRONOMETRADA ================= */
+  function renderReading(root, ctx, sub) {
+    const texts = acts('reading').map(x => ({ x, key: x.d.source || x.key, title: x.a.title || x.u.title, words: x.a.paragraphs.map(p => strip(p)).join(' ').split(' ').length }));
+    const H = load('et-reading', {}), all = Object.values(H).flat();
+    const bestOf = k => (H[k] || []).reduce((m, h) => Math.max(m, h.wpm), 0);
+    const last5 = all.slice().sort((a, b) => a.d - b.d).slice(-5), avg = last5.length ? Math.round(last5.reduce((s, h) => s + h.wpm, 0) / last5.length) : 0, bestAll = all.reduce((m, h) => Math.max(m, h.wpm), 0);
+    let cur = texts.find(t => t.key === sub) || texts.filter(t => !H[t.key]).slice(-1)[0] || texts[texts.length - 1];
+    root.innerHTML = `<div class="card"><div class="eyebrow">Reading fluency · lectura cronometrada</div><h2>Lee más rápido sin perder comprensión</h2>
+      <p class="muted small intro">Elige un texto de tus unidades, léelo contra el reloj y responde sin mirar. Medimos palabras por minuto y comprensión; lo que vale es el producto de las dos. Repite el mismo texto dos o tres veces seguidas: la velocidad que ganas se transfiere a textos nuevos.</p>
+      ${why('Nation 2009; Grabe 2009', 'Dedicar una parte del tiempo a leer material fácil (98 % de palabras conocidas) a velocidad automatiza el reconocimiento de palabras y libera atención para comprender; la lectura repetida y cronometrada es la técnica con más evidencia para ganar fluidez lectora.')}
+      <div class="stat" style="margin:12px 0"><div><b>${bestAll || '—'}</b><span class="small muted">mejor marca (ppm)</span></div><div><b>${avg || '—'}</b><span class="small muted">media últimas 5</span></div><div><b>${all.length}</b><span class="small muted">lecturas hechas</span></div><div><b>${texts.length}</b><span class="small muted">textos disponibles</span></div></div>
+      <div class="eyebrow" style="margin:6px 0 8px">Texto</div><div class="chips rd-pick">${texts.map(t => `<button class="chip ${t === cur ? 'sel' : ''}" data-k="${esc(t.key)}" title="${t.words} palabras">${esc(t.x.label)} · ${esc(t.title)}${bestOf(t.key) ? ` · ${bestOf(t.key)} ppm` : ''}</button>`).join('')}</div></div>
+      <div class="rd-host" style="margin-top:18px"></div>`;
+    $$('.rd-pick .chip', root).forEach(b => b.onclick = () => renderReading(root, ctx, b.dataset.k));
+    if (cur) Engine.renderers.timed($('.rd-host', root), { eyebrow: cur.x.label, title: cur.title, intro: `${cur.words} palabras · ${cur.x.u.title}`, paragraphs: cur.x.a.paragraphs, main: cur.x.a.main || [], infer: cur.x.a.infer || [], key: cur.key }, { ...ctx, score: (g, p) => { ctx.score(g, p); if (window.Mastery) Mastery.record('practice|read|Lectura cronometrada', g); } });
+  }
+
   /* ================= 7. PLAN Y PRINCIPIOS ================= */
   function renderPlan(root, ctx) {
     const w = weakAll();
@@ -211,7 +228,7 @@ window.Method = (() => {
   }
 
   /* ================= montaje ================= */
-  const TABS = [['plan', 'Principios y plan', renderPlan], ['srs', 'Repaso inteligente', renderSRS], ['errors', 'Cuaderno de errores', (r, c) => Mastery.renderErrors(r, c)], ['pron', 'Pronunciación', (r, c) => Pron.render(r, c)], ['shadow', 'Shadowing', renderShadow], ['mix', 'Quiz mezclado', renderMix], ['fluency', '4-3-2', renderFluency], ['dictogloss', 'Dictogloss', renderDictogloss], ['retell', 'Leer y recontar', renderRetell]];
+  const TABS = [['plan', 'Principios y plan', renderPlan], ['srs', 'Repaso inteligente', renderSRS], ['errors', 'Cuaderno de errores', (r, c) => Mastery.renderErrors(r, c)], ['pron', 'Pronunciación', (r, c) => Pron.render(r, c)], ['reading', 'Lectura', renderReading],['shadow', 'Shadowing', renderShadow], ['mix', 'Quiz mezclado', renderMix], ['fluency', '4-3-2', renderFluency], ['dictogloss', 'Dictogloss', renderDictogloss], ['retell', 'Leer y recontar', renderRetell]];
   function render(view, ctx, sub) {
     const active = TABS.find(t => t[0] === sub) || TABS[0];
     view.innerHTML = `<nav class="crumbs"><a href="#/">Hoy</a><span class="sep">›</span><span>Práctica</span></nav>

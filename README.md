@@ -69,6 +69,10 @@ Cada actividad acumula intentos, aciertos y racha, y de ahí sale su nivel: nuev
 
 Además, cada unidad recibe automáticamente cuatro ejercicios de producción generados de su propio contenido: **Escríbela** (lee el significado y escribe la palabra), **Completa lo que oyes** (cloze con audio), **Ordena la frase** (constructor de frases) y **Dilo** (escucha una frase del modelo, dila y compara con tu voz). La portada de cada unidad de Inglés 4 incluye un checklist **Puedo…** con lo que deberías saber hacer al terminarla.
 
+## Lectura cronometrada
+
+En Reading de cada unidad (pestaña **Lectura cronometrada**) y en Práctica › Lectura (`#/method/reading`, con los textos de todas las unidades). El texto se destapa al pulsar "Empezar a leer"; al terminar ves tus palabras por minuto con una banda orientativa y respondes las preguntas de comprensión del texto sin mirarlo. Lo que cuenta es el producto: ppm × comprensión. Cada texto guarda tu historial (`et-reading`) y te anima a releerlo dos o tres veces seguidas, que es la técnica con más evidencia para ganar fluidez lectora.
+
 ## Pronunciación (`js/pron.js`)
 
 Ruta `#/method/pron`. Laboratorio pensado para hispanohablantes: **pares mínimos** (sheep/ship, berry/very, jet/yet, ship/chip, cat/cut, they/day, bad/bat, eyes/ice, hear/ear, pool/pull: oyes una palabra, eliges cuál fue y luego la dices), **terminación -ed** (/t/, /d/ o /ɪd/), **sílaba tónica** (toca la sílaba fuerte) y **enlaces y contracciones** (habla conectada con Dilo).

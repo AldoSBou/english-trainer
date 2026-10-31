@@ -178,6 +178,11 @@
       const say = [...new Set([...fromModels, ...sents])];
       if (say.length >= 5) { const at = sp.activities.findIndex(a => a.type === 'speaking') + 1; sp.activities.splice(at || sp.activities.length, 0, { virtual: true, label: 'Dilo', type: 'say', eyebrow: 'Dilo · pronunciación y ritmo', title: 'Escucha la frase, dila y compara', intro: 'Frases del modelo de los retos y del dictado. Escucha, imita el ritmo y grábate: verás palabra por palabra qué se entendió. Más del 80 % es buena señal.', sentences: say }); }
     }
+    const rd = sec('read'), reading = rd && rd.activities.find(a => a.type === 'reading');
+    if (rd && reading && !rd.activities.some(a => a.type === 'timed')) {
+      const at = rd.activities.indexOf(reading) + 1;
+      rd.activities.splice(at, 0, { virtual: true, label: 'Lectura cronometrada', type: 'timed', eyebrow: 'Fluidez lectora', title: 'Lee contra el reloj y comprueba que entendiste', intro: 'El mismo texto de la unidad, pero midiendo tu velocidad. Primero lee para entender; al terminar, responde sin mirar. Leerlo dos o tres veces seguidas es la forma más rápida de ganar fluidez.', paragraphs: reading.paragraphs, main: reading.main || [], infer: reading.infer || [], key: d.source || 'texto', name: reading.title || '' });
+    }
     const g = sec('grammar');
     if (g && sents.length >= 5 && !g.activities.some(a => a.type === 'build')) {
       const rev = g.activities.findIndex(a => /^repaso/i.test(a.label || ''));
@@ -433,7 +438,8 @@
     if (sec.render === 'overview') return renderOverview(body, c, u, data);
     const acts = sec.activities;
     if (acts.length > 1) {
-      body.innerHTML = `<div class="sub">${acts.map((a, i) => `<button class="${i ? '' : 'on'}" data-a="${i}">${esc(a.label)}</button>`).join('')}</div>` + acts.map((a, i) => `<div class="act ${i ? '' : 'on'}" data-a="${i}"></div>`).join('');
+      const TYPE_LABEL = { reading: 'Lectura', notes: 'Notas', flashcards: 'Flashcards', dictation: 'Dictado', dialog: 'Diálogo', speaking: 'Retos', stress: 'Pronunciación', comment: 'Escribe', fix: 'Corrige', order: 'Ordena' };
+      body.innerHTML = `<div class="sub">${acts.map((a, i) => `<button class="${i ? '' : 'on'}" data-a="${i}">${esc(a.label || TYPE_LABEL[a.type] || a.title || a.type)}</button>`).join('')}</div>` + acts.map((a, i) => `<div class="act ${i ? '' : 'on'}" data-a="${i}"></div>`).join('');
       $('.sub', body).onclick = e => { const b = e.target.closest('button'); if (!b) return; $$('.sub button', body).forEach(x => x.classList.toggle('on', x === b)); $$('.act', body).forEach(x => x.classList.toggle('on', x.dataset.a === b.dataset.a)); b.scrollIntoView({ inline: 'center', block: 'nearest' }); };
     } else body.innerHTML = `<div class="act on" data-a="0"></div>`;
     acts.forEach((a, i) => { const r = Engine.renderers[a.type], root = $(`.act[data-a="${i}"]`, body); if (r) r(root, a, actCtx(key(cId, uId), sec.id, a, { course: cId, unit: uId, sec: sec.id })); else root.innerHTML = `<div class="card">Tipo de actividad desconocido: ${esc(a.type)}</div>`; });

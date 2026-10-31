@@ -338,5 +338,55 @@ window.Engine = (() => {
     draw();
   };
 
+  /* timed: lectura cronometrada · ppm + comprensión (main/infer del reading) + historial por texto (et-reading) */
+  const RD_KEY = 'et-reading';
+  const rdLoad = () => { try { return JSON.parse(localStorage.getItem(RD_KEY)) || {}; } catch (e) { return {}; } };
+  const rdSave = h => { try { localStorage.setItem(RD_KEY, JSON.stringify(h)); } catch (e) { } };
+  const rdBand = w => w < 100 ? ['Lento', 'Lees palabra por palabra. Intenta leer por grupos de 3-4 palabras y no vuelvas atrás.'] : w < 150 ? ['Lectura cuidadosa', 'Ritmo típico de B1. Objetivo para B2: 150-200 ppm manteniendo la comprensión.'] : w < 200 ? ['Buen ritmo', 'Velocidad de B2. Si la comprensión se mantiene alta, ya puedes leer textos más largos.'] : ['Rápido', 'Muy buena velocidad. Comprueba que la comprensión no baje del 70 %.'];
+  R.timed = (root, act, ctx) => {
+    const text = act.paragraphs.map(p => p.replace(/<[^>]+>/g, '')).join(' ').replace(/\s+/g, ' ').trim(), words = text.split(' ').length;
+    const key = act.key || act.title || 'texto', qs = [...(act.main || []), ...(act.infer || [])];
+    let t0 = 0, tmr = null, attempt = 0, lastWpm = 0;
+    const hist = () => rdLoad()[key] || [];
+    const best = () => hist().reduce((m, h) => Math.max(m, h.wpm), 0);
+    const fmt = s => Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0');
+    root.innerHTML = `<div class="card">${head(act)}<div class="rd"></div></div>`;
+    const box = $('.rd', root);
+    function ready() {
+      clearInterval(tmr);
+      const h = hist();
+      box.innerHTML = `<div class="row between"><span class="small"><b>${words}</b> palabras · ${qs.length} preguntas después${best() ? ` · tu mejor marca aquí: <b>${best()} ppm</b>` : ''}</span></div>
+        <div class="article rd-text rd-blur" aria-hidden="true">${act.paragraphs.map(p => `<p>${p}</p>`).join('')}</div>
+        <div class="row" style="margin-top:12px"><button class="btn rd-start">${attempt ? 'Leer otra vez (lectura repetida)' : 'Empezar a leer'}</button>${attempt ? '<span class="small muted">Leer el mismo texto dos o tres veces seguidas sube la velocidad y se transfiere a textos nuevos.</span>' : '<span class="small muted">El texto se destapa al empezar. Lee para entender, sin releer frases.</span>'}</div>
+        ${h.length ? `<div class="rd-hist"><div class="eyebrow" style="margin:14px 0 6px">Tus últimas lecturas de este texto</div><div class="rd-bars">${h.slice(-8).map(x => `<div class="rd-bar" title="${x.wpm} ppm · ${x.acc}% comprensión"><i style="height:${Math.min(100, x.wpm / 2.5)}%;background:${x.acc >= 70 ? 'var(--ok)' : 'var(--amber)'}"></i><span>${x.wpm}</span></div>`).join('')}</div></div>` : ''}`;
+      $('.rd-start', box).onclick = reading;
+    }
+    function reading() {
+      t0 = Date.now(); attempt++;
+      box.innerHTML = `<div class="row between" style="margin-bottom:10px"><span class="timer rd-timer" style="font-size:1.6rem">0:00</span><button class="btn warm rd-done">Terminé de leer</button></div><div class="article rd-text">${act.paragraphs.map(p => `<p>${p}</p>`).join('')}</div><div class="row" style="margin-top:12px;justify-content:flex-end"><button class="btn warm rd-done">Terminé de leer</button></div>`;
+      tmr = setInterval(() => { $('.rd-timer', box).textContent = fmt(Math.round((Date.now() - t0) / 1000)); }, 500);
+      $$('.rd-done', box).forEach(b => b.onclick = result);
+      window.scrollTo({ top: root.getBoundingClientRect().top + window.scrollY - 80, behavior: 'smooth' });
+    }
+    function result() {
+      clearInterval(tmr); const secs = Math.max(5, Math.round((Date.now() - t0) / 1000)), wpm = Math.round(words / (secs / 60)), [band, tip] = rdBand(wpm);
+      const delta = lastWpm ? wpm - lastWpm : 0; lastWpm = wpm;
+      box.innerHTML = `<div class="rd-res"><div class="wpm"><b>${wpm}</b><span>palabras por minuto</span></div><div><div class="eyebrow">${band} · ${fmt(secs)}</div><p class="small" style="margin-top:4px">${tip}</p>${delta ? `<p class="small" style="margin-top:4px">${delta > 0 ? '▲' : '▼'} <b>${Math.abs(delta)} ppm</b> respecto a la lectura anterior.</p>` : ''}</div></div>
+        ${qs.length ? `<h3 style="margin:18px 0 8px">Ahora, sin mirar el texto: ¿qué entendiste?</h3><div class="rd-q"></div>` : ''}<div class="rd-end"></div>`;
+      if (!qs.length) return finish(wpm, secs, 100, 0);
+      let n = 0, okn = 0;
+      const qctx = { ...ctx, score: (good, pts) => { ctx.score(good, pts); n++; if (good) okn++; if (n >= qs.length) finish(wpm, secs, Math.round(okn / qs.length * 100), qs.length); } };
+      mcq($('.rd-q', box), shuffle(qs), qctx);
+    }
+    function finish(wpm, secs, acc, nq) {
+      const real = wpm <= 450; if (real) { const H = rdLoad(); (H[key] ||= []).push({ d: Math.floor(Date.now() / 864e5), wpm, acc, secs }); H[key] = H[key].slice(-30); rdSave(H); }
+      const eff = Math.round(wpm * acc / 100), good = acc >= 70 && real;
+      const end = $('.rd-end', box); end.innerHTML = `<div class="hint" style="margin-top:14px"><b>${wpm} ppm × ${acc}% de comprensión = ${eff} ppm efectivos.</b> ${real ? '' : 'Más de 450 ppm no es leer, es pasar la vista: esta lectura no se guarda. '}${good ? 'Comprensión sólida: puedes intentar leer un poco más rápido.' : 'La velocidad sin comprensión no sirve: vuelve a leer con calma y repite las preguntas.'}${nq && best() && wpm >= best() ? ' 🏆 Nueva mejor marca en este texto.' : ''}</div><div class="row" style="margin-top:10px"><button class="btn rd-again">Leer otra vez</button><button class="btn ghost rd-back">Ver historial</button></div>`;
+      if (nq) ctx.score(good, 20);
+      $('.rd-again', end).onclick = reading; $('.rd-back', end).onclick = ready;
+    }
+    ready();
+  };
+
   return { renderers: R, register: (t, fn) => { R[t] = fn; }, util: { shuffle, pick, esc, norm, blank, diffWords, matchScore, $, $$ } };
 })();
