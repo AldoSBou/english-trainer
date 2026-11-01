@@ -49,7 +49,7 @@ body[data-sec="social"] {--accent:#A3467C;--accent-2:#C979A6;--accent-soft:#F8E6
 
 /* color por ciclo (0-5) para tarjetas y menú */
 [data-n="0"]{--c:#A3467C}[data-n="1"]{--c:#DC5540}[data-n="2"]{--c:#C77D0F}
-[data-n="3"]{--c:#3B8A3F}[data-n="4"]{--c:#0E7C6B}[data-n="5"]{--c:#2563EB}[data-n="P"]{--c:#D98E12}
+[data-n="3"]{--c:#3B8A3F}[data-n="4"]{--c:#0E7C6B}[data-n="5"]{--c:#2563EB}[data-n="P"]{--c:#D98E12}[data-n="M"]{--c:#7A4E9E}
 
 /* ---------- Tokens: tema oscuro (azul noche) ---------- */
 @media (prefers-color-scheme: dark){
@@ -760,3 +760,12 @@ select{padding:7px 10px}
 .msg.note{background:transparent;border:1px dashed var(--line-strong);justify-self:stretch;max-width:100%;padding:6px 12px}
 .msg.note .fbk{border-top:0;margin-top:0;padding-top:0}
 .msg.note .fbk summary{color:var(--ink)}
+/* ---------- Mis temas (unidades generadas) ---------- */
+.tp-list{display:grid;gap:8px}
+.tp-item{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 14px;border:1px solid var(--line);border-radius:12px;background:var(--surface2)}
+.tp-item a{text-decoration:none;color:inherit;flex:1;min-width:0}
+/* ---------- examen ---------- */
+.opt.sel{border-color:var(--accent);box-shadow:0 0 0 2px color-mix(in srgb, var(--accent) 35%, transparent)}
+.ex-wrong li{margin-bottom:10px}
+.ex-wrong .del{text-decoration:line-through;color:var(--bad)}
+.ex-wrong .ins{color:var(--ok);font-weight:800}

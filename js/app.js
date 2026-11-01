@@ -190,6 +190,7 @@
     }
     return d;
   }
+  if (window.Topics) Topics.install();   // Mis temas: unidades generadas con IA (et-topics)
   Object.values(window.UNIT_DATA || {}).forEach(enrich);
 
   /* ctx por actividad: atribuye XP, registra dominio y anota los fallos en el cuaderno */
@@ -408,7 +409,7 @@
     view.innerHTML = `${crumbs([['Hoy', '#/'], ['Curso', '']])}
       <div class="page-head"><div class="eyebrow">Tu programa de inglés</div><h1>Ciclos y unidades</h1><p class="muted">Cada ciclo agrupa las unidades de tu curso. Dentro de cada unidad tienes lo que viste en clase, convertido en práctica: vocabulario, gramática, listening, speaking, reading, writing y social English.</p></div>
       <div class="unit-cards">${COURSES.map(c => c.available
-        ? `<a class="unit-card" data-n="${c.number}" href="#/${c.id}"><span class="big">${c.number}</span><h3>${esc(c.title)}</h3><p class="small muted">${esc(c.subtitle || '')}</p><span class="small">${availableUnits(c).length} de ${c.units.length} unidades listas${c.current ? ' · <b>ciclo actual</b>' : ''}</span><div class="bar"><i style="width:${coursePct(c)}%"></i></div></a>`
+        ? `<a class="unit-card" data-n="${c.number}" href="#/${c.id}"><span class="big">${c.number}</span><h3>${esc(c.title)}</h3><p class="small muted">${esc(c.subtitle || '')}</p><span class="small">${c.custom ? (c.units.length ? `${c.units.length} tema${c.units.length === 1 ? '' : 's'} generado${c.units.length === 1 ? '' : 's'} por ti` : 'Genera tu primera unidad con IA') : `${availableUnits(c).length} de ${c.units.length} unidades listas`}${c.current ? ' · <b>ciclo actual</b>' : ''}</span><div class="bar"><i style="width:${coursePct(c)}%"></i></div></a>`
         : `<div class="unit-card locked" data-n="${c.number}"><span class="big">${c.number}</span><h3>${esc(c.title)}</h3><p class="small muted">${esc(c.subtitle || '')} — se añadirá cuando llegues a este ciclo.</p></div>`).join('')}</div>`;
   }
 
@@ -416,10 +417,11 @@
     const c = course(cId); if (!c || !c.available) { location.hash = '#/curso'; return; }
     setPage('home', cId);
     view.innerHTML = `${crumbs([['Hoy', '#/'], ['Curso', '#/curso'], [c.title, '']])}
-      <div class="unit-head" data-n="${c.number}"><div class="eyebrow">${c.practical ? 'Situaciones reales' : 'Ciclo ' + c.number} · ${esc(c.subtitle || '')}</div><h1>${esc(c.title)}</h1><p class="small">${c.practical ? `${availableUnits(c).length} situaciones listas · ${coursePct(c)}% completado. Cada una es una unidad completa: frases, gramática mínima, audio, role-plays con ramas y escritura.` : `${availableUnits(c).length} unidades listas · ${coursePct(c)}% completado. Las que aún no has visto en clase aparecen como "Próximamente".`}</p></div>
+      <div class="unit-head" data-n="${c.number}"><div class="eyebrow">${c.custom ? 'Tus temas' : c.practical ? 'Situaciones reales' : 'Ciclo ' + c.number} · ${esc(c.subtitle || '')}</div><h1>${esc(c.title)}</h1><p class="small">${c.custom ? (c.units.length ? `${c.units.length} tema${c.units.length === 1 ? '' : 's'} generado${c.units.length === 1 ? '' : 's'} · ${coursePct(c)}% completado. Cada tema es una unidad completa que entra al repaso, al quiz mezclado, al examen y al Coach.` : 'Todavía no has generado ningún tema. Escribe uno abajo y la IA te arma la unidad.') : c.practical ? `${availableUnits(c).length} situaciones listas · ${coursePct(c)}% completado. Cada una es una unidad completa: frases, gramática mínima, audio, role-plays con ramas y escritura.` : `${availableUnits(c).length} unidades listas · ${coursePct(c)}% completado. Las que aún no has visto en clase aparecen como "Próximamente".`}</p></div>
       <div class="unit-cards">${c.units.map(u => u.available
         ? `<a class="unit-card" data-n="${u.number % 6}" href="#/${c.id}/${u.id}"><span class="big">${String(u.number).padStart(2, '0')}</span><h3>${esc(u.title)}</h3><p class="small muted">${esc(u.subtitle || '')}</p><span class="small">${(dataOf(c.id, u.id)?.sections.length || 1) - 1} secciones · ${unitPct(c.id, u)}%</span><div class="bar"><i style="width:${unitPct(c.id, u)}%"></i></div></a>`
         : `<div class="unit-card locked" data-n="${u.number % 6}"><span class="big">${String(u.number).padStart(2, '0')}</span><h3>Unit ${u.number}</h3><p class="small muted">Próximamente</p></div>`).join('')}</div>`;
+    if (c.custom && window.Topics) Topics.panel(view, ctx, c);
   }
 
   /* ======================= UNIDAD ======================= */

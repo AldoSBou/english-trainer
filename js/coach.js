@@ -43,7 +43,7 @@ window.Coach = (() => {
       return this.ready;
     },
     label() { return { claude: 'Claude (dentro de claude.ai)', key: 'Tu API key de Anthropic', local: 'Sin IA · análisis local' }[this.provider]; },
-    async chat(turns, { onText, signal, json = false, tier = 'default' } = {}) {
+    async chat(turns, { onText, signal, json = false, tier = 'default', max = 1500 } = {}) {
       await this.init();
       if (this.provider === 'claude') {
         const opts = { cache: false, signal, modelTier: tier, onText: onText ? ({ text }) => onText(text) : undefined };
@@ -53,7 +53,7 @@ window.Coach = (() => {
         const key = localStorage.getItem(LS.key), model = localStorage.getItem(LS.model) || 'claude-sonnet-5';
         let sys = 'You are an expert English tutor. Follow the instructions in the user message exactly and reply only in the requested format.', msgs = turns.map(t => ({ role: t.role, content: t.content }));
         if (turns.length > 1) { sys = turns[0].content; msgs = turns.slice(1).map(t => ({ role: t.role, content: t.content })); }
-        const res = await fetch('https://api.anthropic.com/v1/messages', { method: 'POST', signal, headers: { 'content-type': 'application/json', 'x-api-key': key, 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true' }, body: JSON.stringify({ model, max_tokens: 1500, system: sys, messages: msgs }) });
+        const res = await fetch('https://api.anthropic.com/v1/messages', { method: 'POST', signal, headers: { 'content-type': 'application/json', 'x-api-key': key, 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true' }, body: JSON.stringify({ model, max_tokens: max, system: sys, messages: msgs }) });
         if (!res.ok) { const t = await res.text(); throw { code: res.status === 401 ? 'not_granted' : 'upstream_error', message: t.slice(0, 200) }; }
         const data = await res.json(); const text = (data.content || []).map(c => c.text || '').join('');
         if (!json) { onText && onText(text); return text; }

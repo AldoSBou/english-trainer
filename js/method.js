@@ -115,6 +115,92 @@ window.Method = (() => {
     Engine.renderers.mcq($('#mixBox', root), { items: pool, pool: 10 }, ctx);
   }
 
+  /* ================= EXAMEN SIMULADO ================= */
+  const EXAM_BANDS = { ingles3: ['A2', 'A2+', 'B1', 'B1+'], ingles4: ['B1', 'B1+', 'B2', 'B2+'], practico: ['B1', 'B1+', 'B2', 'B2+'], all: ['A2+', 'B1', 'B1+', 'B2'] };
+  const EXAM_AREA = { grammar: 'Gramática', vocab: 'Vocabulario', listen: 'Listening', social: 'Social English' };
+  function examPool(cid) {
+    const util = { shuffle, pick, esc, blank: s => esc(s).replace('___', '<span class="blank">…</span>') };
+    const gram = [], vocab = [], dict = [];
+    units().filter(x => cid === 'all' || x.c.id === cid).forEach(x => x.d.sections.forEach(s => s.activities.forEach(a => {
+      if (a.type === 'mcq' && !a.virtual) { try { const items = typeof a.build === 'function' ? a.build(util) : a.items.map(it => ({ ...it, q: it.blank ? util.blank(it.q) : it.q })); items.forEach(it => (s.id === 'vocab' ? vocab : gram).push({ kind: 'mcq', area: s.id === 'vocab' ? 'vocab' : s.id === 'social' ? 'social' : 'grammar', q: it.q, opts: it.opts, a: it.a, why: it.why || '', unit: x.label, key: x.key, sec: s.id })); } catch (e) { } }
+      if (a.type === 'flashcards' && a.cards.length >= 4) a.cards.forEach(c => { if (!c.def) return; let others = pick(a.cards.filter(o => o.w !== c.w && o.cat === c.cat), 3); if (others.length < 3) others = others.concat(pick(a.cards.filter(o => o.w !== c.w && !others.includes(o)), 3 - others.length)); if (others.length < 3) return; vocab.push({ kind: 'mcq', area: 'vocab', q: `¿Qué palabra o expresión significa <i>“${esc(c.def)}”</i>?`, opts: [c.w, ...others.map(o => o.w)], a: c.w, why: c.ex ? `<i>${esc(c.ex)}</i>` : '', unit: x.label, key: x.key, sec: 'vocab' }); });
+      if (a.type === 'dictation' && !a.virtual) a.sentences.forEach(s => dict.push({ kind: 'dict', area: 'listen', s, unit: x.label, key: x.key, sec: 'listen' }));
+    })));
+    return { gram, vocab, dict };
+  }
+  function buildExam(cid, n = 20) {
+    const { gram, vocab, dict } = examPool(cid);
+    const spread = (list, k) => { const by = {}; shuffle(list).forEach(it => (by[it.key] ||= []).push(it)); const out = []; let more = true; while (out.length < k && more) { more = false; for (const key of shuffle(Object.keys(by))) { if (out.length >= k) break; const it = by[key].pop(); if (it) { out.push(it); more = true; } } } return out; };
+    const nd = Math.min(3, dict.length), nv = Math.min(5, vocab.length), ng = Math.min(n - nd - nv, gram.length);
+    return shuffle([...spread(gram, ng), ...spread(vocab, nv), ...spread(dict, nd)]);
+  }
+  function renderExam(root, ctx) {
+    const LIMIT = 15 * 60, N = 20; let H = load('et-exams', []);
+    const scopes = [['all', 'Todo'], ...COURSES.filter(c => c.available && c.units.some(u => u.available && UNIT_DATA[c.id + '/' + u.id])).map(c => [c.id, c.title])];
+    const scopeLabel = k => k === 'all' ? 'Todo' : (COURSES.find(c => c.id === k)?.title || k);
+    let scope = scopes.some(s => s[0] === H[0]?.scope) ? H[0].scope : (COURSES.find(c => c.current && c.available)?.id || 'all');
+    let items = [], i = 0, answers = [], secs = 0, tmr = null;
+    const fmt = s => Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0');
+    const bar = (v, max) => `<div class="cbar"><i style="width:${max ? Math.round(v / max * 100) : 0}%"></i></div>`;
+    function setup() {
+      clearInterval(tmr); H = load('et-exams', []);
+      root.innerHTML = `<div class="card"><div class="eyebrow">Examen simulado · ${N} preguntas</div><h2>Mide dónde estás, como en un examen</h2>
+        <p class="muted small intro">Veinte preguntas mezcladas de un ciclo o de todo lo que tienes cargado: gramática y uso, vocabulario y tres frases de dictado. Sin pistas ni correcciones hasta el final y con 15 minutos de tiempo. Al terminar: nota, nivel orientativo, desglose por área y por unidad, y tus fallos pasan al cuaderno de errores.</p>
+        ${why('Roediger & Karpicke 2006; Bjork 1994', 'Un test sin feedback inmediato y con tiempo es una "dificultad deseable": obliga a recuperar sin apoyos y muestra lo que sabes de verdad. El informe posterior convierte cada fallo en material de repaso.')}
+        <div class="eyebrow" style="margin-top:12px">Alcance</div><div class="chips" id="exScope">${scopes.map(([k, l]) => `<button class="chip ${k === scope ? 'sel' : ''}" data-k="${k}">${esc(l)}</button>`).join('')}</div>
+        <p class="small muted" id="exPoolInfo"></p>
+        <div class="row" style="margin-top:10px"><button class="btn" id="exStart">Empezar examen</button><span class="small muted">15 min · sin volver atrás · se guarda en tu historial</span></div></div>
+        ${H.length ? `<div class="card"><div class="eyebrow">Historial</div><h2>Tus exámenes</h2><div class="scroll-x"><table class="table"><thead><tr><th>Fecha</th><th>Alcance</th><th>Nota</th><th>Nivel</th><th>Tiempo</th></tr></thead><tbody>${H.slice(0, 12).map(h => `<tr><td>${new Date(h.date).toLocaleDateString('es-PE')}</td><td>${esc(scopeLabel(h.scope))}</td><td><b>${h.score}/${h.total}</b> · ${h.pct}%</td><td><b>${esc(h.cefr)}</b></td><td>${fmt(h.secs)}</td></tr>`).join('')}</tbody></table></div>${H.length > 1 ? `<p class="small muted">Mejor nota: <b>${Math.max(...H.map(h => h.pct))}%</b> · media de los últimos ${Math.min(H.length, 5)}: <b>${Math.round(H.slice(0, 5).reduce((s, h) => s + h.pct, 0) / Math.min(H.length, 5))}%</b></p>` : ''}</div>` : ''}`;
+      const info = () => { const p = examPool(scope); $('#exPoolInfo', root).textContent = `Banco disponible: ${p.gram.length} preguntas de gramática y uso, ${p.vocab.length} de vocabulario y ${p.dict.length} frases de dictado.`; };
+      info();
+      $('#exScope', root).onclick = e => { const c = e.target.closest('.chip'); if (!c) return; scope = c.dataset.k; $$('#exScope .chip', root).forEach(x => x.classList.toggle('sel', x === c)); info(); };
+      $('#exStart', root).onclick = () => {
+        items = buildExam(scope, N); if (items.length < 10) { ctx.toast('No hay suficientes preguntas en este alcance'); return; }
+        i = 0; answers = []; secs = 0; question();
+        tmr = setInterval(() => { secs++; const t = $('#exTimer', root); if (t) { t.textContent = fmt(Math.max(LIMIT - secs, 0)); t.style.color = LIMIT - secs <= 60 ? 'var(--bad)' : ''; } if (secs >= LIMIT) report(true); }, 1000);
+      };
+    }
+    function question() {
+      const it = items[i]; let chosen = null, plays = 0;
+      root.innerHTML = `<div class="card"><div class="row between"><div><div class="eyebrow">Examen · ${esc(scopeLabel(scope))}</div><h3 style="margin:0">Pregunta ${i + 1} de ${items.length}</h3></div><div class="timer" id="exTimer">${fmt(LIMIT - secs)}</div></div>
+        <div class="bar" style="margin:10px 0 14px"><i style="width:${Math.round(i / items.length * 100)}%"></i></div>
+        <p class="small muted" style="margin:0 0 6px">${EXAM_AREA[it.area] || ''}</p>
+        ${it.kind === 'mcq' ? `<div class="q">${it.q}</div><div class="opts" id="exOpts">${shuffle(it.opts).map(o => `<button class="opt">${o}</button>`).join('')}</div>`
+          : `<div class="q">Escucha y escribe la frase.</div><div class="row"><button class="btn ghost" id="exPlay">▶ Escuchar</button><button class="btn ghost" id="exSlow">🐢 Lenta</button><span class="small muted">Máximo tres escuchas.</span></div><textarea id="exText" style="margin-top:10px;min-height:70px" placeholder="Escribe exactamente lo que oyes…"></textarea>`}
+        <div class="row" style="margin-top:12px"><button class="btn" id="exNext" ${it.kind === 'mcq' ? 'disabled' : ''}>${i + 1 === items.length ? 'Terminar' : 'Siguiente →'}</button><button class="lnk" id="exSkip">Saltar</button><button class="lnk" id="exQuit" style="margin-left:auto">Abandonar</button></div></div>`;
+      if (it.kind === 'mcq') $('#exOpts', root).onclick = e => { const b = e.target.closest('.opt'); if (!b) return; $$('#exOpts .opt', root).forEach(x => x.classList.toggle('sel', x === b)); chosen = b.innerHTML; $('#exNext', root).disabled = false; };
+      else { const play = r => { if (plays >= 3) { ctx.toast('Ya la escuchaste tres veces'); return; } plays++; ctx.say(it.s, r); }; $('#exPlay', root).onclick = () => play(1); $('#exSlow', root).onclick = () => play(0.8); play(1); setTimeout(() => $('#exText', root)?.focus(), 50); }
+      const go = skip => { const typed = it.kind === 'dict' ? ($('#exText', root)?.value || '').trim() : null; const good = !skip && (it.kind === 'mcq' ? chosen === it.a : !!typed && matchScore(typed, it.s) >= 85); answers.push({ it, chosen: skip ? null : (it.kind === 'mcq' ? chosen : typed), good }); i++; if (i >= items.length) report(false); else question(); };
+      $('#exNext', root).onclick = () => go(false); $('#exSkip', root).onclick = () => go(true);
+      $('#exQuit', root).onclick = () => { clearInterval(tmr); if (window.speechSynthesis) speechSynthesis.cancel(); setup(); };
+    }
+    function report(timeout) {
+      clearInterval(tmr); if (window.speechSynthesis) speechSynthesis.cancel();
+      while (answers.length < items.length) answers.push({ it: items[answers.length], chosen: null, good: false });
+      const score = answers.filter(a => a.good).length, total = items.length, pct = Math.round(score / total * 100);
+      const cefr = (EXAM_BANDS[scope] || EXAM_BANDS.all)[pct < 45 ? 0 : pct < 65 ? 1 : pct < 85 ? 2 : 3];
+      const by = f => { const m = {}; answers.forEach(a => { const k = f(a.it); m[k] ||= { ok: 0, n: 0 }; m[k].n++; if (a.good) m[k].ok++; }); return Object.entries(m); };
+      const areas = by(it => EXAM_AREA[it.area] || it.area), byUnit = by(it => it.unit).sort((a, b) => (a[1].ok / a[1].n) - (b[1].ok / b[1].n));
+      const wrong = answers.filter(a => !a.good);
+      wrong.forEach(a => { const it = a.it; if (it.kind === 'mcq') Mastery.miss({ kind: 'mcq', item: { q: it.q, opts: it.opts, a: it.a, why: it.why, ctx: it.unit }, unit: it.key, sec: it.sec, label: 'Examen' }); else Mastery.miss({ kind: 'dictation', item: { s: it.s }, unit: it.key, sec: 'listen', label: 'Examen', typed: a.chosen || '' }); });
+      answers.forEach(a => Mastery.record(Mastery.idFor(a.it.key, a.it.sec, { label: 'Examen' }), a.good));
+      H.unshift({ date: Date.now(), scope, score, total, pct, cefr, secs }); H = H.slice(0, 40); save('et-exams', H);
+      ctx.score(true, score * 2);
+      const verdict = pct >= 85 ? 'Excelente: dominas este alcance. Sube de ciclo o prueba con "Todo".' : pct >= 65 ? 'Bien: tienes la base. Repasa las unidades más flojas de abajo y repite en una semana.' : pct >= 45 ? 'A medias: hay lagunas claras. Trabaja el cuaderno de errores y el repaso inteligente antes de repetir.' : 'Flojo por ahora: vuelve a las unidades señaladas y haz sus ejercicios de gramática y vocabulario.';
+      root.innerHTML = `<div class="card report"><div class="rep-head"><div><div class="eyebrow">Examen · ${esc(scopeLabel(scope))}</div><h2>${score} de ${total} · ${pct}%</h2></div><div class="cefr">${esc(cefr)}<small>nivel orientativo</small></div></div>
+        ${timeout ? '<p class="small" style="color:var(--bad)">Se acabó el tiempo: las preguntas sin responder cuentan como fallo.</p>' : ''}
+        <p>${verdict}</p>
+        <div class="stat" style="margin:12px 0"><div><b>${score}</b><span class="small muted">aciertos</span></div><div><b>${wrong.length}</b><span class="small muted">fallos</span></div><div><b>${answers.filter(a => a.chosen === null).length}</b><span class="small muted">saltadas</span></div><div><b>${fmt(secs)}</b><span class="small muted">tiempo</span></div></div>
+        <h3>Por área</h3><div class="scores">${areas.map(([k, v]) => `<div><span class="small"><b>${esc(k)}</b> ${v.ok}/${v.n}</span>${bar(v.ok, v.n)}</div>`).join('')}</div>
+        <h3 style="margin-top:14px">Por unidad <span class="muted small" style="font-family:var(--font-body);font-weight:700">· las más flojas primero</span></h3><div class="scores">${byUnit.map(([k, v]) => `<div><span class="small"><b>${esc(k)}</b> ${v.ok}/${v.n}</span>${bar(v.ok, v.n)}</div>`).join('')}</div>
+        ${wrong.length ? `<h3 style="margin-top:14px">Lo que fallaste</h3><ol class="small ex-wrong">${wrong.map(a => a.it.kind === 'mcq' ? `<li><div>${a.it.q}</div><div>${a.chosen !== null ? `<span class="del">${a.chosen}</span> → ` : '<span class="muted">(sin responder)</span> → '}<span class="ins">${a.it.a}</span></div>${a.it.why ? `<div class="muted">${a.it.why}</div>` : ''}<div class="muted">${esc(a.it.unit)}</div></li>` : `<li><div>Dictado: <b>${esc(a.it.s)}</b></div>${a.chosen ? `<div class="diff">${diffWords(a.chosen, a.it.s)}</div>` : '<div class="muted">(sin responder)</div>'}<div class="muted">${esc(a.it.unit)}</div></li>`).join('')}</ol>` : '<p>Sin fallos. 🎯</p>'}
+        <div class="row" style="margin-top:14px"><button class="btn" id="exAgain">Otro examen</button>${wrong.length ? '<a class="btn ghost" href="#/method/errors">Repasar mis fallos</a>' : ''}<a class="btn ghost" href="#/method/srs">Repaso inteligente</a></div></div>`;
+      $('#exAgain', root).onclick = setup;
+      root.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+    setup();
+  }
+
   /* ================= 4. 4-3-2 ================= */
   function renderFluency(root, ctx) {
     const topics = (window.Coach ? Coach.topics() : []); let topic = pick(topics.length ? topics : [{ t: 'My typical day', task: '' }], 1)[0];
@@ -247,11 +333,11 @@ window.Method = (() => {
   }
 
   /* ================= montaje ================= */
-  const TABS = [['plan', 'Principios y plan', renderPlan], ['srs', 'Repaso inteligente', renderSRS], ['errors', 'Cuaderno de errores', (r, c) => Mastery.renderErrors(r, c)], ['pron', 'Pronunciación', (r, c) => Pron.render(r, c)], ['reading', 'Lectura', renderReading],['shadow', 'Shadowing', renderShadow], ['mix', 'Quiz mezclado', renderMix], ['roleplay', 'Role-play', renderRoleplay], ['fluency', '4-3-2', renderFluency], ['dictogloss', 'Dictogloss', renderDictogloss], ['retell', 'Leer y recontar', renderRetell]];
+  const TABS = [['plan', 'Principios y plan', renderPlan], ['srs', 'Repaso inteligente', renderSRS], ['errors', 'Cuaderno de errores', (r, c) => Mastery.renderErrors(r, c)], ['pron', 'Pronunciación', (r, c) => Pron.render(r, c)], ['reading', 'Lectura', renderReading],['shadow', 'Shadowing', renderShadow], ['mix', 'Quiz mezclado', renderMix], ['exam', 'Examen', renderExam], ['roleplay', 'Role-play', renderRoleplay], ['fluency', '4-3-2', renderFluency], ['dictogloss', 'Dictogloss', renderDictogloss], ['retell', 'Leer y recontar', renderRetell]];
   function render(view, ctx, sub) {
     const active = TABS.find(t => t[0] === sub) || TABS[0];
     view.innerHTML = `<nav class="crumbs"><a href="#/">Hoy</a><span class="sep">›</span><span>Práctica</span></nav>
-      <div class="unit-head compact"><div class="eyebrow">Práctica · técnicas con evidencia</div><h1>Práctica</h1><p class="muted small">Repaso espaciado, shadowing, quiz mezclado, role-play, fluidez, dictogloss y recontar: ejercicios transversales con el contenido de todas tus unidades.</p></div>
+      <div class="unit-head compact"><div class="eyebrow">Práctica · técnicas con evidencia</div><h1>Práctica</h1><p class="muted small">Repaso espaciado, shadowing, quiz mezclado, examen simulado, role-play, fluidez, dictogloss y recontar: ejercicios transversales con el contenido de todas tus unidades.</p></div>
       <div class="sub">${TABS.map(t => `<button class="${t === active ? 'on' : ''}" data-t="${t[0]}">${t[1]}</button>`).join('')}</div><div class="act on" id="methodBody"></div>`;
     $$('.sub button', view).forEach(b => b.onclick = () => { location.hash = '#/method/' + b.dataset.t; });
     active[2]($('#methodBody', view), ctx);

@@ -55,4 +55,6 @@ window.COURSES = [
       { id: 'salud', number: 7, title: 'Compras, farmacia y salud', subtitle: 'Devoluciones, síntomas, dosis y urgencias', available: true, xpGoal: 500 },
     ],
   },
+  // Mis temas: unidades generadas con IA desde la propia app (js/topics.js rellena `units` al arrancar con lo guardado en et-topics)
+  { id: 'mistemas', number: 'M', title: 'Mis temas', subtitle: 'Unidades generadas con IA sobre lo que tú elijas', available: true, custom: true, units: [] },
 ];

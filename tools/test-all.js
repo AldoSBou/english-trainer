@@ -24,7 +24,7 @@ const srv = http.createServer((req,res)=>{
   });
   await page.goto(base+'#/'); await page.waitForTimeout(300);
   const courses = await page.evaluate(()=>window.COURSES.filter(c=>c.available).map(c=>({id:c.id,units:c.units.filter(u=>u.available).map(u=>u.id)})));
-  const routes = ['#/','#/curso','#/perfil','#/coach','#/coach/roleplay','#/coach/eval','#/coach/history','#/coach/settings','#/method','#/method/srs','#/method/errors','#/method/pron','#/method/reading','#/method/shadow','#/method/mix','#/method/roleplay','#/method/fluency','#/method/dictogloss','#/method/retell','#/translate'];
+  const routes = ['#/','#/curso','#/mistemas','#/perfil','#/coach','#/coach/roleplay','#/coach/eval','#/coach/history','#/coach/settings','#/method','#/method/srs','#/method/errors','#/method/pron','#/method/reading','#/method/shadow','#/method/mix','#/method/exam','#/method/roleplay','#/method/fluency','#/method/dictogloss','#/method/retell','#/translate'];
   const secs = ['home','vocab','grammar','listen','speak','read','write','social'];
   for (const c of courses){ routes.push('#/'+c.id); for (const u of c.units){ routes.push(`#/${c.id}/${u}`); for (const s of secs) routes.push(`#/${c.id}/${u}/${s}`); } }
   let n=0, empty=[];
