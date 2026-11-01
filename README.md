@@ -88,7 +88,7 @@ En Social English de cada unidad de Inglés 3 y 4 (pestaña **Role-play**, 18 es
 
 ## Inglés práctico (`courses/practico/`)
 
-Un ciclo aparte, fuera de la numeración del instituto, con situaciones reales: aeropuerto y vuelo, hotel y transporte, restaurante y comida (también desde el lado de quien atiende), reuniones y stand-ups de un equipo de software, entrevistas y networking, inglés escrito de trabajo (correos, Slack, revisiones de PR, incidentes) y compras, farmacia y salud. Cada situación es una unidad completa: frasebook con audio, la gramática mínima que la situación exige, errores típicos de hispanohablante, dictado y diálogo, retos de speaking, una lectura realista, una escritura útil y tres role-plays con ramas. Todo entra al repaso SRS, al quiz mezclado y a Práctica › Role-play.
+Un ciclo aparte, fuera de la numeración del instituto, con situaciones reales: aeropuerto y vuelo, hotel y transporte, restaurante y comida (también desde el lado de quien atiende), reuniones y stand-ups de un equipo de software, entrevistas y networking, inglés escrito de trabajo (correos, Slack, revisiones de PR, incidentes), compras, farmacia y salud, teléfono y videollamadas, small talk y socializar, y banco y trámites. Cada situación es una unidad completa: frasebook con audio, la gramática mínima que la situación exige, errores típicos de hispanohablante, dictado y diálogo, retos de speaking, una lectura realista, una escritura útil y tres role-plays con ramas. Todo entra al repaso SRS, al quiz mezclado y a Práctica › Role-play.
 
 ## Pronunciación (`js/pron.js`)
 

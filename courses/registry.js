@@ -44,7 +44,7 @@ window.COURSES = [
   },
   { id: 'ingles5', number: 5, title: 'Inglés 5', subtitle: 'Intermedio alto', available: false, units: [] },
   {
-    id: 'practico', number: 'P', title: 'Inglés práctico', subtitle: 'Viajes, restaurante, trabajo y salud', available: true, practical: true,
+    id: 'practico', number: 'P', title: 'Inglés práctico', subtitle: 'Viajes, restaurante, trabajo, salud, teléfono y trámites', available: true, practical: true,
     units: [
       { id: 'aeropuerto', number: 1, title: 'Aeropuerto y vuelo', subtitle: 'Check-in, seguridad, migración, conexiones y equipaje', available: true, xpGoal: 500 },
       { id: 'hotel', number: 2, title: 'Hotel y transporte', subtitle: 'Reserva, problemas en la habitación, taxi y direcciones', available: true, xpGoal: 500 },
@@ -53,6 +53,9 @@ window.COURSES = [
       { id: 'entrevistas', number: 5, title: 'Entrevistas y networking', subtitle: 'Tell me about yourself, STAR, salario y contactos', available: true, xpGoal: 500 },
       { id: 'escrito', number: 6, title: 'Inglés escrito de trabajo', subtitle: 'Correos, Slack, revisiones de PR e incidentes', available: true, xpGoal: 500 },
       { id: 'salud', number: 7, title: 'Compras, farmacia y salud', subtitle: 'Devoluciones, síntomas, dosis y urgencias', available: true, xpGoal: 500 },
+      { id: 'telefono', number: 8, title: 'Teléfono y videollamadas', subtitle: 'Llamar, deletrear, dejar mensajes y salvar una videollamada', available: true, xpGoal: 500 },
+      { id: 'smalltalk', number: 9, title: 'Small talk y socializar', subtitle: 'Romper el hielo, reaccionar, cambiar de tema y despedirse', available: true, xpGoal: 500 },
+      { id: 'tramites', number: 10, title: 'Banco y trámites', subtitle: 'Cuentas, cargos, transferencias, consulado y formularios', available: true, xpGoal: 500 },
     ],
   },
   // Mis temas: unidades generadas con IA desde la propia app (js/topics.js rellena `units` al arrancar con lo guardado en et-topics)
