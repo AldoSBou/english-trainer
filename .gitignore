@@ -5,3 +5,6 @@ Thumbs.db
 node_modules/
 package-lock.json
 test-results/
+
+# Material del curso (PDFs de Cambridge): solo fuente local, no se publica
+courses/material/
