@@ -30,6 +30,47 @@ window.Coach = (() => {
   }
   window.Speech = { listen, supported: !!SR };
 
+  /* ---------------- JSON tolerante ----------------
+     Los modelos a veces envuelven el JSON en ```json, dejan comas sobrantes, meten comillas sin
+     escapar dentro de un string ("She said "hi"") o se cortan por max_tokens. parseJSON intenta
+     JSON.parse directo y, si falla, repara esos casos y cierra lo que quedó abierto. Devuelve null
+     si no hay nada rescatable. Se exporta como Coach.parseJSON (tools/test-json.js lo prueba). */
+  /* parseJSON:start */
+  function parseJSON(text) {
+    if (!text) return null;
+    let t = String(text).replace(/```(?:json)?/gi, '');
+    const i = t.indexOf('{'); if (i < 0) return null; t = t.slice(i);
+    try { return JSON.parse(t.slice(0, t.lastIndexOf('}') + 1)); } catch (e) { }
+    let out = '', inStr = false, esc = false; const stack = [];
+    for (let k = 0; k < t.length; k++) {
+      const ch = t[k];
+      if (inStr) {
+        if (esc) { out += ch; esc = false; continue; }
+        if (ch === '\\') { out += ch; esc = true; continue; }
+        if (ch === '\n' || ch === '\r' || ch === '\t') { out += ch === '\t' ? '\\t' : '\\n'; continue; }
+        if (ch === '"') {
+          let j = k + 1; while (j < t.length && /[ \t\r\n]/.test(t[j])) j++;
+          if (j >= t.length || ',}]:'.includes(t[j])) { out += ch; inStr = false; } else out += '\\"';
+          continue;
+        }
+        out += ch; continue;
+      }
+      if (ch === '"') { inStr = true; out += ch; continue; }
+      if (ch === '{' || ch === '[') { stack.push(ch === '{' ? '}' : ']'); out += ch; continue; }
+      if (ch === '}' || ch === ']') { if (stack.length && stack[stack.length - 1] === ch) stack.pop(); else continue; out += ch; if (!stack.length) break; continue; }
+      if (ch === '/' && t[k + 1] === '/') { while (k < t.length && t[k] !== '\n') k++; continue; }
+      out += ch;
+    }
+    if (inStr) out += '"';
+    out = out.replace(/,\s*$/, '');
+    out = out.replace(/("[^"\\]*(?:\\.[^"\\]*)*")\s*:\s*$/, '$1: null');
+    out = out.replace(/,\s*$/, '');
+    while (stack.length) out += stack.pop();
+    out = out.replace(/,(\s*[}\]])/g, '$1');
+    try { return JSON.parse(out); } catch (e) { return null; }
+  }
+  /* parseJSON:end */
+
   /* ---------------- proveedor de IA ---------------- */
   const AI = {
     sample: null, ready: null, provider: 'local',
@@ -57,7 +98,9 @@ window.Coach = (() => {
         if (!res.ok) { const t = await res.text(); throw { code: res.status === 401 ? 'not_granted' : 'upstream_error', message: t.slice(0, 200) }; }
         const data = await res.json(); const text = (data.content || []).map(c => c.text || '').join('');
         if (!json) { onText && onText(text); return text; }
-        const m = text.match(/\{[\s\S]*\}/); if (!m) throw { code: 'invalid_json', message: 'sin JSON', text }; return JSON.parse(m[0]);
+        const parsed = parseJSON(text);
+        if (parsed === null) throw { code: 'invalid_json', message: data.stop_reason === 'max_tokens' ? 'la respuesta se cortó por longitud' : 'sin JSON válido', text, truncated: data.stop_reason === 'max_tokens' };
+        return parsed;
       }
       throw { code: 'not_granted', message: 'sin proveedor' };
     },
@@ -538,5 +581,5 @@ Reply with ONLY a JSON object:
     $$('.sub button', view).forEach(b => b.onclick = () => { location.hash = '#/coach/' + b.dataset.t; });
     active[2]($('#coachBody', view), ctx);
   }
-  return { render, analyze, AI, hist, topics, scenes, listen };
+  return { render, analyze, AI, hist, topics, scenes, listen, parseJSON };
 })();

@@ -6,7 +6,8 @@
   "scripts": {
     "serve": "npx --yes serve -l 8080 .",
     "validate": "node tools/validate-all.js",
-    "test": "node tools/test-all.js"
+    "test": "node tools/test-all.js",
+    "test:json": "node tools/test-json.js"
   },
   "devDependencies": {
     "playwright": "^1.64.1"

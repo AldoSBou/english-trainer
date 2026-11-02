@@ -159,7 +159,16 @@ Rules for the scene: 7-9 nodes in total including 3 endings (win, meh, fail); ev
   async function generate(topic, level, onStep) {
     const AI = window.Coach && Coach.AI; if (!AI) throw { code: 'not_granted' };
     await AI.init(); if (AI.provider === 'local') throw { code: 'not_granted' };
-    const ask = (p, max) => AI.chat([{ role: 'user', content: p }], { json: true, tier: 'default', max });
+    const STRICT = '\n\nOutput format: ONLY the JSON object, starting with { and ending with }. No markdown fences, no comments, no trailing commas. Inside string values never use unescaped double quotes: use single quotes for quoted speech. Keep every text short so the whole answer fits.';
+    // cada paso se pide hasta dos veces: la IA a veces corta o rompe el JSON y basta con repetir (la segunda vez con más margen)
+    const ask = async (p, max) => {
+      let err;
+      for (let i = 0; i < 2; i++) {
+        try { return await AI.chat([{ role: 'user', content: p + STRICT }], { json: true, tier: 'default', max: i ? max + 2000 : max }); }
+        catch (e) { err = e; if (!(e && (e.code === 'invalid_json' || e instanceof SyntaxError))) throw e; }
+      }
+      throw { code: 'invalid_json', message: (err && err.message) || 'JSON inválido' };
+    };
     onStep(1); const core = await ask(P_CORE(topic, level), 7000);
     const words = arr(core.cards).map(c => c && c.w).filter(Boolean).slice(0, 20).join(', ');
     onStep(2); const skills = await ask(P_SKILLS(topic, level, words), 7000);
@@ -199,7 +208,7 @@ Rules for the scene: 7-9 nodes in total including 3 endings (win, meh, fail); ev
         fb.innerHTML = `✅ <b>${esc(r.title)}</b> lista con ${r.activities} actividades. Abriendo…`;
         try { sessionStorage.setItem('et-topics-open', r.id); } catch (e) { } setTimeout(() => location.reload(), 400);
       } catch (e) {
-        fb.className = 'fb show wrong'; fb.innerHTML = e && e.code === 'not_granted' ? 'No hay IA conectada. Configura tu API key en <a href="#/coach/settings">Ajustes IA</a>.' : e && e.code === 'invalid_json' ? 'La respuesta de la IA llegó incompleta o en un formato inesperado. Vuelve a intentarlo (a veces basta con repetir).' : 'No se pudo generar la unidad: ' + esc((e && (e.message || e.code)) || 'error desconocido');
+        fb.className = 'fb show wrong'; fb.innerHTML = e && e.code === 'not_granted' ? 'No hay IA conectada. Configura tu API key en <a href="#/coach/settings">Ajustes IA</a>.' : e && (e.code === 'invalid_json' || e instanceof SyntaxError) ? 'La respuesta de la IA llegó incompleta o en un formato inesperado' + (e.code && e.message ? ' (' + esc(e.message) + ')' : '') + '. Se reintentó una vez sin éxito; prueba de nuevo o con un tema más concreto.' : 'No se pudo generar la unidad: ' + esc((e && (e.message || e.code)) || 'error desconocido');
         go.disabled = false; inp.disabled = false;
       }
     };
